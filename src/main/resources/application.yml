@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: hh api
+
+  datasource:
+    url: ${DATA_BASE_URL}
+    driver-class-name: ${DATA_BASE_DRIVER_CLASS_NAME}
+    username: ${DATA_BASE_USER}
+    password: ${DATA_BASE_PASSWORD}
+    jpa:
+      database-platform: ${DATA_BASE_PLATFORM}
+      hibernate:
+        ddl-auto: update
+
+  server:
+    port: ${SERVER_PORT}
+
+  logging:
+    level:
+      root: INFO
+      org.springframework.cloud: INFO
+      org.springframework.web: INFO
+
+hh:
+  client-id: ${HH_CLIENT_ID}
+  client-secret: ${HH_CLIENT_SECRET}
+  redirect-uri: ${HH_REDIRECT_URL}
+  base_url_api: ${HH_BASE_URL_API}
+  base_url: ${HH_BASE_URL}
+  count_vacancies: ${HH_COUNT_VACANCIES}
+  HH-User-Agent: ${HH_USER_AGENT}
+  cover_letter: ${HH_COVER_LETTER}
+
+
+application:
+  prePrompt: ${APP_PRE_PROMPT}
+  apply-interval-min: ${APP_APPLY_INTERVAL_MIN}
+  apply-interval-max: ${APP_APPLY_INTERVAL_MAX}
+  page-interval-min: ${APP_PAGE_INTERVAL_MIN}
+  page-interval-max: ${APP_PAGE_INTERVAL_MAX}
+  dry-run: ${APP_DRY_RUN}  # режим "dry-run" (без фактической отправки откликов)
