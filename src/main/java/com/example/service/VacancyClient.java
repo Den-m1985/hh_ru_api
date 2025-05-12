@@ -17,7 +17,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @RequiredArgsConstructor
 public class VacancyClient {
     private final RequestTemplates requestTemplates;
-    private final ResumeService resumeService;
     private final HeadHunterProperties headHunterProperties;
 
     /**
@@ -26,16 +25,6 @@ public class VacancyClient {
     public ApiListResponse<VacancyItem> getSimilarVacancies(String resumeId, int page, int perPage, String orderBy, String search) {
         String url = createUrl(resumeId, page, perPage, orderBy, search);
         return requestTemplates.getDataFromRequest(url);
-    }
-
-    public void test() {
-        String resumeId = resumeService.getResume().getResumeId();
-        ApiListResponse<VacancyItem> dfg = getSearchVacancies(resumeId, 1, 5);
-        System.out.println(dfg.items().size());
-        for (VacancyItem vacancyItem : dfg.items()) {
-            System.out.println(vacancyItem.name());
-            System.out.println(vacancyItem.experience() + "\n");
-        }
     }
 
     public ApiListResponse<VacancyItem> getSearchVacancies(String resumeId, int page, int perPage) {
@@ -51,16 +40,19 @@ public class VacancyClient {
         return requestTemplates.getDataFromRequest(url);
     }
 
-    // https://hh.ru/search/vacancy?area=113&enable_snippets=true&experience=between1And3&no_magic=true&text=Java
+    /**
+     <a href="https://api.hh.ru/openapi/redoc#tag/Poisk-vakansij/operation/get-vacancies">...</a>
+     */
     public ApiListResponse<VacancyItem> getSearchVacancies2(int page, int perPage) {
         Map<String, String> params = new LinkedHashMap<>();
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(perPage));
-//        params.put("enable_snippets", "true");
-        params.put("experience", "between1And3");
-        params.put("no_magic", "true");
+//        params.put("experience", "between1And3");
+        params.put("experience", "between3And6");
+//        params.put("order_by", "relevance");
+        params.put("order_by", "publication_time");  // по дате
         params.put("text", "Java");
-        params.put("vacancy_search_fields", "name");
+        params.put("search_field", "name");
         String url = createUrl3(params);
         System.out.println(url);
         return requestTemplates.getDataFromRequest(url);

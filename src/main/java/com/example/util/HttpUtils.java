@@ -11,7 +11,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -22,7 +21,6 @@ public class HttpUtils {
             return sendRequest(url, method, headers, body, typeReference);
         } catch (IOException | InterruptedException e) {
             log.error("Request failed. Method: {}, url: {}, message: {} ", method, url, e.getMessage());
-//            throw new RuntimeException("Request failed: " + method + " " + url, e);
         }
         return null;
 

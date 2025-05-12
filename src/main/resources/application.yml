@@ -28,7 +28,7 @@ hh:
   base_url_api: ${HH_BASE_URL_API}
   base_url: ${HH_BASE_URL}
   count_vacancies: ${HH_COUNT_VACANCIES}
-  HH-User-Agent: ${HH_USER_AGENT}
+  hh-User-Agent: ${HH_USER_AGENT}
   cover_letter: ${HH_COVER_LETTER}
 
 

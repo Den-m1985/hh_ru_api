@@ -29,10 +29,10 @@ public class NegotiationsAll {
     public void getNegotiations() {
         Map<String, String> params = new LinkedHashMap<>();
         params.put("page", String.valueOf(0));
-        params.put("per_page", String.valueOf(500));
+        params.put("per_page", String.valueOf(1000));
         params.put("order_by", "created_at");
         params.put("status", "all");
-        String url = createUrl2(params);
+        String url = createUrl(params);
         System.out.println(url);
         ApiListResponse<NegotiationItemDto> response = requestTemplates.getDataFromRequest2(url);
         System.out.println(response.items().size());
@@ -42,7 +42,7 @@ public class NegotiationsAll {
         log.info("negotiation size: {}", response.items().size());
     }
 
-    private String createUrl2(Map<String, String> search) {
+    private String createUrl(Map<String, String> search) {
         String url = String.format("%s/negotiations?", headHunterProperties.getBaseUrlApi());
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : search.entrySet()) {

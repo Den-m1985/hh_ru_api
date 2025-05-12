@@ -16,13 +16,13 @@ public class CreateHeaders {
     private String clientId;
 
     @Value("${hh.HH-User-Agent}")
-    private String HhUserAgent;
+    private String hhUserAgent;
 
     public Map<String, String> getHeaders() {
         HhToken token = tokenService.findTokenByUserId(clientId);
         return Map.of(
                 "Authorization", "Bearer " + token.getAccessToken(),
-                "HH-User-Agent", HhUserAgent
+                "HH-User-Agent", hhUserAgent
         );
     }
 

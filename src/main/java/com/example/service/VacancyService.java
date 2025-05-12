@@ -10,10 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -24,7 +22,7 @@ public class VacancyService {
     private final ApplicationProperties properties;
     private final ResumeService resumeService;
     private final RequestTemplates requestTemplates;
-    private final NegotiationsAll negotiationsAll;
+    private final VacancyFilter vacancyFilter;
 
     @Value("${hh.cover_letter}")
     private String cover_letter;
@@ -38,21 +36,23 @@ public class VacancyService {
     public void applyToVacancies(boolean useAi, boolean forceMessage) {
         String resumeId = resumeService.getResume().getResumeId();
         List<VacancyItem> allVacancies = getAllVacancies(resumeId);
+        allVacancies.stream().forEach(o -> {
+            System.out.println(o.name());
+            System.out.println(o.published_at());
+        });
+        System.out.println();
+        List<VacancyItem> filtered = vacancyFilter.filterVacancies(allVacancies);
+        System.out.println(filtered.size());
+        filtered.stream().forEach(o -> System.out.println(o.name()));
 
-        removeNegotiationVacancies(allVacancies);
-
-        for (VacancyItem vacancy : allVacancies) {
+        for (VacancyItem vacancy : filtered) {
             try {
-                if (vacancy.has_test() || vacancy.archived()) {
-                    log.info("Skipping vacancy with test or archived: {}", vacancy.name());
-                    continue;
-                }
                 String message = "";
-                if (forceMessage || vacancy.response_letter_required()) {
-                    message = useAi
-                            ? blackboxChatClient.generateMessage(properties.getPrePrompt() + "\n\n" + vacancy.name())
-                            : cover_letter;
-                }
+//                if (forceMessage || vacancy.response_letter_required()) {
+//                    message = useAi
+//                            ? blackboxChatClient.generateMessage(properties.getPrePrompt() + "\n\n" + vacancy.name())
+//                            : cover_letter;
+//                }
                 if (properties.isDryRun()) {
                     log.info("Dry run mode: application would be sent for vacancy {}", vacancy.name());
                 } else {
@@ -71,10 +71,10 @@ public class VacancyService {
 
     private List<VacancyItem> getAllVacancies(String resumeId) {
         List<VacancyItem> all = new ArrayList<>();
-        int perPage = 100;   // количество вакансий на одной странице
-        int totalPages = (int) Math.ceil((double) countVacancies / perPage);
+        int maxPerPage = 100;   // количество вакансий на одной странице
+        int totalPages = (int) Math.ceil((double) countVacancies / maxPerPage);
         for (int page = 0; page < totalPages; page++) {
-            int vacanciesOnPage = Math.min(perPage, countVacancies - page * perPage);
+            int vacanciesOnPage = Math.min(maxPerPage, countVacancies - page * maxPerPage);
 
 //            ApiListResponse<VacancyItem> response = vacancyClient.getSearchVacancies(resumeId, page, vacanciesOnPage);
             ApiListResponse<VacancyItem> response = vacancyClient.getSearchVacancies2(page, vacanciesOnPage);
@@ -90,12 +90,6 @@ public class VacancyService {
         }
         log.info("All vacancies size: {}", all.size());
         return all;
-    }
-
-    private void removeNegotiationVacancies(List<VacancyItem> allVacancies) {
-        List<String> list = negotiationsAll.getNegotiationList();
-        Set<String> negotiationIds = new HashSet<>(list);
-        allVacancies.removeIf(vacancy -> negotiationIds.contains(vacancy.id()));
     }
 
     private float randomInterval(float min, float max) {

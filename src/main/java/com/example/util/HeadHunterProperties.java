@@ -16,6 +16,6 @@ public class HeadHunterProperties {
     String baseUrlApi;
     String baseUrl;
     Integer countVacancies;
-    String HHUserAgent;
+    String hhUserAgent;
     String coverLetter;
 }
