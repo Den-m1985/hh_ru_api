@@ -1,8 +1,8 @@
 package com.example.service;
 
 import com.example.model.HhToken;
+import com.example.util.HeadHunterProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -11,18 +11,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CreateHeaders {
     private final TokenService tokenService;
-
-    @Value("${hh.client-id}")
-    private String clientId;
-
-    @Value("${hh.HH-User-Agent}")
-    private String hhUserAgent;
+    private final HeadHunterProperties headHunterProperties;
 
     public Map<String, String> getHeaders() {
-        HhToken token = tokenService.findTokenByUserId(clientId);
+        HhToken token = tokenService.findTokenByUserId(headHunterProperties.getClientId());
         return Map.of(
                 "Authorization", "Bearer " + token.getAccessToken(),
-                "HH-User-Agent", hhUserAgent
+                "HH-User-Agent", headHunterProperties.getHhUserAgent()
         );
     }
 

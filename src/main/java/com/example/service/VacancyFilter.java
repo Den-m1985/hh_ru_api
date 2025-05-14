@@ -15,7 +15,7 @@ import java.util.Set;
 public class VacancyFilter {
     private final NegotiationsAll negotiationsAll;
 
-    public List<VacancyItem> filterVacancies(List<VacancyItem> allVacancies) {
+    public List<VacancyItem> filterVacancies(Set<VacancyItem> allVacancies) {
         return allVacancies.stream()
                 .filter(this::isNotNegotiated)
                 .filter(this::isNotArchivedOrWithTest)

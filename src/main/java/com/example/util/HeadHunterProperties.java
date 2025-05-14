@@ -18,4 +18,5 @@ public class HeadHunterProperties {
     Integer countVacancies;
     String hhUserAgent;
     String coverLetter;
+    Boolean searchBySimilarVacancies;
 }
