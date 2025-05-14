@@ -8,7 +8,6 @@ import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.service.CreateHeaders;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
@@ -20,16 +19,11 @@ import java.util.Map;
 public class RequestTemplates {
     private final HttpUtils httpUtils;
     private final CreateHeaders createHeaders;
-
-    @Value("${hh.base_url_api}")
-    private String baseUrlApi;
-
-    @Value("${hh.client-id}")
-    private String clientId;
+    private final HeadHunterProperties headHunterProperties;
 
     public ResumeDto getMineResume() {
         return httpUtils.safeRequest(
-                baseUrlApi + "/resumes/mine",
+                headHunterProperties.baseUrlApi + "/resumes/mine",
                 HttpMethod.GET,
                 createHeaders.getHeaders(),
                 null,
@@ -96,9 +90,8 @@ public class RequestTemplates {
         Map<String, String> headers = new HashMap<>(createHeaders.getHeaders());
         headers.put("Content-Type", "multipart/form-data; boundary=" + boundary);
 
-
         return httpUtils.safeRequest(
-                baseUrlApi + "/negotiations",
+                headHunterProperties.baseUrlApi + "/negotiations",
                 HttpMethod.POST,
                 headers,
                 body,

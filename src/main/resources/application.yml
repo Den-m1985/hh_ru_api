@@ -30,6 +30,7 @@ hh:
   count_vacancies: ${HH_COUNT_VACANCIES}
   hh-User-Agent: ${HH_USER_AGENT}
   cover_letter: ${HH_COVER_LETTER}
+  search_by_similar_vacancies: ${SEARCH_BY_SIMILAR_VACANCIES}
 
 
 application:

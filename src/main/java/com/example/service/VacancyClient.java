@@ -5,6 +5,7 @@ import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.util.HeadHunterProperties;
 import com.example.util.RequestTemplates;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.URLEncoder;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class VacancyClient {
@@ -22,12 +24,7 @@ public class VacancyClient {
     /**
      * <a href="https://api.hh.ru/openapi/redoc#tag/Poisk-vakansij-dlya-soiskatelya/operation/get-vacancies-similar-to-resume">...</a>
      */
-    public ApiListResponse<VacancyItem> getSimilarVacancies(String resumeId, int page, int perPage, String orderBy, String search) {
-        String url = createUrl(resumeId, page, perPage, orderBy, search);
-        return requestTemplates.getDataFromRequest(url);
-    }
-
-    public ApiListResponse<VacancyItem> getSearchVacancies(String resumeId, int page, int perPage) {
+    public ApiListResponse<VacancyItem> getSimilarVacancies(String resumeId, int page, int perPage) {
         Map<String, String> params = new LinkedHashMap<>();
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(perPage));
@@ -35,38 +32,30 @@ public class VacancyClient {
         params.put("text", "Java");
         params.put("vacancy_search_fields", "name");
         params.put("experience", "between1And3");
-        String url = createUrl2(resumeId, params);
-        System.out.println(url);
+        String url = createSimilarUrl(resumeId, params);
+        log.info(url);
         return requestTemplates.getDataFromRequest(url);
     }
 
     /**
-     <a href="https://api.hh.ru/openapi/redoc#tag/Poisk-vakansij/operation/get-vacancies">...</a>
+     * <a href="https://api.hh.ru/openapi/redoc#tag/Poisk-vakansij/operation/get-vacancies">...</a>
      */
-    public ApiListResponse<VacancyItem> getSearchVacancies2(int page, int perPage) {
+    public ApiListResponse<VacancyItem> getSearchVacancies(int page, int perPage) {
         Map<String, String> params = new LinkedHashMap<>();
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(perPage));
 //        params.put("experience", "between1And3");
         params.put("experience", "between3And6");
 //        params.put("order_by", "relevance");
-        params.put("order_by", "publication_time");  // по дате
+        params.put("order_by", "publication_time");  // sort по дате
         params.put("text", "Java");
         params.put("search_field", "name");
-        String url = createUrl3(params);
-        System.out.println(url);
+        String url = createSearchUrl(params);
+        log.info(url);
         return requestTemplates.getDataFromRequest(url);
     }
 
-    private String createUrl(String resumeId, int page, int perPage, String orderBy, String search) {
-        String url = String.format("%s/resumes/%s/similar_vacancies?page=%d&per_page=%d&order_by=%s", headHunterProperties.getBaseUrlApi(), resumeId, page, perPage, orderBy);
-        if (search != null) {
-            url += "&text=" + search;
-        }
-        return url;
-    }
-
-    private String createUrl2(String resumeId, Map<String, String> search) {
+    private String createSimilarUrl(String resumeId, Map<String, String> search) {
         String url = String.format("%s/resumes/%s/similar_vacancies?", headHunterProperties.getBaseUrlApi(), resumeId);
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : search.entrySet()) {
@@ -78,7 +67,7 @@ public class VacancyClient {
         return url + sb;
     }
 
-    private String createUrl3(Map<String, String> search) {
+    private String createSearchUrl(Map<String, String> search) {
         String url = String.format("%s/vacancies?", headHunterProperties.getBaseUrlApi());
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : search.entrySet()) {
