@@ -12,8 +12,6 @@ public class CallBackService {
     private final OAuthClient oauthClient;
     private final ResumeService resumeService;
     private final VacancyResponseProcessor vacancyService;
-    private final SavedSearches savedSearches;
-    private final NegotiationsAll negotiationsAll;
 
     public void processApp(String code) {
         log.debug("Получен код: {}", code);
@@ -22,10 +20,6 @@ public class CallBackService {
 
         resumeService.getResumeFromHh();
 
-        negotiationsAll.getNegotiations();
-
         vacancyService.respondToRelevantVacancies();
-
-//        savedSearches.getSavedSearches();
     }
 }

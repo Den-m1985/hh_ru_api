@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +12,6 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class VacancyFilter {
-    private final NegotiationsAll negotiationsAll;
 
     public List<VacancyItem> filterVacancies(Set<VacancyItem> allVacancies) {
         return allVacancies.stream()
@@ -25,12 +23,11 @@ public class VacancyFilter {
 
     // Фильтрация вакансий, по которым уже есть отклики (переговоры)
     private boolean isNotNegotiated(VacancyItem vacancy) {
-        Set<String> negotiationIds = new HashSet<>(negotiationsAll.getNegotiationList());
-        boolean isNegotiated = negotiationIds.contains(vacancy.id());
-        if (isNegotiated) {
-            log.debug("Skipping vacancy {} already negotiated: {}", vacancy.id(), vacancy.name());
+        if (vacancy.relations().isEmpty()) {
+            return true;
         }
-        return !isNegotiated;
+        log.debug("Skipping vacancy {} with negotiation: {}", vacancy.id(), vacancy.relations());
+        return false;
     }
 
     // Проверка на архивность и наличие теста
