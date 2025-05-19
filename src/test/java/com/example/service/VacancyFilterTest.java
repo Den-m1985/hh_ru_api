@@ -5,6 +5,7 @@ import com.example.dto.vacancy_dto.ProfessionalRoles;
 import com.example.dto.vacancy_dto.Snippet;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.dto.vacancy_dto.WorkFormat;
+import com.example.enums.VacancyRelation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,37 +15,33 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class VacancyFilterTest {
-    private NegotiationsAll negotiationsAll;
     private VacancyFilter vacancyFilter;
 
     @BeforeEach
     void setUp() {
-        negotiationsAll = mock(NegotiationsAll.class);
-        vacancyFilter = new VacancyFilter(negotiationsAll);
+        vacancyFilter = new VacancyFilter();
     }
 
     @Test
     void shouldFilterOutNegotiatedArchivedAndKeywordedVacancies() {
-        VacancyItem negotiated = createVacancy("Java Developer", false, false);
-        VacancyItem archived = createVacancy("Kotlin Developer", false, true);
-        VacancyItem withTest = createVacancy("Backend Developer", true, false);
-        VacancyItem keyworded = createVacancy("Senior Python Engineer", false, false);
-        VacancyItem valid = createVacancy("Kotlin разработчик", false, false);
+        List<VacancyRelation> relations = List.of(VacancyRelation.GOT_RESPONSE);
+        VacancyItem vacancyToApply = createVacancy("Java Developer", false, false, Collections.emptyList());
+        VacancyItem negotiated = createVacancy("Java Developer", false, false, relations);
+        VacancyItem archived = createVacancy("Kotlin Developer", false, true, Collections.emptyList());
+        VacancyItem withTest = createVacancy("Backend Developer", true, false, Collections.emptyList());
+        VacancyItem keyworded = createVacancy("Senior Python Engineer", false, false, Collections.emptyList());
+        VacancyItem valid = createVacancy("Kotlin разработчик", false, false, relations);
 
-        when(negotiationsAll.getNegotiationList()).thenReturn(List.of("1"));
-
-        Set<VacancyItem> allVacancies = Set.of(negotiated, archived, withTest, keyworded, valid);
+        Set<VacancyItem> allVacancies = Set.of(vacancyToApply, negotiated, archived, withTest, keyworded, valid);
         List<VacancyItem> result = vacancyFilter.filterVacancies(allVacancies);
 
-        assertEquals(2, result.size());
+        assertEquals(1, result.size());
     }
 
 
-    public VacancyItem createVacancy(String name, boolean hasTest, boolean archived) {
+    public VacancyItem createVacancy(String name, boolean hasTest, boolean archived, List<VacancyRelation> relations) {
         return new VacancyItem(
                 false,
                 false,
@@ -63,7 +60,7 @@ class VacancyFilterTest {
                 false,
                 Collections.singletonList(new ProfessionalRoles("124", "Тестировщик")),
                 "2025-05-14T18:14:21+0300",
-                Collections.emptyList(),
+                relations,
                 false,
                 null,
                 null,

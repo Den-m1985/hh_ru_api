@@ -1,5 +1,6 @@
 package com.example.dto.vacancy_dto;
 
+import com.example.enums.VacancyRelation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public record VacancyItem(
         Boolean premium,  // Является ли данная вакансия премиум-вакансией
         List<ProfessionalRoles> professional_roles,  // Список профессиональных ролей
         String published_at,  // Дата и время публикации вакансии
-        List<String> relations,  // Связи соискателя с вакансией Enum
+        List<VacancyRelation> relations,  // Связи соискателя с вакансией Enum
         Boolean response_letter_required,
         String response_url,  // URL отклика для прямых вакансий (type.id=direct)
         SalaryRange salary_range,  // Зарплата
