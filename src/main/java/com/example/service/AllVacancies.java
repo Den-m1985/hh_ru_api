@@ -4,14 +4,12 @@ import com.example.dto.vacancy_dto.ApiListResponse;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.util.HeadHunterProperties;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AllVacancies {
@@ -31,7 +29,6 @@ public class AllVacancies {
             ApiListResponse<VacancyItem> response = fetchVacancies(resumeId, page, perPage);
             all.addAll(response.items());
         }
-        log.info("All vacancies size: {}", all.size());
         return all;
     }
 

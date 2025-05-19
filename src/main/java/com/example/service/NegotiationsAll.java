@@ -33,13 +33,12 @@ public class NegotiationsAll {
         params.put("order_by", "created_at");
         params.put("status", "all");
         String url = createUrl(params);
-        System.out.println(url);
+        log.debug("Negotiation url: {}", url);
         ApiListResponse<NegotiationItemDto> response = requestTemplates.getDataFromRequest2(url);
-        System.out.println(response.items().size());
         for (NegotiationItemDto str : response.items()) {
             negotiationList.add(str.vacancy().id());
         }
-        log.info("negotiation size: {}", response.items().size());
+        log.info("Negotiation size: {}", response.items().size());
     }
 
     private String createUrl(Map<String, String> search) {

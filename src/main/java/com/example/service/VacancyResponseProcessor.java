@@ -38,7 +38,10 @@ public class VacancyResponseProcessor {
 
     private List<VacancyItem> prepareData(String resumeId) {
         Set<VacancyItem> allVacanciesFromServer = allVacancies.getAllVacancies(resumeId);
-        return vacancyFilter.filterVacancies(allVacanciesFromServer);
+        log.info("All vacancies size: {}", allVacanciesFromServer.size());
+        List<VacancyItem> filteredData = vacancyFilter.filterVacancies(allVacanciesFromServer);
+        log.info("Filtered vacancies size: {}", filteredData.size());
+        return filteredData;
     }
 
 }
