@@ -2,7 +2,6 @@ package com.example.service;
 
 import com.example.dto.vacancy_dto.ApiListResponse;
 import com.example.dto.vacancy_dto.VacancyItem;
-import com.example.util.ApplicationProperties;
 import com.example.util.HeadHunterProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 @Slf4j
@@ -18,10 +16,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AllVacancies {
     private final VacancyClient vacancyClient;
-    private final ApplicationProperties properties;
     private final HeadHunterProperties headHunterProperties;
     private final PaginationCalculator paginationCalculator;
-    private final Random random = new Random();
 
     public Set<VacancyItem> getAllVacancies(String resumeId) {
         int total = headHunterProperties.getCountVacancies();
@@ -34,10 +30,6 @@ public class AllVacancies {
             int perPage = entry.getValue();
             ApiListResponse<VacancyItem> response = fetchVacancies(resumeId, page, perPage);
             all.addAll(response.items());
-
-            sleepBetweenRequests();
-
-
         }
         log.info("All vacancies size: {}", all.size());
         return all;
@@ -49,19 +41,6 @@ public class AllVacancies {
         } else {
             return vacancyClient.getSearchVacancies(page, perPage);
         }
-    }
-
-    private void sleepBetweenRequests() {
-        try {
-            float delay = randomInterval(properties.getPageIntervalMin(), properties.getPageIntervalMax());
-            Thread.sleep((long) (delay * 1000));
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private float randomInterval(float min, float max) {
-        return min + random.nextFloat() * (max - min);
     }
 
 }

@@ -7,6 +7,7 @@ import com.example.util.HttpUtils;
 import com.example.service.TokenService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuthClient {
@@ -77,6 +79,7 @@ public class OAuthClient {
         hhToken.setToken_type(response.getTokenType());
         hhToken.setExpiresIn(response.getExpiresIn());
         hhToken.setUserId(clientId);
+        log.info("Access Token: {}", hhToken.getAccessToken());
         return tokenService.saveToken(hhToken);
     }
 }
