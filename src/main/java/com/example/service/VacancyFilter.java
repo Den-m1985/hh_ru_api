@@ -42,8 +42,9 @@ public class VacancyFilter {
     // Проверка на наличие исключающих ключевых слов
     private boolean doesNotContainExcludedKeywords(VacancyItem vacancy) {
         List<String> keywordsToExclude = List.of("Senior", "lead", "TeamLead", "Android", "QA", "Python",
-                "Typescript", "Go", "DevOps", "Oracle", "Node.js", "ReactJS", "Менеджер", "Лектор", "Ведущий", "Старший",
-                "Тестировщик", "Fullstack", "фулстек", "Автотестировщик", "Главный", "Руководитель");
+                "Typescript", "Java Script", "JavaScript", "Go", "DevOps", "Oracle", "Node.js", "ReactJS", "Менеджер",
+                "Лектор", "Ведущий", "Старший", "Тестировщик", "Fullstack", "фулстек", "Автотестировщик", "Главный",
+                "Руководитель");
         String name = vacancy.name().toLowerCase();
         boolean hasKeyword = keywordsToExclude.stream()
                 .anyMatch(keyword -> name.contains(keyword.toLowerCase()));
