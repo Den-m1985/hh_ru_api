@@ -28,7 +28,7 @@ public class VacancyFilter {
         Set<String> negotiationIds = new HashSet<>(negotiationsAll.getNegotiationList());
         boolean isNegotiated = negotiationIds.contains(vacancy.id());
         if (isNegotiated) {
-            log.info("Skipping vacancy {} already negotiated: {}", vacancy.id(), vacancy.name());
+            log.debug("Skipping vacancy {} already negotiated: {}", vacancy.id(), vacancy.name());
         }
         return !isNegotiated;
     }
@@ -36,7 +36,7 @@ public class VacancyFilter {
     // Проверка на архивность и наличие теста
     private boolean isNotArchivedOrWithTest(VacancyItem vacancy) {
         if (vacancy.has_test() || vacancy.archived()) {
-            log.info("Skipping vacancy {} with test or archived: {}", vacancy.id(), vacancy.name());
+            log.debug("Skipping vacancy {} with test or archived: {}", vacancy.id(), vacancy.name());
             return false;
         }
         return true;
@@ -51,7 +51,7 @@ public class VacancyFilter {
         boolean hasKeyword = keywordsToExclude.stream()
                 .anyMatch(keyword -> name.contains(keyword.toLowerCase()));
         if (hasKeyword) {
-            log.info("Skipping vacancy {} by keyword match: {}", vacancy.id(), vacancy.name());
+            log.debug("Skipping vacancy {} by keyword match: {}", vacancy.id(), vacancy.name());
         }
         return !hasKeyword;
     }
