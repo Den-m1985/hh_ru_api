@@ -19,4 +19,6 @@ public class HeadHunterProperties {
     String hhUserAgent;
     String coverLetter;
     Boolean searchBySimilarVacancies;
+    Boolean forceCoverLetter;
+    Boolean useAi;
 }
