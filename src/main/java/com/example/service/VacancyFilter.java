@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.dto.vacancy_dto.VacancyItem;
+import com.example.util.HeadHunterProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class VacancyFilter {
+    private final HeadHunterProperties headHunterProperties;
 
     public List<VacancyItem> filterVacancies(Set<VacancyItem> allVacancies) {
         return allVacancies.stream()
@@ -41,10 +43,7 @@ public class VacancyFilter {
 
     // Проверка на наличие исключающих ключевых слов
     private boolean doesNotContainExcludedKeywords(VacancyItem vacancy) {
-        List<String> keywordsToExclude = List.of("Senior", "lead", "TeamLead", "Android", "QA", "Python",
-                "Typescript", "Java Script", "JavaScript", "Go", "DevOps", "Oracle", "Node.js", "ReactJS", "Менеджер",
-                "Лектор", "Ведущий", "Старший", "Тестировщик", "Fullstack", "фулстек", "Автотестировщик", "Главный",
-                "Руководитель");
+        List<String> keywordsToExclude = headHunterProperties.getKeywordsToExclude();
         String name = vacancy.name().toLowerCase();
         boolean hasKeyword = keywordsToExclude.stream()
                 .anyMatch(keyword -> name.contains(keyword.toLowerCase()));

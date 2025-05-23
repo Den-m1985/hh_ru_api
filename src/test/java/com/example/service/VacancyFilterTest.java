@@ -6,6 +6,7 @@ import com.example.dto.vacancy_dto.Snippet;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.dto.vacancy_dto.WorkFormat;
 import com.example.enums.VacancyRelation;
+import com.example.util.HeadHunterProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,13 +16,22 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class VacancyFilterTest {
     private VacancyFilter vacancyFilter;
 
+
     @BeforeEach
     void setUp() {
-        vacancyFilter = new VacancyFilter();
+        List<String> keywordsToExclude = List.of("Senior", "lead", "TeamLead", "Android", "QA", "Python",
+                "Typescript", "Java Script", "JavaScript", "Go", "DevOps", "Oracle", "Node.js", "ReactJS", "Менеджер",
+                "Лектор", "Ведущий", "Старший", "Тестировщик", "Fullstack", "фулстек", "Автотестировщик", "Главный",
+                "Руководитель");
+        HeadHunterProperties headHunterProperties = mock(HeadHunterProperties.class);
+        when(headHunterProperties.getKeywordsToExclude()).thenReturn(keywordsToExclude);
+        vacancyFilter = new VacancyFilter(headHunterProperties);
     }
 
     @Test

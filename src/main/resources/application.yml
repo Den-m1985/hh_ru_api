@@ -30,9 +30,10 @@ hh:
   count_vacancies: ${HH_COUNT_VACANCIES}
   hh-User-Agent: ${HH_USER_AGENT}
   cover_letter: ${HH_COVER_LETTER}
-  search_by_similar_vacancies: ${SEARCH_BY_SIMILAR_VACANCIES}
-  force_cover_letter: ${FORCE_COVER_LETTER}
-  use_aI: ${USE_AI}
+  search_by_similar_vacancies: ${HH_SEARCH_BY_SIMILAR_VACANCIES}
+  force_cover_letter: ${HH_FORCE_COVER_LETTER}
+  use_aI: ${HH_USE_AI}
+  keywordsToExclude: ${HH_KEYWORDS_TO_EXCLUDE}
 
 application:
   prePrompt: ${APP_PRE_PROMPT}

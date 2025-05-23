@@ -21,5 +21,7 @@ public class CallBackService {
         resumeService.getResumeFromHh();
 
         vacancyService.respondToRelevantVacancies();
+
+        log.info("Finished");
     }
 }
