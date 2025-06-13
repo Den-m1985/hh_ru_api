@@ -9,6 +9,8 @@ Client Secret
 Redirect URI нужно прописать:
 http://localhost:8080/callback
 
+серверный код лежит в ветке server
+
 ### Swagger доступен по адресу, при запущенном приложении:
 http://localhost:8080/swagger-ui/index.html
 
