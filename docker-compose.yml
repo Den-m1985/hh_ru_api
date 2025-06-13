@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:10
+    container_name: hh_ru_api
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATA_BASE_USER}
+      POSTGRES_PASSWORD: ${DATA_BASE_PASSWORD}
+      POSTGRES_DB: hh_ru_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

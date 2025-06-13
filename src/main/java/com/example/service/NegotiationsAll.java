@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.dto.NegotiationItemDto;
 import com.example.dto.vacancy_dto.ApiListResponse;
+import com.example.model.User;
 import com.example.util.HeadHunterProperties;
 import com.example.util.RequestTemplates;
 import lombok.Getter;
@@ -26,7 +27,8 @@ public class NegotiationsAll {
     @Getter
     private final List<String> negotiationList = new ArrayList<>();
 
-    public void getNegotiations() {
+    // получаем все отклики по резюме user
+    public void getNegotiations(User user) {
         Map<String, String> params = new LinkedHashMap<>();
         params.put("page", String.valueOf(0));
         params.put("per_page", String.valueOf(1000));
@@ -34,7 +36,7 @@ public class NegotiationsAll {
         params.put("status", "all");
         String url = createUrl(params);
         log.debug("Negotiation url: {}", url);
-        ApiListResponse<NegotiationItemDto> response = requestTemplates.getDataFromRequest2(url);
+        ApiListResponse<NegotiationItemDto> response = requestTemplates.getDataFromRequest2(url, user);
         for (NegotiationItemDto str : response.items()) {
             negotiationList.add(str.vacancy().id());
         }

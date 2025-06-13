@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.service.common;
 
 import com.example.model.HhToken;
 import com.example.util.HeadHunterProperties;
@@ -10,11 +10,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CreateHeaders {
-    private final TokenService tokenService;
     private final HeadHunterProperties headHunterProperties;
 
-    public Map<String, String> getHeaders() {
-        HhToken token = tokenService.findTokenByUserId(headHunterProperties.getClientId());
+    public Map<String, String> getHeaders(HhToken token) {
         return Map.of(
                 "Authorization", "Bearer " + token.getAccessToken(),
                 "HH-User-Agent", headHunterProperties.getHhUserAgent()

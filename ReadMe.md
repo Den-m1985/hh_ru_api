@@ -9,14 +9,14 @@ Client Secret
 Redirect URI нужно прописать:
 http://localhost:8080/callback
 
+### Swagger доступен по адресу, при запущенном приложении:
+http://localhost:8080/swagger-ui/index.html
 
-### Запуск приложения:
-Запускаем в среде разработке.   
-Получаем токен доступа:  
-В консоле получаем ссылку по которой надо перейти.
-
+При запросе на endpoint /v1/hh_ru/get_auth_url ты получишь ссылку для авторизации пользователя на платформе hh.ru:
 ```shell
 https://hh.ru/oauth/authorize?response_type=code&client_id=...
 ```
 При переходе по ссылке откроется браузер. Авторизуемся.  
-Далее сайт редеректит на: Redirect URI
+Далее сайт авторизации hh.ru редеректит на: Redirect URI и отдает в нем code, 
+который обменивается на пару access refresh token
+

@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.dto.vacancy_dto.VacancyItem;
+import com.example.service.common.ResumeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,8 @@ public class VacancyResponseProcessor {
     /**
      * <a href="https://api.hh.ru/openapi/redoc#tag/Vakansii/operation/apply-to-vacancy">...</a>
      */
-    public void respondToRelevantVacancies() {
-        String resumeId = resumeService.getResume().getResumeId();
+    public void respondToRelevantVacancies(String resumeId) {
         List<VacancyItem> filtered = prepareData(resumeId);
-
         for (VacancyItem vacancy : filtered) {
             try {
                 String message = coverLetterService.prepareMessage(vacancy);

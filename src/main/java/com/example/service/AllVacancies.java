@@ -36,7 +36,7 @@ public class AllVacancies {
         if (Boolean.TRUE.equals(headHunterProperties.getSearchBySimilarVacancies())) {
             return vacancyClient.getSimilarVacancies(resumeId, page, perPage);
         } else {
-            return vacancyClient.getSearchVacancies(page, perPage);
+            return vacancyClient.getSearchVacancies(resumeId, page, perPage);
         }
     }
 

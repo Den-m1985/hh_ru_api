@@ -61,9 +61,9 @@ class AllVacanciesTest {
 
         List<VacancyItem> data = initializeVacancies(3);
 
-        when(vacancyClient.getSearchVacancies(0, 2))
+        when(vacancyClient.getSearchVacancies(resumeId, 0, 2))
                 .thenReturn(new ApiListResponse<>(List.of(data.get(0), data.get(1)), 3, 0, 2, 2, ""));
-        when(vacancyClient.getSearchVacancies(1, 1))
+        when(vacancyClient.getSearchVacancies(resumeId, 1, 1))
                 .thenReturn(new ApiListResponse<>(List.of(data.get(2)), 3, 1, 2, 1, ""));
 
         Set<VacancyItem> result = allVacancies.getAllVacancies(resumeId);

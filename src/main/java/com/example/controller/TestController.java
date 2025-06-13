@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tests")
+@RequestMapping("/v1/tests")
 @RequiredArgsConstructor
 public class TestController {
 
+    // TODO should be replased by "spring-boot-starter-actuator"
     @GetMapping("/test")
-    public ResponseEntity<String> getTest() {
-        return ResponseEntity.ok("I am alive");
+    public ResponseEntity<Boolean> getTest() {
+        return ResponseEntity.ok(true);
     }
 }

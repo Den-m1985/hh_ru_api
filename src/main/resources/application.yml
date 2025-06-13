@@ -7,19 +7,31 @@ spring:
     driver-class-name: ${DATA_BASE_DRIVER_CLASS_NAME}
     username: ${DATA_BASE_USER}
     password: ${DATA_BASE_PASSWORD}
-    jpa:
-      database-platform: ${DATA_BASE_PLATFORM}
-      hibernate:
-        ddl-auto: update
+  jpa:
+    hibernate:
+#      ddl-auto: none
+      ddl-auto: update
 
   server:
-    port: ${SERVER_PORT}
+    port: 8080
 
   logging:
     level:
       root: INFO
       org.springframework.cloud: INFO
       org.springframework.web: INFO
+
+jwt:
+  secret:
+    access: ${JWT_KEY_ACCESS}
+    refresh: ${JWT_KEY_REFRESH}
+  lifetime:
+    access: ${LIFETIME_ACCESS_TOKEN}
+    refresh: ${LIFETIME_REFRESH_TOKEN}
+
+supper_admin:
+  email: ${SUPPER_ADMIN_EMAIL}
+  password: ${SUPPER_ADMIN_PASSWORD}
 
 hh:
   client-id: ${HH_CLIENT_ID}
