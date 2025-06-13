@@ -21,4 +21,3 @@ https://hh.ru/oauth/authorize?response_type=code&client_id=...
 При переходе по ссылке откроется браузер. Авторизуемся.  
 Далее сайт авторизации hh.ru редеректит на: Redirect URI и отдает в нем code, 
 который обменивается на пару access refresh token
-
