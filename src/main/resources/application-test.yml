@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: hh api
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  server:
+    port: 8080
+
+  logging:
+    level:
+      root: INFO
+      org.springframework.cloud: INFO
+      org.springframework.web: INFO
+
+jwt:
+  secret:
+    access: MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCDM1CGdbcKpFyfXKxJgqhzQoruKfYrGMUfWIxm/cC64mA==
+    refresh: MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCDM1CGdbcKpFyfXKxJgqhzQoruKfYrGMUfWIxm/cC64mA==
+  lifetime:
+    access: 30000
+    refresh: 5
+
+supper_admin:
+  email: admin@super.ru
+  password: 123456
+
+security:
+  state:
+    secret: 1234567890123456
+
+hh:
+  client-id: 123456
+  client-secret: 123456
+  redirect-uri: http://localhost:8080/callback
+  base_url_api: https://api.hh.ru
+  base_url: https://hh.ru
+  count_vacancies: 10
+  hh-User-Agent: agent
+  cover_letter: none
+  search_by_similar_vacancies: false
+  force_cover_letter: true
+  use_aI: false
+  keywordsToExclude: Senior,Сениор,lead,TeamLead,Тимлид
+
+application:
+  prePrompt: prompt
+  apply-interval-min: 1
+  apply-interval-max: 5
+  page-interval-min: 1
+  page-interval-max: 3
+  dry-run: false  # режим "dry-run" (без фактической отправки откликов)

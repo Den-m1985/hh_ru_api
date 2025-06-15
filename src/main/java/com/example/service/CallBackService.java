@@ -1,10 +1,7 @@
 package com.example.service;
 
-import com.example.model.AuthUser;
-import com.example.model.Resume;
-import com.example.model.User;
-import com.example.service.common.ResumeService;
-import com.example.service.common.UserService;
+import com.example.dto.StatePayload;
+import com.example.service.common.OAuthStateGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,21 +11,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CallBackService {
     private final OAuthClient oauthClient;
-    private final ResumeService resumeService;
-    private final VacancyResponseProcessor vacancyService;
-    private final UserService userService;
+    private final OAuthStateGenerator oAuthStateGenerator;
 
-    public void processApp(String code) {
-        log.debug("Получен код: {}", code);
+    public void processApp(String code, String state) {
+        log.debug("Получен код: {} и state: {}", code, state);
 
-        oauthClient.authenticate(code, new AuthUser(new User()));
+        StatePayload statePayload = oAuthStateGenerator.parseState(state);
 
-        User user = userService.getUserByEmail("sender@example.com"); // TODO get user from client app
+        oauthClient.authenticate(code, statePayload);
 
-        Resume resume = resumeService.getResumeFromHh(user);
-
-        vacancyService.respondToRelevantVacancies(resume.getHhResumeId());
-
-        log.info("Finished");
+        log.info("Finished oauth with user id:{}", statePayload.userId());
     }
 }

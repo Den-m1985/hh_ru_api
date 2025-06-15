@@ -17,6 +17,11 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
+    public User getUserById(Integer userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User with id: " + userId + " not found"));
+    }
+
     public User getUserByEmail(String userEmail) {
         return findUserByEmail(userEmail)
                 .orElseThrow(() -> new EntityNotFoundException("User with mail: " + userEmail + " not found"));

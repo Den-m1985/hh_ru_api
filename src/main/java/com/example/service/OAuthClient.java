@@ -1,9 +1,13 @@
 package com.example.service;
 
 import com.example.dto.HhTokenResponse;
+import com.example.dto.StatePayload;
+import com.example.enums.Device;
 import com.example.model.AuthUser;
 import com.example.model.HhToken;
 import com.example.model.User;
+import com.example.service.common.OAuthStateGenerator;
+import com.example.service.common.UserService;
 import com.example.util.HeadHunterProperties;
 import com.example.util.RequestTemplates;
 import lombok.RequiredArgsConstructor;
@@ -23,24 +27,28 @@ public class OAuthClient {
     private final RequestTemplates requestTemplates;
     private final HhTokenService tokenService;
     private final HeadHunterProperties headHunterProperties;
+    private final OAuthStateGenerator oAuthStateGenerator;
+    private final UserService userService;
 
     /**
      * <a href="https://api.hh.ru/openapi/redoc#section/Avtorizaciya/Avtorizaciya-polzovatelya">...</a>
      */
-    // TODO не работает добавление к запросу redirect_uri
-    public String getAuthorizeUrl() {
+    public String getAuthorizeUrl(AuthUser authUser) {
+        String state = oAuthStateGenerator.generateEncryptedState(authUser.getUser().getId(), Device.ANDROID);
         Map<String, String> params = new LinkedHashMap<>();
         params.put("response_type", "code");
         params.put("client_id", headHunterProperties.getClientId());
-//        params.put("redirect_uri", headHunterProperties.getRedirectUri());
-        return headHunterProperties.getBaseUrl() + "/oauth/authorize" + "?" + buildQuery(params);
+        params.put("state", state);
+        String url =headHunterProperties.getBaseUrl() + "/oauth/authorize" + "?" + buildQuery(params);
+        System.out.println(url);
+        return url;
     }
 
     /**
      * <a href="https://api.hh.ru/openapi/redoc#tag/Avtorizaciya-soiskatelya/operation/authorize">...</a>
      */
     // согласно документации надо передавать в теле запроса, хотя в параметрах запроса тоже работает
-    public void authenticate(String code, AuthUser authUser) {
+    public void authenticate(String code, StatePayload statePayload) {
         Map<String, String> params = Map.of(
                 "client_id", headHunterProperties.getClientId(),
                 "client_secret", headHunterProperties.getClientSecret(),
@@ -48,7 +56,7 @@ public class OAuthClient {
                 "grant_type", "authorization_code"
         );
         String url = headHunterProperties.getBaseUrl() + "/oauth/token" + "?" + buildQuery(params);
-        getDataFromRequest(url, authUser);
+        getTokenFromService(url, statePayload);
     }
 
     private String buildQuery(Map<String, String> params) {
@@ -62,12 +70,13 @@ public class OAuthClient {
         return sb.toString();
     }
 
-    private void getDataFromRequest(String url, AuthUser authUser) {
+    private void getTokenFromService(String url, StatePayload statePayload) {
         HhTokenResponse response = requestTemplates.getHhTokenFromRequest(url);
 
-        User user = authUser.getUser();
+        User user = userService.getUserById(statePayload.userId());
 
         HhToken hhToken = new HhToken();
+        hhToken.setUser(user);
         hhToken.setAccessToken(response.getAccessToken());
         hhToken.setRefreshToken(response.getRefreshToken());
         hhToken.setTokenType(response.getTokenType());

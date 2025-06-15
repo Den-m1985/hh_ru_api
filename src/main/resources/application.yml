@@ -33,6 +33,10 @@ supper_admin:
   email: ${SUPPER_ADMIN_EMAIL}
   password: ${SUPPER_ADMIN_PASSWORD}
 
+security:
+  state:
+    secret: ${AES_CODE}
+
 hh:
   client-id: ${HH_CLIENT_ID}
   client-secret: ${HH_CLIENT_SECRET}

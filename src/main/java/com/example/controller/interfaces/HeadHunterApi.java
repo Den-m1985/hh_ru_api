@@ -1,6 +1,5 @@
 package com.example.controller.interfaces;
 
-import com.example.dto.CodeDto;
 import com.example.dto.vacancy_dto.ResumeItemDto;
 import com.example.model.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +11,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -34,21 +32,7 @@ public interface HeadHunterApi {
                             content = @Content(schema = @Schema(example = "https://hh.ru/oauth/authorize?..."))
                     )}
     )
-    ResponseEntity<String> getAuthUrl();
-
-
-    @Operation(
-            summary = "Обмен кода авторизации на токен",
-            description = "Принимает код авторизации от HH.ru и сохраняет токены доступа для пользователя",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Токены успешно сохранены"),
-                    @ApiResponse(responseCode = "400", description = "Неверный код авторизации")
-            }
-    )
-    ResponseEntity<String> code(
-            @Parameter(description = "DTO с кодом авторизации", required = true)
-            @RequestBody CodeDto code,
-
+    ResponseEntity<String> getAuthUrl(
             @Parameter(hidden = true)
             @AuthenticationPrincipal AuthUser authUser
     );
