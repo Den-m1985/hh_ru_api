@@ -1,6 +1,7 @@
 package com.example.model;
 
 import com.example.enums.Gender;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +40,7 @@ public class User extends BaseEntity {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
+    @Nullable
     @Size(min = 11, max = 13)
     @Pattern(regexp = "^\\+\\d{1,3}\\d{1,14}$", message = "Invalid phone number format")
     @Column(name = "phone", unique = true)
