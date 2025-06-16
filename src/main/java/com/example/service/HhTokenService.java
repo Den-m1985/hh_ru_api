@@ -3,10 +3,8 @@ package com.example.service;
 import com.example.dto.HhTokenResponse;
 import com.example.model.AuthUser;
 import com.example.model.HhToken;
-import com.example.model.Resume;
 import com.example.model.User;
 import com.example.repository.HhTokenRepository;
-import com.example.service.common.ResumeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,19 +17,12 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class HhTokenService {
     private final HhTokenRepository tokenRepository;
-    private final ResumeService resumeService;
-
-//    public HhToken findTokenByResumeId(String resumeId) {
-//        return tokenRepository.findByResume(resumeId)
-//                .orElseThrow(() -> new EntityNotFoundException("HH Token with user ID " + resumeId + " not found"));
-//    }
 
     public HhToken saveToken(HhToken token) {
         return tokenRepository.save(token);
     }
 
     public HhToken saveTokenFromHh(HhTokenResponse response, User user) {
-        Resume resume = resumeService.getResumeByUser(user);
         HhToken hhToken = new HhToken();
         hhToken.setAccessToken(response.getAccessToken());
         hhToken.setRefreshToken(response.getRefreshToken());
@@ -42,7 +33,7 @@ public class HhTokenService {
         return saveToken(hhToken);
     }
 
-    public boolean checkToken(/*ResumeDto resumeDto, */AuthUser authUser) {
+    public boolean checkToken(AuthUser authUser) {
         return isTokenGood(authUser.getUser().getHhToken());
     }
 

@@ -3,7 +3,6 @@ package com.example.service;
 import com.example.model.BaseEntity;
 import com.example.model.HhToken;
 import com.example.repository.HhTokenRepository;
-import com.example.service.common.ResumeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +20,7 @@ class TokenServiceTest {
     @BeforeEach
     void setUp() {
         HhTokenRepository tokenRepository = mock(HhTokenRepository.class);
-        ResumeService resumeService = mock(ResumeService.class);
-        tokenService = new HhTokenService(tokenRepository, resumeService);
+        tokenService = new HhTokenService(tokenRepository);
     }
 
     @Test

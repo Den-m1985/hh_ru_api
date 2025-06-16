@@ -1,8 +1,8 @@
 package com.example.service;
 
+import com.example.dto.VacancyRequest;
 import com.example.dto.vacancy_dto.ApiListResponse;
 import com.example.dto.vacancy_dto.VacancyItem;
-import com.example.util.HeadHunterProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,29 +14,26 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AllVacancies {
     private final VacancyClient vacancyClient;
-    private final HeadHunterProperties headHunterProperties;
     private final PaginationCalculator paginationCalculator;
+    private final int maxPerPage = 100;
 
-    public Set<VacancyItem> getAllVacancies(String resumeId) {
-        int total = headHunterProperties.getCountVacancies();
-        int maxPerPage = 100;
-        Map<Integer, Integer> pages = paginationCalculator.calculatePages(total, maxPerPage);
+    public Set<VacancyItem> getAllVacancies(VacancyRequest vacancyRequest) {
+        Map<Integer, Integer> pages = paginationCalculator.calculatePages(vacancyRequest.count(), maxPerPage);
         Set<VacancyItem> all = new HashSet<>();
-
         for (Map.Entry<Integer, Integer> entry : pages.entrySet()) {
             int page = entry.getKey();
             int perPage = entry.getValue();
-            ApiListResponse<VacancyItem> response = fetchVacancies(resumeId, page, perPage);
+            ApiListResponse<VacancyItem> response = fetchVacancies(vacancyRequest, page, perPage);
             all.addAll(response.items());
         }
         return all;
     }
 
-    private ApiListResponse<VacancyItem> fetchVacancies(String resumeId, int page, int perPage) {
-        if (Boolean.TRUE.equals(headHunterProperties.getSearchBySimilarVacancies())) {
-            return vacancyClient.getSimilarVacancies(resumeId, page, perPage);
+    private ApiListResponse<VacancyItem> fetchVacancies(VacancyRequest vacancyRequest, int page, int perPage) {
+        if (vacancyRequest.isSimilarSearch()) {
+            return vacancyClient.getSimilarVacancies(vacancyRequest, page, perPage);
         } else {
-            return vacancyClient.getSearchVacancies(resumeId, page, perPage);
+            return vacancyClient.getSearchVacancies(vacancyRequest, page, perPage);
         }
     }
 

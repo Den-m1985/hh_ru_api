@@ -29,12 +29,6 @@ public class ResumeService {
                 .orElseThrow(() -> new RuntimeException("Resume not found"));
     }
 
-
-    public Resume getResumeByUser(User user) {
-        return resumeRepository.findResumeByUser(user)
-                .orElseThrow(() -> new RuntimeException("Resume not found"));
-    }
-
     /**
      * <a href="https://api.hh.ru/openapi/redoc#tag/Rezyume.-Prosmotr-informacii/operation/get-mine-resumes">...</a>
      */
@@ -50,7 +44,7 @@ public class ResumeService {
     }
 
     public List<ResumeItemDto> getResumesFromHh(AuthUser authUser) {
-        User user = authUser.getUser();
+        User user = userService.getUserById(authUser.getUser().getId());
         ResumeDto data = requestTemplates.getMineResume(user.getHhToken());
         List<Resume> resumes = new ArrayList<>();
         for (int i = 0; i < data.items().size(); i++) {

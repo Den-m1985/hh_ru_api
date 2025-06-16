@@ -1,6 +1,7 @@
 package com.example.service.common;
 
 import com.example.model.HhToken;
+import com.example.service.HhTokenService;
 import com.example.util.HeadHunterProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CreateHeaders {
     private final HeadHunterProperties headHunterProperties;
+    private final HhTokenService hhTokenService;
 
     public Map<String, String> getHeaders(HhToken token) {
+        if (!hhTokenService.isTokenGood(token)){
+            throw new RuntimeException("Token from hh.ru no good from user id: " + token.getUser().getId());
+        }
         return Map.of(
                 "Authorization", "Bearer " + token.getAccessToken(),
                 "HH-User-Agent", headHunterProperties.getHhUserAgent()

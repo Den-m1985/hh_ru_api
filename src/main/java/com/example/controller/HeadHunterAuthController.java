@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/hh_ru")
-public class HeadHunterController implements HeadHunterApi {
+public class HeadHunterAuthController implements HeadHunterApi {
     private final OAuthClient oauthClient;
     private final ResumeService resumeService;
     private final HhTokenService tokenService;
@@ -36,7 +36,7 @@ public class HeadHunterController implements HeadHunterApi {
     }
 
     @PostMapping("/is_token")
-    public ResponseEntity<Boolean> isTokenGood(/*@RequestBody ResumeDto resumeId, */@AuthenticationPrincipal AuthUser authUser) {
+    public ResponseEntity<Boolean> isTokenGood(@AuthenticationPrincipal AuthUser authUser) {
         return ResponseEntity.ok(tokenService.checkToken(/*resumeId, */authUser));
     }
 
