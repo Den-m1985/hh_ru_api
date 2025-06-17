@@ -31,7 +31,7 @@ public class HeadHunterAuthController implements HeadHunterApi {
 
     @GetMapping("/resume")
     public ResponseEntity<List<ResumeItemDto>> getMineResume(@AuthenticationPrincipal AuthUser authUser) {
-        List<ResumeItemDto> data = resumeService.getResumesFromHh(authUser);
+        List<ResumeItemDto> data = resumeService.getResumeItemDto(authUser);
         return ResponseEntity.ok(data);
     }
 

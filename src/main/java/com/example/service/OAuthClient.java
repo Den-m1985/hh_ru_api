@@ -39,7 +39,7 @@ public class OAuthClient {
         params.put("response_type", "code");
         params.put("client_id", headHunterProperties.getClientId());
         params.put("state", state);
-        String url =headHunterProperties.getBaseUrl() + "/oauth/authorize" + "?" + buildQuery(params);
+        String url = headHunterProperties.getBaseUrl() + "/oauth/authorize" + "?" + buildQuery(params);
         System.out.println(url);
         return url;
     }
@@ -72,11 +72,13 @@ public class OAuthClient {
 
     private void getTokenFromService(String url, StatePayload statePayload) {
         HhTokenResponse response = requestTemplates.getHhTokenFromRequest(url);
-
         User user = userService.getUserById(statePayload.userId());
 
-        HhToken hhToken = new HhToken();
-        hhToken.setUser(user);
+        HhToken hhToken = user.getHhToken();
+        if (hhToken == null) {
+            hhToken = new HhToken();
+            hhToken.setUser(user);
+        }
         hhToken.setAccessToken(response.getAccessToken());
         hhToken.setRefreshToken(response.getRefreshToken());
         hhToken.setTokenType(response.getTokenType());

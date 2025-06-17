@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, String> {
 
-    Optional<Resume> findByHhResumeId(String hhResumeId);
+    Optional<Resume> findByResumeId(String resumeId);
 
     Optional<Resume> findResumeByUser(User user);
 }

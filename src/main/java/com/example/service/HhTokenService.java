@@ -1,9 +1,7 @@
 package com.example.service;
 
-import com.example.dto.HhTokenResponse;
 import com.example.model.AuthUser;
 import com.example.model.HhToken;
-import com.example.model.User;
 import com.example.repository.HhTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,19 +16,8 @@ import java.time.LocalDateTime;
 public class HhTokenService {
     private final HhTokenRepository tokenRepository;
 
-    public HhToken saveToken(HhToken token) {
-        return tokenRepository.save(token);
-    }
-
-    public HhToken saveTokenFromHh(HhTokenResponse response, User user) {
-        HhToken hhToken = new HhToken();
-        hhToken.setAccessToken(response.getAccessToken());
-        hhToken.setRefreshToken(response.getRefreshToken());
-        hhToken.setTokenType(response.getTokenType());
-        hhToken.setExpiresIn(response.getExpiresIn());
-        log.info("Access Token: {}", hhToken.getAccessToken());
-        user.setHhToken(hhToken);
-        return saveToken(hhToken);
+    public void saveToken(HhToken newToken) {
+        tokenRepository.save(newToken);
     }
 
     public boolean checkToken(AuthUser authUser) {

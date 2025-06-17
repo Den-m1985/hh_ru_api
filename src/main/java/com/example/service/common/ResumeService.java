@@ -8,10 +8,11 @@ import com.example.model.User;
 import com.example.repository.ResumeRepository;
 import com.example.util.RequestTemplates;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -21,11 +22,8 @@ public class ResumeService {
     private final RequestTemplates requestTemplates;
     private final UserService userService;
 
-    @Value("${hh.client-id}")
-    private String clientId;
-
     public Resume getResumeById(String resumeId) {
-        return resumeRepository.findByHhResumeId(resumeId)
+        return resumeRepository.findByResumeId(resumeId)
                 .orElseThrow(() -> new RuntimeException("Resume not found"));
     }
 
@@ -35,7 +33,7 @@ public class ResumeService {
     public Resume getResumeFromHh(User user) {
         ResumeDto data = requestTemplates.getMineResume(user.getHhToken());
         Resume resume = new Resume();
-        resume.setHhResumeId(data.items().get(0).id());
+        resume.setResumeId(data.items().get(0).id());
         resume.setUser(user);
 
         List<Resume> userResume = user.getResume();
@@ -43,20 +41,52 @@ public class ResumeService {
         return resumeRepository.save(resume);
     }
 
-    public List<ResumeItemDto> getResumesFromHh(AuthUser authUser) {
+    @Transactional
+    public List<ResumeItemDto> getResumeItemDto(AuthUser authUser) {
+        List<Resume> existingResumes = getResumesFromHh(authUser);
+        List<ResumeItemDto> result = new ArrayList<>();
+        for (Resume resume : existingResumes) {
+            ResumeItemDto resumeItemDto = new ResumeItemDto(resume.getResumeTitle(), resume.getResumeId());
+            result.add(resumeItemDto);
+        }
+        return result;
+    }
+
+    public List<Resume> getResumesFromHh(AuthUser authUser) {
         User user = userService.getUserById(authUser.getUser().getId());
         ResumeDto data = requestTemplates.getMineResume(user.getHhToken());
-        List<Resume> resumes = new ArrayList<>();
-        for (int i = 0; i < data.items().size(); i++) {
-            Resume resume = new Resume();
-            resume.setHhResumeId(data.items().get(i).id());
-            resume.setUser(user);
-            resumes.add(resume);
-            List<Resume> userResume = user.getResume();
-            userResume.add(resume);
+        List<ResumeItemDto> items = data.items();
+        if (items == null) {
+            return Collections.emptyList();
         }
-        resumeRepository.saveAll(resumes);
-        return data.items();
+        List<Resume> existingResumes = user.getResume();
+        if (existingResumes != null) {
+            resumeRepository.deleteAll(existingResumes);
+            existingResumes.clear();
+        }else {
+            existingResumes = new ArrayList<>();
+        }
+
+        for (ResumeItemDto item : items) {
+            if (!isContainsInList(existingResumes, item.id())) {
+                Resume resume = new Resume();
+                resume.setResumeId(item.id());
+                resume.setResumeTitle(item.title());
+                resume.setUser(user);
+                existingResumes.add(resume);
+            }
+        }
+        resumeRepository.saveAll(existingResumes);
+        return existingResumes;
+    }
+
+    private boolean isContainsInList(List<Resume> resumes, String resumeId) {
+        for (Resume resume : resumes) {
+            if (resume.getResumeId().equals(resumeId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

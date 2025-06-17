@@ -43,13 +43,10 @@ hh:
   redirect-uri: ${HH_REDIRECT_URL}
   base_url_api: ${HH_BASE_URL_API}
   base_url: ${HH_BASE_URL}
-  count_vacancies: ${HH_COUNT_VACANCIES}
   hh-User-Agent: ${HH_USER_AGENT}
   cover_letter: ${HH_COVER_LETTER}
-  search_by_similar_vacancies: ${HH_SEARCH_BY_SIMILAR_VACANCIES}
   force_cover_letter: ${HH_FORCE_COVER_LETTER}
   use_aI: ${HH_USE_AI}
-  keywordsToExclude: ${HH_KEYWORDS_TO_EXCLUDE}
 
 application:
   prePrompt: ${APP_PRE_PROMPT}
