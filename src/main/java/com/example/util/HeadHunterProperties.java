@@ -16,7 +16,4 @@ public class HeadHunterProperties {
     String baseUrlApi;
     String baseUrl;
     String hhUserAgent;
-    String coverLetter;
-    Boolean forceCoverLetter;
-    Boolean useAi;
 }

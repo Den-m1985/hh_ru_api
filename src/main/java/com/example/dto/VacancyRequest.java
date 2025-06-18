@@ -7,6 +7,7 @@ public record VacancyRequest(
         int count,
         List<String> keywordsToExclude,
         boolean isSimilarSearch,
+        String coverLetter,
 
         // Основные фильтры
         String text,

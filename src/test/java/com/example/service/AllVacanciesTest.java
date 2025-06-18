@@ -73,6 +73,7 @@ class AllVacanciesTest {
                 3,                // count
                 List.of("Senior", "Сениор", "lead", "TeamLead", "Тимлид", "Android"),
                 false,
+                "",
 
                 // Основные фильтры
                 "Java Developer",   // text

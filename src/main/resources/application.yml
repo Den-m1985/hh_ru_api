@@ -44,9 +44,6 @@ hh:
   base_url_api: ${HH_BASE_URL_API}
   base_url: ${HH_BASE_URL}
   hh-User-Agent: ${HH_USER_AGENT}
-  cover_letter: ${HH_COVER_LETTER}
-  force_cover_letter: ${HH_FORCE_COVER_LETTER}
-  use_aI: ${HH_USE_AI}
 
 application:
   prePrompt: ${APP_PRE_PROMPT}

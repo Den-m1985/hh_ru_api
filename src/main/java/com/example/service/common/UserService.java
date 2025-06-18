@@ -39,7 +39,7 @@ public class UserService {
 
     private Integer findUserIdByResume(String resumeId) {
         return userRepository.findUserIdByResumeId(resumeId)
-                .orElseThrow(() -> new EntityNotFoundException("User with email: " + resumeId + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User with resume Id: " + resumeId + " not found"));
     }
 
     @Transactional

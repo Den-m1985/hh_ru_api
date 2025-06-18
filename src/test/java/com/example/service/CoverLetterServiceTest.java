@@ -2,9 +2,10 @@ package com.example.service;
 
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.util.ApplicationProperties;
-import com.example.util.HeadHunterProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -13,16 +14,14 @@ import static org.mockito.Mockito.when;
 
 class CoverLetterServiceTest {
     private ApplicationProperties applicationProperties;
-    private HeadHunterProperties headHunterProperties;
     private GenerateChatClient generateChatClient;
     private CoverLetterService coverLetterService;
 
     @BeforeEach
     void setUp() {
         applicationProperties = mock(ApplicationProperties.class);
-        headHunterProperties = mock(HeadHunterProperties.class);
         generateChatClient = mock(GenerateChatClient.class);
-        coverLetterService = new CoverLetterService(applicationProperties, headHunterProperties, generateChatClient);
+        coverLetterService = new CoverLetterService(applicationProperties, generateChatClient);
     }
 
     @Test
@@ -33,10 +32,15 @@ class CoverLetterServiceTest {
         when(applicationProperties.getPrePrompt()).thenReturn("Prompt");
         when(generateChatClient.generateMessage("Prompt\n\nJava Developer"))
                 .thenReturn("Generated AI message");
-        when(headHunterProperties.getUseAi()).thenReturn(true);
-        when(headHunterProperties.getForceCoverLetter()).thenReturn(true);
+        try {
+            Field field = CoverLetterService.class.getDeclaredField("useAi");
+            field.setAccessible(true);
+            field.set(coverLetterService, true);
+        } catch (Exception e) {
+            throw new RuntimeException("Не удалось установить updatedAt через reflection", e);
+        }
 
-        String result = coverLetterService.prepareMessage(vacancy);
+        String result = coverLetterService.prepareMessage(vacancy, "");
 
         assertEquals("Generated AI message", result);
         verify(generateChatClient).generateMessage("Prompt\n\nJava Developer");
@@ -46,24 +50,18 @@ class CoverLetterServiceTest {
     void testPrepareMessage_WhenNotUsingAi_ButRequiredByVacancy() {
         VacancyItem vacancy = mock(VacancyItem.class);
         when(vacancy.response_letter_required()).thenReturn(true);
-        when(headHunterProperties.getCoverLetter()).thenReturn("Predefined cover letter");
-        when(headHunterProperties.getUseAi()).thenReturn(false);
-        when(headHunterProperties.getForceCoverLetter()).thenReturn(false);
 
-        String result = coverLetterService.prepareMessage(vacancy);
+        String result = coverLetterService.prepareMessage(vacancy, "Predefined cover letter");
 
         assertEquals("Predefined cover letter", result);
-        verify(headHunterProperties).getCoverLetter();
     }
 
     @Test
     void testPrepareMessage_WhenNotRequiredAndNotForced() {
         VacancyItem vacancy = mock(VacancyItem.class);
         when(vacancy.response_letter_required()).thenReturn(false);
-        when(headHunterProperties.getUseAi()).thenReturn(false);
-        when(headHunterProperties.getForceCoverLetter()).thenReturn(false);
 
-        String result = coverLetterService.prepareMessage(vacancy);
+        String result = coverLetterService.prepareMessage(vacancy, "");
 
         assertEquals("", result);
     }

@@ -25,20 +25,23 @@ public class VacancyResponseProcessor {
         List<VacancyItem> filtered = prepareData(request);
         for (VacancyItem vacancy : filtered) {
             try {
-                String message = coverLetterService.prepareMessage(vacancy);
+                String message = coverLetterService.prepareMessage(vacancy, request.coverLetter());
                 applicationService.sendResponseToVacancy(request, vacancy, message);
             } catch (Exception e) {
                 log.error("Failed to apply to vacancy: {}", vacancy.name(), e);
                 Thread.currentThread().interrupt();
             }
         }
+        log.info("Finished apply to vacancies with resume id: {}", request.resumeId());
     }
 
     public List<VacancyItem> prepareData(VacancyRequest request) {
         Set<VacancyItem> allVacanciesFromServer = allVacancies.getAllVacancies(request);
-        log.info("All vacancies size: {}", allVacanciesFromServer.size());
         List<VacancyItem> filteredData = vacancyFilter.filterVacancies(allVacanciesFromServer, request.keywordsToExclude());
-        log.info("Filtered vacancies size: {}", filteredData.size());
+        log.info("All vacancies size: {} Filtered vacancies size: {} according to resume id: {}",
+                allVacanciesFromServer.size(),
+                filteredData.size(),
+                request.resumeId());
         return filteredData;
     }
 

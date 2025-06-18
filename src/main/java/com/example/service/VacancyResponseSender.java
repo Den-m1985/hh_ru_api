@@ -21,7 +21,7 @@ public class VacancyResponseSender {
             log.info("Dry run: would apply to {}", vacancy.name());
             return;
         }
-        delayService.sleepRandom();
+//        delayService.sleepRandom();
         requestTemplates.postDataToRequest(request.resumeId(), vacancy.id(), message);
         log.info("Applied to vacancy: {}", vacancy.name());
     }

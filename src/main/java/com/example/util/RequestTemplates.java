@@ -81,6 +81,9 @@ public class RequestTemplates {
         );
     }
 
+    /**
+     * <a href="https://api.hh.ru/openapi/redoc#tag/Vakansii/operation/apply-to-vacancy">...</a>
+     */
     // TODO сделать form-data как-то проще, надо перейти на WebClient. HttpClient неудобен для multipart
     public String postDataToRequest(String resumeId, String vacancyId, String message) {
         String boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
