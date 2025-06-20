@@ -42,6 +42,9 @@ jobs:  # набор задач
       - name: Save Docker image as tar
         run: docker save hh-ru-api -o ./hh-ru-api.tar
 
+      - name: List files
+        run: ls -la
+
       - name: Copy Docker image to remote server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -50,6 +53,7 @@ jobs:  # набор задач
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           source: "hh-ru-api.tar"
           target: "~/"
+          tar: false  # 👈 обязательно отключаем упаковку в tar.gz
 
       - name: Deploy on remote server
         uses: appleboy/ssh-action@v1.0.3
