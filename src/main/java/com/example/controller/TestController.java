@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.dto.UserInfoDto;
 import com.example.model.User;
 import com.example.service.common.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,7 @@ public class TestController {
 
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.findAll();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<UserInfoDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

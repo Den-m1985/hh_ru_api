@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +46,23 @@ public class UserService {
 
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    public List<UserInfoDto> getAllUsers() {
+        List<User> all = findAll();
+        List<UserInfoDto> result = new ArrayList<>();
+        for (User user : all) {
+            UserInfoDto userInfoDto = new UserInfoDto(
+                    user.getFirstName(),
+                    user.getMiddleName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getGender(),
+                    user.getRole().name()
+            );
+            result.add(userInfoDto);
+        }
+        return result;
     }
 
     @Transactional
