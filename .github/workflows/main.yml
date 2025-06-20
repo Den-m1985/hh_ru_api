@@ -40,7 +40,7 @@ jobs:  # набор задач
         run: docker build -t hh-ru-api .
 
       - name: Save Docker image as tar
-        run: docker save hh-ru-api -o hh-ru-api.tar
+        run: docker save hh-ru-api -o ./hh-ru-api.tar
 
       - name: Copy Docker image to remote server
         uses: appleboy/scp-action@v0.1.7
