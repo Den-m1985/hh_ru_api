@@ -28,11 +28,14 @@ jobs:  # набор задач
 #   TEST
 # ____________________________________________________________________________________
 #  Deploy
-#  server_update:
-#    needs: run_tests_job
-#    name: Update server buy ssh
-#    runs-on: ubuntu-latest
-#    steps:
+  server_update:
+    needs: run_tests_job
+    name: Update server buy ssh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Build Docker image
         run: docker build -t hh-ru-api .
 
