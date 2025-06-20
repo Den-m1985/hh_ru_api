@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -40,6 +41,10 @@ public class UserService {
     private Integer findUserIdByResume(String resumeId) {
         return userRepository.findUserIdByResumeId(resumeId)
                 .orElseThrow(() -> new EntityNotFoundException("User with resume Id: " + resumeId + " not found"));
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     @Transactional
