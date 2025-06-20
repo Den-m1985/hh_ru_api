@@ -42,6 +42,9 @@ jobs:  # набор задач
       - name: Save Docker image as tar
         run: docker save hh-ru-api -o ./hh-ru-api.tar
 
+      - name: Fix permissions
+        run: chmod 644 hh-ru-api.tar
+
       - name: List files
         run: ls -la
 
