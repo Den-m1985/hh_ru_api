@@ -2,12 +2,14 @@ name: Run Tests
 
 on:
   push:  # Запуск при push в любую ветку
-  pull_request:  # Запуск при Pull Request
+    branches:
+      - master  # только при пуше в master
+#  pull_request:  # Запуск при Pull Request
 
 jobs:  # набор задач
-  test:  # Имя задачи, можно назвать как угодно (build-tests, ci-checks и т.д.)
+  run_tests_job:  # Имя задачи, можно назвать как угодно (build-tests, ci-checks и т.д.)
+    name: run tests
     runs-on: ubuntu-latest  # на какой виртуальной машине будет выполняться pipeline
-#    runs-on: windows-latest
 
     steps:
       - name: Checkout code
@@ -22,3 +24,38 @@ jobs:  # набор задач
 
       - name: Run tests
         run: mvn test  # Запускает тесты в Maven-проекте
+
+#   TEST
+# ____________________________________________________________________________________
+#  Deploy
+  server_update:
+    needs: run_tests_job
+    name: Update server buy ssh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Docker image
+        run: docker build -t hh-ru-api .
+
+      - name: Save Docker image as tar
+        run: docker save hh-ru-api -o hh-ru-api.tar
+
+      - name: Copy Docker image to remote server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "hh-ru-api.tar"
+          target: "~/"
+
+      - name: Deploy on remote server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            docker load -i ~/hh-ru-api.tar
+            docker stop hh-ru-api || true
+            docker rm hh-ru-api || true
+            docker run -d --env-file .env --network=hh_network -p 8080:8080 --name hh-ru-api hh-ru-api

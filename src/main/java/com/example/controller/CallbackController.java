@@ -14,8 +14,8 @@ public class CallbackController implements CallBackApi {
     private final CallBackService callBackService;
 
     @GetMapping("/callback")
-    public ResponseEntity<String> callback(@RequestParam String code) {
-        callBackService.processApp(code);
-        return ResponseEntity.ok("Process successfully");
+    public ResponseEntity<String> callback(@RequestParam String code, @RequestParam String state) {
+        callBackService.processApp(code, state);
+        return ResponseEntity.ok().build();
     }
 }

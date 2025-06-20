@@ -1,6 +1,7 @@
 package com.example.service;
 
 
+import com.example.dto.VacancyRequest;
 import com.example.dto.vacancy_dto.ApiListResponse;
 import com.example.dto.vacancy_dto.Experience;
 import com.example.dto.vacancy_dto.ProfessionalRoles;
@@ -8,7 +9,6 @@ import com.example.dto.vacancy_dto.Snippet;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.dto.vacancy_dto.WorkFormat;
 import com.example.util.ApplicationProperties;
-import com.example.util.HeadHunterProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -33,8 +33,6 @@ class AllVacanciesTest {
     @Mock
     private ApplicationProperties applicationProperties;
     @Mock
-    private HeadHunterProperties headHunterProperties;
-    @Mock
     private PaginationCalculator paginationCalculator;
 
     @InjectMocks
@@ -49,9 +47,7 @@ class AllVacanciesTest {
 
     @Test
     void testGetAllVacancies() {
-        String resumeId = "dummy_resume_id";
-        when(headHunterProperties.getCountVacancies()).thenReturn(3);
-        when(headHunterProperties.getSearchBySimilarVacancies()).thenReturn(false);
+        VacancyRequest vacancyRequest = initVacancyRequest();
 
         Map<Integer, Integer> pageMap = new LinkedHashMap<>();
         pageMap.put(0, 2);
@@ -61,14 +57,69 @@ class AllVacanciesTest {
 
         List<VacancyItem> data = initializeVacancies(3);
 
-        when(vacancyClient.getSearchVacancies(0, 2))
+        when(vacancyClient.getSearchVacancies(vacancyRequest, 0, 2))
                 .thenReturn(new ApiListResponse<>(List.of(data.get(0), data.get(1)), 3, 0, 2, 2, ""));
-        when(vacancyClient.getSearchVacancies(1, 1))
+        when(vacancyClient.getSearchVacancies(vacancyRequest, 1, 1))
                 .thenReturn(new ApiListResponse<>(List.of(data.get(2)), 3, 1, 2, 1, ""));
 
-        Set<VacancyItem> result = allVacancies.getAllVacancies(resumeId);
+        Set<VacancyItem> result = allVacancies.getAllVacancies(vacancyRequest);
 
         assertThat(result).hasSize(3);
+    }
+
+    private VacancyRequest initVacancyRequest() {
+        return new VacancyRequest(
+                "12345678",         // resumeId
+                3,                // count
+                List.of("Senior", "Сениор", "lead", "TeamLead", "Тимлид", "Android"),
+                false,
+                "",
+
+                // Основные фильтры
+                "Java Developer",   // text
+                "name",             // search_field
+                "between1And3", // experience
+                "full",             // employment
+                "remote",           // schedule
+                "1",                // area (например, Москва)
+                "6.1",              // metro
+                "96",               // professional_role (например, backend dev)
+                "7",                // industry
+                "1455",             // employer_id
+                "RUR",              // currency
+                150000L,            // salary
+                "verified",         // label
+
+                // Флаги
+                true,               // only_with_salary
+                30,                 // period
+                "2024-06-01",       // date_from
+                "2024-06-16",       // date_to
+
+                // Геокоординаты
+                55.75,              // top_lat
+                55.70,              // bottom_lat
+                37.65,              // left_lng
+                37.70,              // right_lng
+
+                // Сортировка
+                "relevance",        // order_by
+                55.72,              // sort_point_lat
+                37.66,              // sort_point_lng
+
+                // Доп. флаги
+                true,               // clusters
+                false,              // describe_arguments
+                false,              // no_magic
+                false,              // premium
+                true,               // responses_count_enabled
+                "part_day",         // part_time
+                true,               // accept_temporary
+
+                // Интернационализация
+                "RU",               // locale
+                "hh.ru"             // host
+        );
     }
 
     public List<VacancyItem> initializeVacancies(int count) {

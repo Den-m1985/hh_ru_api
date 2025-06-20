@@ -1,6 +1,7 @@
 package com.example.service;
 
-import com.example.service.auth.OAuthClient;
+import com.example.dto.StatePayload;
+import com.example.service.common.OAuthStateGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,18 +11,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CallBackService {
     private final OAuthClient oauthClient;
-    private final ResumeService resumeService;
-    private final VacancyResponseProcessor vacancyService;
+    private final OAuthStateGenerator oAuthStateGenerator;
 
-    public void processApp(String code) {
-        log.debug("Получен код: {}", code);
+    public void processApp(String code, String state) {
+        log.debug("Получен код: {} и state: {}", code, state);
 
-        oauthClient.authenticate(code);
+        StatePayload statePayload = oAuthStateGenerator.parseState(state);
 
-        resumeService.getResumeFromHh();
+        oauthClient.authenticate(code, statePayload);
 
-        vacancyService.respondToRelevantVacancies();
-
-        log.info("Finished");
+        log.info("Finished oauth with user id:{}", statePayload.userId());
     }
 }

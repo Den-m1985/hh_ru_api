@@ -6,7 +6,6 @@ import com.example.dto.vacancy_dto.Snippet;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.dto.vacancy_dto.WorkFormat;
 import com.example.enums.VacancyRelation;
-import com.example.util.HeadHunterProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,8 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class VacancyFilterTest {
     private VacancyFilter vacancyFilter;
@@ -25,17 +22,16 @@ class VacancyFilterTest {
 
     @BeforeEach
     void setUp() {
-        List<String> keywordsToExclude = List.of("Senior", "lead", "TeamLead", "Android", "QA", "Python",
-                "Typescript", "Java Script", "JavaScript", "Go", "DevOps", "Oracle", "Node.js", "ReactJS", "Менеджер",
-                "Лектор", "Ведущий", "Старший", "Тестировщик", "Fullstack", "фулстек", "Автотестировщик", "Главный",
-                "Руководитель");
-        HeadHunterProperties headHunterProperties = mock(HeadHunterProperties.class);
-        when(headHunterProperties.getKeywordsToExclude()).thenReturn(keywordsToExclude);
-        vacancyFilter = new VacancyFilter(headHunterProperties);
+        vacancyFilter = new VacancyFilter();
     }
 
     @Test
     void shouldFilterOutNegotiatedArchivedAndKeywordedVacancies() {
+        List<String> keywordsToExclude = List.of("Senior", "lead", "TeamLead", "Android", "QA", "Python",
+                "Typescript", "Java Script", "JavaScript", "Go", "DevOps", "Oracle", "Node.js", "ReactJS", "Менеджер",
+                "Лектор", "Ведущий", "Старший", "Тестировщик", "Fullstack", "фулстек", "Автотестировщик", "Главный",
+                "Руководитель");
+
         List<VacancyRelation> relations = List.of(VacancyRelation.GOT_RESPONSE);
         VacancyItem vacancyToApply = createVacancy("Java Developer", false, false, Collections.emptyList());
         VacancyItem negotiated = createVacancy("Java Developer", false, false, relations);
@@ -45,7 +41,7 @@ class VacancyFilterTest {
         VacancyItem valid = createVacancy("Kotlin разработчик", false, false, relations);
 
         Set<VacancyItem> allVacancies = Set.of(vacancyToApply, negotiated, archived, withTest, keyworded, valid);
-        List<VacancyItem> result = vacancyFilter.filterVacancies(allVacancies);
+        List<VacancyItem> result = vacancyFilter.filterVacancies(allVacancies, keywordsToExclude);
 
         assertEquals(1, result.size());
     }

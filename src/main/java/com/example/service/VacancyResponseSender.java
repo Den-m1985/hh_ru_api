@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dto.VacancyRequest;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.util.ApplicationProperties;
 import com.example.util.RequestTemplates;
@@ -15,13 +16,13 @@ public class VacancyResponseSender {
     private final RequestTemplates requestTemplates;
     private final DelayService delayService;
 
-    public void sendResponseToVacancy(String resumeId, VacancyItem vacancy, String message) throws InterruptedException {
+    public void sendResponseToVacancy(VacancyRequest request, VacancyItem vacancy, String message) throws InterruptedException {
         if (properties.isDryRun()) {
             log.info("Dry run: would apply to {}", vacancy.name());
             return;
         }
-        delayService.sleepRandom();
-        requestTemplates.postDataToRequest(resumeId, vacancy.id(), message);
+//        delayService.sleepRandom();
+        requestTemplates.postDataToRequest(request.resumeId(), vacancy.id(), message);
         log.info("Applied to vacancy: {}", vacancy.name());
     }
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ResumeItemDto(
         // ...
+        String title,
         String id
         // ...
 

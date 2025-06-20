@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dto.VacancyRequest;
 import com.example.dto.vacancy_dto.VacancyItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class VacancyResponseProcessor {
-    private final ResumeService resumeService;
     private final VacancyFilter vacancyFilter;
     private final AllVacancies allVacancies;
     private final CoverLetterService coverLetterService;
@@ -21,26 +21,27 @@ public class VacancyResponseProcessor {
     /**
      * <a href="https://api.hh.ru/openapi/redoc#tag/Vakansii/operation/apply-to-vacancy">...</a>
      */
-    public void respondToRelevantVacancies() {
-        String resumeId = resumeService.getResume().getResumeId();
-        List<VacancyItem> filtered = prepareData(resumeId);
-
+    public void respondToRelevantVacancies(VacancyRequest request) {
+        List<VacancyItem> filtered = prepareData(request);
         for (VacancyItem vacancy : filtered) {
             try {
-                String message = coverLetterService.prepareMessage(vacancy);
-                applicationService.sendResponseToVacancy(resumeId, vacancy, message);
+                String message = coverLetterService.prepareMessage(vacancy, request.coverLetter());
+                applicationService.sendResponseToVacancy(request, vacancy, message);
             } catch (Exception e) {
                 log.error("Failed to apply to vacancy: {}", vacancy.name(), e);
                 Thread.currentThread().interrupt();
             }
         }
+        log.info("Finished apply to vacancies with resume id: {}", request.resumeId());
     }
 
-    private List<VacancyItem> prepareData(String resumeId) {
-        Set<VacancyItem> allVacanciesFromServer = allVacancies.getAllVacancies(resumeId);
-        log.info("All vacancies size: {}", allVacanciesFromServer.size());
-        List<VacancyItem> filteredData = vacancyFilter.filterVacancies(allVacanciesFromServer);
-        log.info("Filtered vacancies size: {}", filteredData.size());
+    public List<VacancyItem> prepareData(VacancyRequest request) {
+        Set<VacancyItem> allVacanciesFromServer = allVacancies.getAllVacancies(request);
+        List<VacancyItem> filteredData = vacancyFilter.filterVacancies(allVacanciesFromServer, request.keywordsToExclude());
+        log.info("All vacancies size: {} Filtered vacancies size: {} according to resume id: {}",
+                allVacanciesFromServer.size(),
+                filteredData.size(),
+                request.resumeId());
         return filteredData;
     }
 

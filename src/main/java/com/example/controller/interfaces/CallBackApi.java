@@ -5,5 +5,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface CallBackApi {
 
-    ResponseEntity<String> callback(@RequestParam String code);
+    ResponseEntity<String> callback(
+            @RequestParam String code,
+            @RequestParam String state
+    );
 }

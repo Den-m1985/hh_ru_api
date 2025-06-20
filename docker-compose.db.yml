@@ -1,0 +1,24 @@
+
+services:
+  db:
+    image: postgres:17
+    container_name: hh_ru_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATA_BASE_USER}
+      POSTGRES_PASSWORD: ${DATA_BASE_PASSWORD}
+      POSTGRES_DB: hh_ru_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - hh_network
+
+volumes:
+  db_data:
+
+networks:
+  hh_network:
+    name: hh_network
+    driver: bridge

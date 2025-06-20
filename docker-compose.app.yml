@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hh-ru-api
+    restart: unless-stopped
+    environment:
+      DATA_BASE_URL: ${DATA_BASE_URL}
+      DATA_BASE_DRIVER_CLASS_NAME: ${DATA_BASE_DRIVER_CLASS_NAME}
+      DATA_BASE_USER: ${DATA_BASE_USER}
+      DATA_BASE_PASSWORD: ${DATA_BASE_PASSWORD}
+      JWT_KEY_ACCESS: ${JWT_KEY_ACCESS}
+      JWT_KEY_REFRESH: ${JWT_KEY_REFRESH}
+      LIFETIME_ACCESS_TOKEN: ${LIFETIME_ACCESS_TOKEN}
+      LIFETIME_REFRESH_TOKEN: ${LIFETIME_REFRESH_TOKEN}
+      SUPPER_ADMIN_EMAIL: ${SUPPER_ADMIN_EMAIL}
+      SUPPER_ADMIN_PASSWORD: ${SUPPER_ADMIN_PASSWORD}
+      AES_CODE: ${AES_CODE}
+      HH_CLIENT_ID: ${HH_CLIENT_ID}
+      HH_CLIENT_SECRET: ${HH_CLIENT_SECRET}
+      HH_REDIRECT_URL: ${HH_REDIRECT_URL}
+      HH_BASE_URL_API: ${HH_BASE_URL_API}
+      HH_BASE_URL: ${HH_BASE_URL}
+      HH_USER_AGENT: ${HH_USER_AGENT}
+      APP_PRE_PROMPT: ${APP_PRE_PROMPT}
+      APP_APPLY_INTERVAL_MIN: ${APP_APPLY_INTERVAL_MIN}
+      APP_APPLY_INTERVAL_MAX: ${APP_APPLY_INTERVAL_MAX}
+      APP_PAGE_INTERVAL_MIN: ${APP_PAGE_INTERVAL_MIN}
+      APP_PAGE_INTERVAL_MAX: ${APP_PAGE_INTERVAL_MAX}
+      APP_DRY_RUN: ${APP_DRY_RUN}
+    #    env_file:
+    #      - .env
+    ports:
+      - "8080:8080"
+    networks:
+      - hh_network
+
+networks:
+  hh_network:
+    external: true

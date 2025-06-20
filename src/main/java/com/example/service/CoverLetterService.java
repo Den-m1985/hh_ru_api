@@ -2,7 +2,6 @@ package com.example.service;
 
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.util.ApplicationProperties;
-import com.example.util.HeadHunterProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,14 +9,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CoverLetterService {
     private final ApplicationProperties properties;
-    private final HeadHunterProperties headHunterProperties;
-    private final GenerateChatClient blackboxChatClient;
+    private final GenerateChatClient generateChatClient;
+    private boolean useAi = false;
+    private boolean forceCoverLetter = true;
 
-    public String prepareMessage(VacancyItem vacancy) {
-        if (Boolean.TRUE.equals(headHunterProperties.getForceCoverLetter()) || Boolean.TRUE.equals(vacancy.response_letter_required())) {
-            return Boolean.TRUE.equals(headHunterProperties.getUseAi())
-                    ? blackboxChatClient.generateMessage(properties.getPrePrompt() + "\n\n" + vacancy.name())
-                    : headHunterProperties.getCoverLetter();
+    public String prepareMessage(VacancyItem vacancy, String coverLetter) {
+        if (forceCoverLetter || Boolean.TRUE.equals(vacancy.response_letter_required())) {
+            return useAi
+                    ? generateChatClient.generateMessage(properties.getPrePrompt() + "\n\n" + vacancy.name())
+                    : coverLetter;
         }
         return "";
     }
