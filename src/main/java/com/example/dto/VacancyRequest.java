@@ -8,6 +8,7 @@ public record VacancyRequest(
         List<String> keywordsToExclude,
         boolean isSimilarSearch,
         String coverLetter,
+        boolean enabledSchedule,
 
         // Основные фильтры
         String text,
