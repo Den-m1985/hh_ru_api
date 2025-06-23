@@ -74,6 +74,7 @@ class AllVacanciesTest {
                 List.of("Senior", "Сениор", "lead", "TeamLead", "Тимлид", "Android"),
                 false,
                 "",
+                true,
 
                 // Основные фильтры
                 "Java Developer",   // text
