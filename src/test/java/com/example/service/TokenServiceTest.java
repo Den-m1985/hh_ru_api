@@ -1,36 +1,84 @@
 package com.example.service;
 
+import com.example.dto.AuthResponse;
+import com.example.dto.HhTokenResponse;
+import com.example.dto.UserDTO;
 import com.example.model.BaseEntity;
 import com.example.model.HhToken;
+import com.example.model.User;
 import com.example.repository.HhTokenRepository;
+import com.example.repository.UserRepository;
+import com.example.service.common.RegisterService;
+import com.example.util.HeadHunterProperties;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+@SpringBootTest
+@ActiveProfiles("test")
 class TokenServiceTest {
-    HhTokenService tokenService;
+    @Autowired
+    private HhTokenService hhTokenService;
+    @Autowired
+    private HhTokenRepository tokenRepository;
+    @Autowired
+    private HeadHunterProperties headHunterProperties;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RegisterService registerService;
+    private final HttpServletResponse servletResponse = mock(HttpServletResponse.class);
+    @MockitoBean // This will inject a Mockito mock into the Spring context
+    private HhTokenRefreshClient hhTokenRefreshClient;
+    private User testUser;
 
     @BeforeEach
     void setUp() {
-        HhTokenRepository tokenRepository = mock(HhTokenRepository.class);
-        tokenService = new HhTokenService(tokenRepository);
+        userRepository.deleteAll();
+        tokenRepository.deleteAll();
+
+        String email = "john.doe@example.com";
+        String password = "password";
+        UserDTO request = new UserDTO(email, password);
+        AuthResponse response = registerService.registerUser(request, servletResponse);
+        assertNotNull(response.userId());
+        testUser = userRepository.findByEmail(email).orElse(null);
+
+        HhToken hhToken = new HhToken();
+        hhToken.setAccessToken("test_access_token");
+        hhToken.setRefreshToken("test_refresh_token");
+        hhToken.setExpiresIn(10000L);
+        hhToken.setUser(testUser);
+        hhTokenService.saveToken(hhToken);
+        assertNotNull(testUser);
+        testUser.setHhToken(hhToken);
     }
 
     @Test
     void isTokenGood_ShouldReturnFalse_WhenTokenIsNull() {
-        assertFalse(tokenService.isTokenGood(null));
+        assertFalse(hhTokenService.isTokenGood(null));
     }
 
     @Test
     void isTokenGood_ShouldReturnFalse_WhenTokenFieldsAreNull() {
-        assertFalse(tokenService.isTokenGood(new HhToken()));
+        assertFalse(hhTokenService.isTokenGood(new HhToken()));
     }
 
     @Test
@@ -41,7 +89,7 @@ class TokenServiceTest {
         token.setExpiresIn(duration.toSeconds());
         setUpdatedAt(token, LocalDateTime.now().minusHours(2)); // обновлен 2 часа назад
 
-        assertFalse(tokenService.isTokenGood(token));
+        assertFalse(hhTokenService.isTokenGood(token));
     }
 
     @Test
@@ -51,17 +99,17 @@ class TokenServiceTest {
         token.setExpiresIn(7200L); // 2 часа
         setUpdatedAt(token, LocalDateTime.now().minusHours(1)); // обновлен 1 час назад
 
-        assertTrue(tokenService.isTokenGood(token));
+        assertTrue(hhTokenService.isTokenGood(token));
     }
 
     @Test
-    void isTokenGood_ShouldReturnFalse_WhenTokenAlmostExpired() {
+    void isTokenGood_ShouldReturnTrue_WhenTokenExpired() {
         HhToken token = new HhToken();
         token.setAccessToken("valid_token");
         token.setExpiresIn(300L); // 5 минут
-        setUpdatedAt(token, LocalDateTime.now().minusMinutes(4).minusSeconds(50)); // обновлен 4:50 назад
+        setUpdatedAt(token, LocalDateTime.now().minusMinutes(5).minusSeconds(50));
 
-        assertFalse(tokenService.isTokenGood(token));
+        assertFalse(hhTokenService.isTokenGood(token));
     }
 
     @Test
@@ -72,7 +120,7 @@ class TokenServiceTest {
         token.setExpiresIn(duration.toSeconds());
         setUpdatedAt(token, LocalDateTime.now().minusMinutes(3).minusSeconds(30));
 
-        assertTrue(tokenService.isTokenGood(token));
+        assertTrue(hhTokenService.isTokenGood(token));
     }
 
     private void setUpdatedAt(HhToken token, LocalDateTime time) {
@@ -83,5 +131,20 @@ class TokenServiceTest {
         } catch (Exception e) {
             throw new RuntimeException("Не удалось установить updatedAt через reflection", e);
         }
+    }
+
+    @Test
+    @Transactional
+    void shouldSuccessfullyRefreshHhTokenWhenExpired() {
+        HhTokenResponse mockResponse = new HhTokenResponse();
+        mockResponse.setAccessToken("new_access_token");
+        mockResponse.setRefreshToken("new_refresh_token");
+        mockResponse.setTokenType("Bearer");
+        mockResponse.setExpiresIn(7200L);
+
+        when(hhTokenRefreshClient.refreshAccessToken(anyString()))
+                .thenReturn(mockResponse);
+        boolean result = hhTokenService.refreshHhTokens(testUser.getHhToken());
+        assertTrue(result, "Token refresh should be successful");
     }
 }

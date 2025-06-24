@@ -15,11 +15,14 @@ public class CreateHeaders {
     private final HhTokenService hhTokenService;
 
     public Map<String, String> getHeaders(HhToken token) {
-        if (token == null){
+        if (token == null) {
             throw new RuntimeException("Token for request null");
         }
-        if (!hhTokenService.isTokenGood(token)){
-            throw new RuntimeException("Token from hh.ru no good from user id: " + token.getUser().getId());
+        if (!hhTokenService.isTokenGood(token)) {
+            boolean refreshed = hhTokenService.refreshHhTokens(token);
+            if (!refreshed) {
+                throw new RuntimeException("Token from hh.ru no good and refresh failed for user id: " + token.getUser().getId());
+            }
         }
         return Map.of(
                 "Authorization", "Bearer " + token.getAccessToken(),
