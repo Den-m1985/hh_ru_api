@@ -9,16 +9,14 @@ import com.example.model.User;
 import com.example.service.common.OAuthStateGenerator;
 import com.example.service.common.UserService;
 import com.example.util.HeadHunterProperties;
+import com.example.util.QueryBuilder;
 import com.example.util.RequestTemplates;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Component
@@ -39,7 +37,7 @@ public class OAuthClient {
         params.put("response_type", "code");
         params.put("client_id", headHunterProperties.getClientId());
         params.put("state", state);
-        String url = headHunterProperties.getBaseUrl() + "/oauth/authorize" + "?" + buildQuery(params);
+        String url = headHunterProperties.getBaseUrl() + "/oauth/authorize" + "?" + QueryBuilder.buildQuery(params);
         System.out.println(url);
         return url;
     }
@@ -55,20 +53,10 @@ public class OAuthClient {
                 "code", code,
                 "grant_type", "authorization_code"
         );
-        String url = headHunterProperties.getBaseUrl() + "/oauth/token" + "?" + buildQuery(params);
+        String url = headHunterProperties.getBaseUrl() + "/oauth/token" + "?" + QueryBuilder.buildQuery(params);
         getTokenFromService(url, statePayload);
     }
 
-    private String buildQuery(Map<String, String> params) {
-        StringBuilder sb = new StringBuilder();
-        for (var entry : params.entrySet()) {
-            if (!sb.isEmpty()) sb.append("&");
-            sb.append(URLEncoder.encode(entry.getKey(), UTF_8))
-                    .append("=")
-                    .append(URLEncoder.encode(entry.getValue(), UTF_8));
-        }
-        return sb.toString();
-    }
 
     private void getTokenFromService(String url, StatePayload statePayload) {
         HhTokenResponse response = requestTemplates.getHhTokenFromRequest(url);
@@ -83,7 +71,7 @@ public class OAuthClient {
         hhToken.setRefreshToken(response.getRefreshToken());
         hhToken.setTokenType(response.getTokenType());
         hhToken.setExpiresIn(response.getExpiresIn());
-        log.info("Access Token: {}", hhToken.getAccessToken());
+        log.info("Access Token: {} for user:{}", hhToken.getAccessToken(), user.getId());
         user.setHhToken(hhToken);
         tokenService.saveToken(hhToken);
     }

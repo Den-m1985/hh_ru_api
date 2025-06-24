@@ -37,11 +37,6 @@ public class HeadHunterAuthController implements HeadHunterApi {
 
     @PostMapping("/is_token")
     public ResponseEntity<Boolean> isTokenGood(@AuthenticationPrincipal AuthUser authUser) {
-        return ResponseEntity.ok(tokenService.checkToken(/*resumeId, */authUser));
-    }
-
-    @PostMapping("/token")
-    public ResponseEntity<Boolean> refreshTokens() {
-        return ResponseEntity.ok(tokenService.refreshTokens());
+        return ResponseEntity.ok(tokenService.checkToken(authUser));
     }
 }

@@ -68,17 +68,4 @@ public interface HeadHunterApi {
             @Parameter(hidden = true)
             @AuthenticationPrincipal AuthUser authUser
     );
-
-
-    @Operation(
-            summary = "Обновить токены доступа",
-            description = "Обновляет access и refresh токены для работы с API HH.ru",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Результат обновления",
-                            content = @Content(schema = @Schema(example = "true")))
-            }
-    )
-    ResponseEntity<Boolean> refreshTokens();
 }
