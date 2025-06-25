@@ -57,3 +57,8 @@ application:
   page-interval-min: 1
   page-interval-max: 3
   dry-run: false  # режим "dry-run" (без фактической отправки откликов)
+
+telegram:
+  bot:
+    token: ВАШ_ТОКЕН_БОТА
+    username: ЮЗЕРНЕЙМ_ВАШЕГО_БОТА

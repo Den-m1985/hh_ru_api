@@ -52,3 +52,8 @@ application:
   page-interval-min: ${APP_PAGE_INTERVAL_MIN}
   page-interval-max: ${APP_PAGE_INTERVAL_MAX}
   dry-run: ${APP_DRY_RUN}  # режим "dry-run" (без фактической отправки откликов)
+
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
+    username: ${TELEGRAM_BOT_NAME}

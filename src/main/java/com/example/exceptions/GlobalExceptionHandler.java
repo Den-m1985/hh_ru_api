@@ -16,6 +16,7 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.stream.Collectors;
 
@@ -90,6 +91,12 @@ public class GlobalExceptionHandler {
                     .collect(Collectors.joining(", "));
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, validationErrors);
             errorDetail.setProperty("description", "Validation failed");
+            return errorDetail;
+        }
+
+        if (exception instanceof TelegramApiException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
+            errorDetail.setProperty("description", "Telegram error");
             return errorDetail;
         }
 
