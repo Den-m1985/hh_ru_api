@@ -153,6 +153,6 @@ class VacancySchedulerServiceTest {
         scheduler.init();
         scheduler.executeScheduledResponses();
 
-        verify(processor).respondToRelevantVacancies(vacancyRequest); // << проверка вызова
+        verify(processor).respondToRelevantVacancies(vacancyRequest, testUser.getId()); // << проверка вызова
     }
 }

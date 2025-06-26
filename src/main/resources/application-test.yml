@@ -60,5 +60,5 @@ application:
 
 telegram:
   bot:
-    token: ВАШ_ТОКЕН_БОТА
-    username: ЮЗЕРНЕЙМ_ВАШЕГО_БОТА
+    token: TELEGRAM_BOT_TOKEN
+    username: TELEGRAM_BOT_NAME

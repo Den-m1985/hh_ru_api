@@ -16,7 +16,7 @@ public class VacancyResponseSender {
     private final RequestTemplates requestTemplates;
     private final DelayService delayService;
 
-    public void sendResponseToVacancy(VacancyRequest request, VacancyItem vacancy, String message) throws InterruptedException {
+    public void sendResponseToVacancy(VacancyRequest request, VacancyItem vacancy, String message) {
         if (properties.isDryRun()) {
             log.info("Dry run: would apply to {}", vacancy.name());
             return;

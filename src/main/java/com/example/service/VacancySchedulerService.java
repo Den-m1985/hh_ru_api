@@ -7,6 +7,7 @@ import com.example.model.User;
 import com.example.repository.AutoResponseScheduleRepository;
 import com.example.repository.UserRepository;
 import com.example.service.common.UserService;
+import com.example.service.notify.TelegramUserNotifier;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import jakarta.annotation.PostConstruct;
@@ -27,6 +28,7 @@ public class VacancySchedulerService {
     private final VacancyResponseProcessor processor;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final TelegramUserNotifier telegramUserNotifier;
 
     // Используем Caffeine Cache для автоматического управления памятью
     private Cache<Integer, VacancyRequest> memoryCache;
@@ -83,18 +85,17 @@ public class VacancySchedulerService {
 
         loadActiveSchedulesIntoCache();
         log.info("Кэш автоответчиков синхронизирован. Активных расписаний: {}", memoryCache.estimatedSize());
-
         for (Map.Entry<Integer, VacancyRequest> entry : memoryCache.asMap().entrySet()) {
             Integer userId = entry.getKey();
             VacancyRequest request = entry.getValue();
 
             userRepository.findById(userId).ifPresent(user -> {
                 try {
-                    processor.respondToRelevantVacancies(request);
+                    processor.respondToRelevantVacancies(request, userId);
                     log.info("✅ Автоотклик выполнен для userId={}", userId);
+                    telegramUserNotifier.notifyUser(userId, "✅ Автоотклик выполнен");
                 } catch (Exception e) {
                     log.error("❌ Ошибка автоотклика для userId={}: {}", userId, e.getMessage(), e);
-                    // Возможно, добавить логику для временного отключения или повторных попыток
                 }
             });
         }

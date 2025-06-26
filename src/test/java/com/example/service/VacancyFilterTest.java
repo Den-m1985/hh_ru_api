@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dto.FilterResult;
 import com.example.dto.vacancy_dto.Experience;
 import com.example.dto.vacancy_dto.ProfessionalRoles;
 import com.example.dto.vacancy_dto.Snippet;
@@ -41,9 +42,10 @@ class VacancyFilterTest {
         VacancyItem valid = createVacancy("Kotlin разработчик", false, false, relations);
 
         Set<VacancyItem> allVacancies = Set.of(vacancyToApply, negotiated, archived, withTest, keyworded, valid);
-        List<VacancyItem> result = vacancyFilter.filterVacancies(allVacancies, keywordsToExclude);
+        FilterResult result = vacancyFilter.filterVacancies(allVacancies, keywordsToExclude);
 
-        assertEquals(1, result.size());
+        assertEquals(1, result.filteredVacancies().size());
+        assertEquals(1, result.vacanciesWithTests().size());
     }
 
 

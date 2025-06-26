@@ -8,6 +8,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class TelegramService {
@@ -17,6 +19,10 @@ public class TelegramService {
     public TelegramChat getTelegramChatById(Integer telegramChatId) {
         return telegramChatRepository.findById(telegramChatId)
                 .orElseThrow(() -> new EntityNotFoundException("TelegramChat with id: " + telegramChatId + " not found"));
+    }
+
+    public Optional<TelegramChat> getTelegramChatByUserId(Integer userId) {
+        return telegramChatRepository.findByUserId(userId);
     }
 
     public void bindTelegramChat(Integer userId, Long chatId, Long telegramUserId) {

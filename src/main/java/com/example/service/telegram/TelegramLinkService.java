@@ -25,7 +25,7 @@ public class TelegramLinkService {
     }
 
     public String generateLinkCode(Integer userId) {
-        String code = UUID.randomUUID().toString().substring(0, 8);
+        String code = UUID.randomUUID().toString().substring(0, 6);
         codeToUserIdCache.put(code, userId);
         return code;
     }

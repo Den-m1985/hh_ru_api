@@ -2,12 +2,15 @@ package com.example.controller.interfaces;
 
 import com.example.dto.VacancyRequest;
 import com.example.dto.vacancy_dto.VacancyItem;
+import com.example.model.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -51,7 +54,9 @@ public interface HhVacancyAPI {
                             content = @Content(mediaType = "application/json"))
             }
     )
-    List<VacancyItem> getAllFilteredVacancies(@RequestBody VacancyRequest request);
+    List<VacancyItem> getAllFilteredVacancies(@RequestBody VacancyRequest request,
+                                              @Parameter(hidden = true)
+                                              @AuthenticationPrincipal AuthUser authUser);
 
 
     @Operation(
@@ -66,5 +71,7 @@ public interface HhVacancyAPI {
                     @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
             }
     )
-    ResponseEntity<Void> applyToVacancies(@RequestBody VacancyRequest request);
+    ResponseEntity<Void> applyToVacancies(@RequestBody VacancyRequest request,
+                                          @Parameter(hidden = true)
+                                          @AuthenticationPrincipal AuthUser authUser);
 }

@@ -42,9 +42,9 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 
                 1. Перейдите в Postman или frontend
                 2. Выполните GET-запрос к /v1/telegram/link
-                3. Вы получите код вида: `ABC123`
-                4. Введите в боте: `/link ABC123`
-                
+                3. Вы получите код вида: `2e310a`
+                4. Введите в боте:
+                `/link 2e310a`
                 """;
         SendMessage message = new SendMessage();
         message.setChatId(chatId.toString());
@@ -68,7 +68,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             Message message = update.getMessage();
             Long chatId = message.getChatId();
             String text = message.getText();
-            Long telegramUserId = message.getFrom().getId(); // Получаем telegramUserId
+            Long telegramUserId = message.getFrom().getId();
 
             switch (text) {
                 case "/start" -> sendStartMessage(chatId);
@@ -95,7 +95,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 

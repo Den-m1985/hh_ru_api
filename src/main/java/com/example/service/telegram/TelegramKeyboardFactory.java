@@ -17,18 +17,8 @@ public class TelegramKeyboardFactory {
         ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
         markup.setKeyboard(List.of(row));
         markup.setResizeKeyboard(true);
-        markup.setOneTimeKeyboard(false);
+        markup.setOneTimeKeyboard(true); // Не скрывать клавиатуру после использования false
         return markup;
     }
 
-    public ReplyKeyboardMarkup singleButtonKeyboard(String label) {
-        KeyboardRow row = new KeyboardRow();
-        row.add(label);
-
-        ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
-        markup.setKeyboard(List.of(row));
-        markup.setResizeKeyboard(true);
-        markup.setOneTimeKeyboard(true);
-        return markup;
-    }
 }
