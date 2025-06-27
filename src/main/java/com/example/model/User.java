@@ -61,4 +61,7 @@ public class User extends BaseEntity {
 
     @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     private AutoResponseSchedule autoResponseSchedule;
+
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
+    private TelegramChat telegramChat;
 }

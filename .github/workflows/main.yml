@@ -68,4 +68,10 @@ jobs:  # набор задач
             docker load -i ~/hh-ru-api.tar
             docker stop hh-ru-api || true
             docker rm hh-ru-api || true
-            docker run -d --env-file .env --network=hh_network -p 8080:8080 --name hh-ru-api hh-ru-api
+            docker run -d \
+              --env "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" \
+              --env "TELEGRAM_BOT_NAME=${{ secrets.TELEGRAM_BOT_NAME }}" \
+              --env-file .env \
+              --network=hh_network \
+              -p 8080:8080 \
+              --name hh-ru-api hh-ru-api
