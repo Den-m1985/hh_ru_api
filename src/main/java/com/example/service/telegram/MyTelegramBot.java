@@ -1,7 +1,6 @@
 package com.example.service.telegram;
 
 import com.example.util.TelegramProperties;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -12,22 +11,46 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class MyTelegramBot extends TelegramLongPollingBot {
     private final TelegramProperties telegramProperties;
-    private final TelegramLinkService telegramLinkService;
     private final TelegramService telegramService;
     private final TelegramKeyboardFactory keyboardFactory;
 
-
     @Override
     public String getBotUsername() {
-        return telegramProperties.getBot().getUsername();
+        return telegramProperties.getUsername();
+    }
+
+    public MyTelegramBot(TelegramProperties telegramProperties,
+                         TelegramService telegramService,
+                         TelegramKeyboardFactory keyboardFactory) {
+        super(telegramProperties.getToken());
+        this.telegramProperties = telegramProperties;
+        this.telegramService = telegramService;
+        this.keyboardFactory = keyboardFactory;
     }
 
     @Override
-    public String getBotToken() {
-        return telegramProperties.getBot().getToken();
+    public void onUpdateReceived(Update update) {
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            Message message = update.getMessage();
+            Long chatId = message.getChatId();
+            String text = message.getText();
+            Long telegramUserId = message.getFrom().getId();
+
+            try {
+                if ("/start".equals(text)) {
+                    sendStartMessage(chatId);
+                } else if (text.startsWith("/link ")) {
+                    handleLinkCommand(chatId, text.substring(6).trim(), telegramUserId);
+                } else {
+                    sendMessage(chatId, "Используйте /start для инструкций");
+                }
+            } catch (Exception e) {
+                log.error("Error processing message: {}, {}", text, e.getMessage());
+                sendMessage(chatId, "⚠️ Ошибка обработки запроса");
+            }
+        }
     }
 
     public void sendStartMessage(Long chatId) {
@@ -52,8 +75,6 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         message.setParseMode("Markdown");
 
         message.setReplyMarkup(keyboardFactory.mainMenuKeyboard());
-        // Добавляем кнопку "Привязать аккаунт"
-//        message.setReplyMarkup(keyboardFactory.linkButtonKeyboard());
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -61,31 +82,9 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    // Обработка входящих сообщений
-    @Override
-    public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            Message message = update.getMessage();
-            Long chatId = message.getChatId();
-            String text = message.getText();
-            Long telegramUserId = message.getFrom().getId();
-
-            switch (text) {
-                case "/start" -> sendStartMessage(chatId);
-                case "/link" -> sendMessage(chatId, "Введите команду вида:\n/link <код>");
-                default -> {
-                    if (text.startsWith("/link ")) {
-                        String code = text.substring(6).trim();
-                        telegramLinkService.getUserIdByCode(code).ifPresentOrElse(userId -> {
-                            telegramService.bindTelegramChat(userId, chatId, telegramUserId);
-                            sendMessage(chatId, "✅ Успешно! Ваш аккаунт привязан.");
-                        }, () -> sendMessage(chatId, "⛔ Неверный или просроченный код."));
-                    } else {
-                        sendMessage(chatId, "Неизвестная команда. Нажмите /start для меню.");
-                    }
-                }
-            }
-        }
+    private void handleLinkCommand(Long chatId, String code, Long telegramUserId) {
+        String resultMessage = telegramService.linkAccount(chatId, code, telegramUserId);
+        sendMessage(chatId, resultMessage);
     }
 
     public void sendMessage(Long chatId, String textToSend) {
@@ -98,5 +97,4 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             log.error(e.getMessage());
         }
     }
-
 }

@@ -59,6 +59,5 @@ application:
   dry-run: false  # режим "dry-run" (без фактической отправки откликов)
 
 telegram:
-  bot:
-    token: TELEGRAM_BOT_TOKEN
-    username: TELEGRAM_BOT_NAME
+  token: TELEGRAM_BOT_TOKEN
+  username: TELEGRAM_BOT_NAME

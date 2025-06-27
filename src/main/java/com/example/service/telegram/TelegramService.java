@@ -14,6 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TelegramService {
     private final TelegramChatRepository telegramChatRepository;
+    private final TelegramLinkService telegramLinkService;
     private final UserService userService;
 
     public TelegramChat getTelegramChatById(Integer telegramChatId) {
@@ -35,5 +36,18 @@ public class TelegramService {
         telegramChat.setTelegramChatId(chatId);
         telegramChat.setTelegramUserId(telegramUserId);
         telegramChatRepository.save(telegramChat);
+    }
+
+    public String linkAccount(Long chatId, String code, Long telegramUserId) {
+        Optional<TelegramChat> chatByTelegramUserId = telegramChatRepository.findByTelegramUserId(telegramUserId);
+        if (chatByTelegramUserId.isPresent()) {
+            return "⚠️ Пользователь уже привязан";
+        }
+        Optional<Integer> userId = telegramLinkService.getUserIdByCode(code);
+        if (userId.isPresent()) {
+            bindTelegramChat(userId.get(), chatId, telegramUserId);
+            return "✅ Успешно! Ваш аккаунт привязан.";
+        }
+        return "⛔ Неверный или просроченный код.";
     }
 }
