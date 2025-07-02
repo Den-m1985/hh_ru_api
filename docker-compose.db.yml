@@ -8,8 +8,9 @@ services:
       POSTGRES_USER: ${DATA_BASE_USER}
       POSTGRES_PASSWORD: ${DATA_BASE_PASSWORD}
       POSTGRES_DB: hh_ru_db
-    ports:
-      - "5432:5432"
+      TZ: Europe/Moscow
+#    ports:
+#      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -20,5 +21,6 @@ volumes:
 
 networks:
   hh_network:
-    name: hh_network
-    driver: bridge
+#    name: hh_network
+#    driver: bridge
+    external: true
