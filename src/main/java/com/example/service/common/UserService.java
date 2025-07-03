@@ -1,6 +1,6 @@
 package com.example.service.common;
 
-import com.example.dto.UserInfoDto;
+import com.example.dto.user.UserInfoDto;
 import com.example.model.User;
 import com.example.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,23 +47,6 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<UserInfoDto> getAllUsers() {
-        List<User> all = findAll();
-        List<UserInfoDto> result = new ArrayList<>();
-        for (User user : all) {
-            UserInfoDto userInfoDto = new UserInfoDto(
-                    user.getFirstName(),
-                    user.getMiddleName(),
-                    user.getLastName(),
-                    user.getEmail(),
-                    user.getGender(),
-                    user.getRole().name()
-            );
-            result.add(userInfoDto);
-        }
-        return result;
-    }
-
     @Transactional
     public User saveUser(User user) {
         return userRepository.save(user);
@@ -72,13 +54,6 @@ public class UserService {
 
     public UserInfoDto getUserInfo(String email) {
         User user = getUserByEmail(email);
-        return new UserInfoDto(
-                user.getFirstName(),
-                user.getMiddleName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getGender(),
-                user.getRole().name()
-        );
+        return new UserInfoDto(user);
     }
 }
