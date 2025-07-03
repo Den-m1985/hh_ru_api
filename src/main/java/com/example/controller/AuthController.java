@@ -4,7 +4,7 @@ import com.example.controller.interfaces.AuthApi;
 import com.example.dto.AuthResponse;
 import com.example.dto.JwtAuthResponse;
 import com.example.dto.UserDTO;
-import com.example.dto.UserInfoDto;
+import com.example.dto.user.UserInfoDto;
 import com.example.service.common.AuthService;
 import com.example.service.common.RegisterService;
 import com.example.service.common.UserService;

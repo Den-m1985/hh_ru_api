@@ -3,7 +3,7 @@ package com.example.controller.interfaces;
 import com.example.dto.AuthResponse;
 import com.example.dto.JwtAuthResponse;
 import com.example.dto.UserDTO;
-import com.example.dto.UserInfoDto;
+import com.example.dto.user.UserInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
