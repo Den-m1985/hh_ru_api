@@ -1,7 +1,5 @@
 package com.example.dto.user;
 
-import com.example.dto.VacancyRequest;
-import com.example.model.AutoResponseSchedule;
 import com.example.model.HhToken;
 import com.example.model.Resume;
 import com.example.model.TelegramChat;
@@ -9,6 +7,7 @@ import com.example.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +17,6 @@ import java.util.Optional;
 public class UserInfoDtoFull extends UserInfoDtoAdmin {
     private HhTokenInfo hhToken;
     private List<ResumeInfo> resumes;
-    private AutoResponseInfo autoResponse;
     private TelegramInfo telegram;
 
     public UserInfoDtoFull() {
@@ -36,10 +34,6 @@ public class UserInfoDtoFull extends UserInfoDtoAdmin {
                 .map(ResumeInfo::new)
                 .toList();
 
-        this.autoResponse = Optional.ofNullable(user.getAutoResponseSchedule())
-                .map(AutoResponseInfo::new)
-                .orElse(null);
-
         this.telegram = Optional.ofNullable(user.getTelegramChat())
                 .map(TelegramInfo::new)
                 .orElse(null);
@@ -47,7 +41,7 @@ public class UserInfoDtoFull extends UserInfoDtoAdmin {
 
     @Getter
     @Setter
-    public static class HhTokenInfo {
+    public static class HhTokenInfo implements Serializable {
         private Integer id;
         private String accessToken;
         private Long expiresIn;
@@ -67,7 +61,7 @@ public class UserInfoDtoFull extends UserInfoDtoAdmin {
 
     @Getter
     @Setter
-    public static class ResumeInfo {
+    public static class ResumeInfo implements Serializable {
         private Integer id;
         private String resumeId;
         private String resumeTitle;
@@ -85,25 +79,7 @@ public class UserInfoDtoFull extends UserInfoDtoAdmin {
 
     @Getter
     @Setter
-    public static class AutoResponseInfo {
-        private Integer id;
-        private boolean enabled;
-        private VacancyRequest params;
-        private LocalDateTime created;
-        private LocalDateTime updatedAt;
-
-        public AutoResponseInfo(AutoResponseSchedule schedule) {
-            this.id = schedule.getId();
-            this.enabled = schedule.isEnabled();
-            this.params = schedule.getParams();
-            this.created = schedule.getCreatedAt();
-            this.updatedAt = schedule.getUpdatedAt();
-        }
-    }
-
-    @Getter
-    @Setter
-    public static class TelegramInfo {
+    public static class TelegramInfo implements Serializable {
         private Integer id;
         private Long telegramUserId;
         private Long telegramChatId;

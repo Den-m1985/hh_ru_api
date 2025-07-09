@@ -69,6 +69,7 @@ class AllVacanciesTest {
 
     private VacancyRequest initVacancyRequest() {
         return new VacancyRequest(
+                "nameSchedule",
                 "12345678",         // resumeId
                 3,                // count
                 List.of("Senior", "Сениор", "lead", "TeamLead", "Тимлид", "Android"),

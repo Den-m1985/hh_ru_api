@@ -37,7 +37,6 @@ public class VacancyResponseProcessor {
             }
         }
         log.info("✅ Finished apply to vacancies with resume id: {}", request.resumeId());
-        notificationService.notifyUser(userId, "✅ Finished apply to vacancies");
     }
 
     public List<VacancyItem> prepareData(VacancyRequest request, Integer userId) {

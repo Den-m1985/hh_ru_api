@@ -1,8 +1,10 @@
 package com.example.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 public record VacancyRequest(
+        String nameRequest,
         String resumeId,
         int count,
         List<String> keywordsToExclude,
@@ -54,5 +56,5 @@ public record VacancyRequest(
         // Интернационализация
         String locale,
         String host
-) {
+) implements Serializable {
 }
