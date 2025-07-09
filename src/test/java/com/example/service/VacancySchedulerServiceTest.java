@@ -1,15 +1,16 @@
 package com.example.service;
 
 import com.example.dto.AuthResponse;
+import com.example.dto.AutoResponseScheduleDto;
 import com.example.dto.UserDTO;
 import com.example.dto.VacancyRequest;
-import com.example.model.AuthUser;
 import com.example.model.AutoResponseSchedule;
 import com.example.model.HhToken;
 import com.example.model.User;
 import com.example.repository.AutoResponseScheduleRepository;
 import com.example.repository.UserRepository;
 import com.example.service.common.RegisterService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -36,13 +39,13 @@ class VacancySchedulerServiceTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private VacancySchedulerService scheduler;
+    private VacancySchedulerService schedulerService;
     @Autowired
     private AutoResponseScheduleRepository scheduleRepository;
     @MockitoBean
-    private VacancyResponseProcessor processor; // << замена настоящего на мок
+    private VacancyResponseProcessor processor;
     private final HttpServletResponse servletResponse = mock(HttpServletResponse.class);
-    private AuthUser testAuthUser;
+
     private User testUser;
     private VacancyRequest vacancyRequest;
 
@@ -66,14 +69,12 @@ class VacancySchedulerServiceTest {
         assertNotNull(testUser);
         testUser.setHhToken(hhToken);
 
-        testAuthUser = new AuthUser(testUser);
-
-        vacancyRequest = initVacancyRequest();
+        vacancyRequest = initVacancyRequest("nameRequest");
     }
 
-
-    private VacancyRequest initVacancyRequest() {
+    private VacancyRequest initVacancyRequest(String name) {
         return new VacancyRequest(
+                name,
                 "12345678",         // resumeId
                 3,                // count
                 List.of("Senior", "Сениор", "lead", "TeamLead", "Тимлид", "Android"),
@@ -102,7 +103,7 @@ class VacancySchedulerServiceTest {
                 "2024-06-01",       // date_from
                 "2024-06-16",       // date_to
 
-                // Геокоординаты
+                // Гео координаты
                 55.75,              // top_lat
                 55.70,              // bottom_lat
                 37.65,              // left_lng
@@ -131,28 +132,88 @@ class VacancySchedulerServiceTest {
 
     @Test
     void shouldCreateScheduleAndCacheIt() {
-        // обновляем планировщик
-        scheduler.updateSchedule(vacancyRequest, testAuthUser);
+        schedulerService.createOrUpdateSchedule(vacancyRequest, testUser);
 
-        // проверяем, что запись появилась
-        AutoResponseSchedule schedule = scheduleRepository.findByUserId(testUser.getId()).orElse(null);
+        List<AutoResponseScheduleDto> schedule = schedulerService.getAllSchedulesByUser(testUser);
         assertNotNull(schedule);
-        assertTrue(schedule.isEnabled());
-        assertEquals(testUser.getId(), schedule.getUser().getId());
+        for (AutoResponseScheduleDto autoResponseScheduleDto : schedule) {
+            assertTrue(autoResponseScheduleDto.enabled());
+            VacancyRequest params = autoResponseScheduleDto.params();
+            assertEquals(vacancyRequest, params);
+        }
     }
 
     @Test
     void shouldCallProcessorForEachActiveSchedule() {
-
         AutoResponseSchedule schedule = new AutoResponseSchedule();
         schedule.setUser(testUser);
         schedule.setEnabled(true);
         schedule.setParams(vacancyRequest);
         scheduleRepository.save(schedule);
 
-        scheduler.init();
-        scheduler.executeScheduledResponses();
+        schedulerService.init();
+        schedulerService.executeScheduledResponses();
 
-        verify(processor).respondToRelevantVacancies(vacancyRequest, testUser.getId()); // << проверка вызова
+        verify(processor).respondToRelevantVacancies(vacancyRequest, testUser.getId());
+    }
+
+    @Test
+    void shouldCreateNewScheduleWhenNotExists() {
+        String scheduleName = "New Test Schedule";
+        VacancyRequest request = initVacancyRequest(scheduleName);
+
+        AutoResponseScheduleDto result = schedulerService.createOrUpdateSchedule(request, testUser);
+
+        assertNotNull(result);
+        assertEquals(scheduleName, result.name());
+        assertTrue(result.enabled());
+        assertEquals(request, result.params());
+        List<AutoResponseScheduleDto> schedules = schedulerService.getAllSchedulesByUser(testUser);
+        assertEquals(1, schedules.size());
+        assertEquals(result.params(), schedules.get(0).params());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenScheduleNameIsEmpty() {
+        VacancyRequest request = initVacancyRequest("");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> schedulerService.createOrUpdateSchedule(request, testUser));
+    }
+
+    @Test
+    void shouldDeleteScheduleById() {
+        AutoResponseScheduleDto schedule = schedulerService.createOrUpdateSchedule(vacancyRequest, testUser);
+
+        schedulerService.deleteScheduleById(schedule.id(), testUser);
+
+        boolean scheduleExists;
+        try {
+            schedulerService.getScheduleById(schedule.id(), testUser);
+            scheduleExists = true;
+        } catch (EntityNotFoundException e) {
+            scheduleExists = false;
+        }
+        assertFalse(scheduleExists);
+    }
+
+    @Test
+    void shouldGetScheduleById() {
+        AutoResponseScheduleDto created = schedulerService.createOrUpdateSchedule(vacancyRequest, testUser);
+
+        AutoResponseScheduleDto retrieved = schedulerService.getScheduleById(created.id(), testUser);
+
+        assertNotNull(retrieved);
+        assertEquals(created.params(), retrieved.params());
+    }
+
+    @Test
+    void shouldGetAllSchedulesForUser() {
+        schedulerService.createOrUpdateSchedule(initVacancyRequest("Schedule 1"), testUser);
+        schedulerService.createOrUpdateSchedule(initVacancyRequest("Schedule 2"), testUser);
+
+        List<AutoResponseScheduleDto> schedules = schedulerService.getAllSchedulesByUser(testUser);
+
+        assertEquals(2, schedules.size());
     }
 }

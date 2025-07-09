@@ -8,6 +8,11 @@ import java.util.Optional;
 
 public interface AutoResponseScheduleRepository extends JpaRepository<AutoResponseSchedule, Integer> {
 
-    Optional<AutoResponseSchedule> findByUserId(Integer userId);
+    List<AutoResponseSchedule> findByUserId(Integer userId);
+
+    Optional<AutoResponseSchedule> findByNameAndUserId(String name, Integer userId);
+
     List<AutoResponseSchedule> findAllByEnabledTrue();
+
+    List<AutoResponseSchedule> findAllByUserId(Integer userId);
 }

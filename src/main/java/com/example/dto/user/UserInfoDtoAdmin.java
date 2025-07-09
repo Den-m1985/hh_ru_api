@@ -1,6 +1,6 @@
 package com.example.dto.user;
 
-import com.example.model.AutoResponseSchedule;
+import com.example.dto.AutoResponseScheduleDto;
 import com.example.model.TelegramChat;
 import com.example.model.User;
 import lombok.Getter;
@@ -16,7 +16,7 @@ public class UserInfoDtoAdmin extends UserInfoDto {
 
     private boolean hasHhToken;
     private boolean hasAutoResponseSchedule;
-    private boolean isAutoResponseScheduleEnabled;
+    private transient List<AutoResponseScheduleDto> autoResponseScheduleDtoList;
     private boolean hasTelegramChat;
     private Long telegramUserId; // Telegram's internal user ID
     private Integer resumeCount;
@@ -30,9 +30,11 @@ public class UserInfoDtoAdmin extends UserInfoDto {
 
         this.hasHhToken = user.getHhToken() != null;
         this.hasAutoResponseSchedule = user.getAutoResponseSchedule() != null;
-        this.isAutoResponseScheduleEnabled = Optional.ofNullable(user.getAutoResponseSchedule())
-                .map(AutoResponseSchedule::isEnabled)
-                .orElse(false);
+        this.autoResponseScheduleDtoList = Optional.ofNullable(user.getAutoResponseSchedule())
+                .orElse(List.of())
+                .stream()
+                .map(AutoResponseScheduleDto::fromEntity)
+                .toList();
         this.hasTelegramChat = user.getTelegramChat() != null;
         this.telegramUserId = Optional.ofNullable(user.getTelegramChat())
                 .map(TelegramChat::getTelegramUserId)

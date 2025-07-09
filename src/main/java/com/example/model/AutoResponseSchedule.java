@@ -5,7 +5,7 @@ import com.nimbusds.jose.shaded.gson.Gson;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +18,11 @@ import lombok.Setter;
 @Table(name = "auto_response_schedules")
 public class AutoResponseSchedule extends BaseEntity{
 
-    @OneToOne
-    @JoinColumn(name = "user_id", unique = true, nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    private String name;
 
     private boolean enabled;
 
