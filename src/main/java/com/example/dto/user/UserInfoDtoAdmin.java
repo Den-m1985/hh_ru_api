@@ -36,9 +36,7 @@ public class UserInfoDtoAdmin extends UserInfoDto {
                 .map(AutoResponseScheduleDto::fromEntity)
                 .toList();
         this.hasTelegramChat = user.getTelegramChat() != null;
-        this.telegramUserId = Optional.ofNullable(user.getTelegramChat())
-                .map(TelegramChat::getTelegramUserId)
-                .orElse(null);
+        this.telegramUserId = user.getTelegramUserId();
         this.resumeCount = Optional.ofNullable(user.getResume())
                 .map(List::size)
                 .orElse(0);
