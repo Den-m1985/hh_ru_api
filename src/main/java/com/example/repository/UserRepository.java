@@ -16,4 +16,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT r.user.id FROM Resume r WHERE r.resumeId = :resumeId")
     Optional<Integer> findUserIdByResumeId(@Param("resumeId") String resumeId);
+
+    Optional<User> findUserByUsername(String username);
+
+    Optional<User> findUserByTelegramUserId(Long telegramUserId);
 }
