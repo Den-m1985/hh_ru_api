@@ -28,6 +28,15 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User with mail: " + userEmail + " not found"));
     }
 
+    public User getUserByUsername(String username) {
+        return userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User with username: " + username + " not found"));
+    }
+
+    public Optional<User> getUserByTelegramUserId(Long telegramUserId) {
+        return userRepository.findUserByTelegramUserId(telegramUserId);
+    }
+
     public Optional<User> findUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail);
     }

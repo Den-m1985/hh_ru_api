@@ -37,6 +37,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
             user = new User();
             user.setFirstName("Super Admin");
             user.setEmail(supperAdminEmail);
+            user.setUsername(supperAdminEmail);
             user.setPassword(passwordEncoder.encode(supperAdminPassword));
             user.setRole(RoleEnum.SUPER_ADMIN);
             user.setPhone("+71234567890");
@@ -54,6 +55,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
             user = new User();
             user.setFirstName("user test");
             user.setEmail(email);
+            user.setUsername(email);
             user.setPassword(passwordEncoder.encode("123456"));
             user.setRole(RoleEnum.USER);
             user.setPhone("+71234567891");

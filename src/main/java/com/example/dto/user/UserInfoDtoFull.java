@@ -81,14 +81,12 @@ public class UserInfoDtoFull extends UserInfoDtoAdmin {
     @Setter
     public static class TelegramInfo implements Serializable {
         private Integer id;
-        private Long telegramUserId;
         private Long telegramChatId;
         private LocalDateTime created;
         private LocalDateTime updatedAt;
 
         public TelegramInfo(TelegramChat chat) {
             this.id = chat.getId();
-            this.telegramUserId = chat.getTelegramUserId();
             this.telegramChatId = chat.getTelegramChatId();
             this.created = chat.getCreatedAt();
             this.updatedAt = chat.getUpdatedAt();

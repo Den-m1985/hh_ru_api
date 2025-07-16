@@ -45,6 +45,7 @@ class JwtProviderTest {
         user.setMiddleName("Middle name");
         user.setLastName("Last name");
         user.setEmail(email);
+        user.setUsername(email);
         user.setRole(RoleEnum.USER);
         user.setPassword(passwordEncoder.encode("password"));
         user = userService.saveUser(user);
