@@ -72,6 +72,7 @@ jobs:  # набор задач
               --env "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" \
               --env "TELEGRAM_BOT_NAME=${{ secrets.TELEGRAM_BOT_NAME }}" \
               --env "SUPPER_ADMIN_PASSWORD=${{ secrets.SUPPER_ADMIN_PASSWORD }}" \
+              --env "ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}" \
               --env-file .env \
               --network=hh_network \
               -p 8080:8080 \
