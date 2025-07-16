@@ -76,10 +76,11 @@ class TelegramServiceTest {
     void shouldReturnAlreadyLinkedIfTelegramUserIsPresent() {
         TelegramChat telegramChat = new TelegramChat();
         telegramChat.setTelegramChatId(testChatId);
-        telegramChat.setTelegramUserId(testTelegramUserId);
         telegramChat.setUser(testUser);
         telegramChatRepository.save(telegramChat);
         testUser.setTelegramChat(telegramChat);
+        testUser.setTelegramUserId(testTelegramUserId);
+        userRepository.save(testUser);
         when(telegramLinkService.getUserIdByCode(anyString())).thenReturn(Optional.of(testUser2.getId()));
 
         String result = telegramService.linkAccount(testChatId, validCode, testTelegramUserId);

@@ -40,6 +40,7 @@ public class RegisterService {
 
         User user = new User();
         user.setEmail(request.email());
+        user.setUsername(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(RoleEnum.USER);
         user = userService.saveUser(user);

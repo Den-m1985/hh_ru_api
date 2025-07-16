@@ -56,3 +56,6 @@ application:
 telegram:
   token: ${TELEGRAM_BOT_TOKEN}
   username: ${TELEGRAM_BOT_NAME}
+
+cors:
+  allowed-origins: ${ALLOWED_ORIGINS:null}

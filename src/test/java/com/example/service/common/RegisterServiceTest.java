@@ -60,6 +60,7 @@ class RegisterServiceTest {
     void shouldThrowExceptionIfUserAlreadyExists() {
         User existingUser = new User();
         existingUser.setEmail(email);
+        existingUser.setUsername(email);
         existingUser.setPassword(passwordEncoder.encode(password));
         existingUser.setRole(RoleEnum.USER);
         userRepository.save(existingUser);

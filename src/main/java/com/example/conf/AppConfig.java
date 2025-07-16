@@ -21,7 +21,7 @@ public class AppConfig {
     @Bean
     UserDetailsService userDetailsService() {
         return username -> {
-            User user = userService.getUserByEmail(username);
+            User user = userService.getUserByUsername(username);
             return new AuthUser(user);
         };
     }

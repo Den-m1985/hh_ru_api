@@ -10,6 +10,4 @@ import java.util.Optional;
 public interface TelegramChatRepository extends JpaRepository<TelegramChat, Integer> {
 
     Optional<TelegramChat> findByUserId(Integer userId);
-
-    Optional<TelegramChat> findByTelegramUserId(Long telegramUserId);
 }
