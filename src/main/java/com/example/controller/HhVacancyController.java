@@ -2,13 +2,16 @@ package com.example.controller;
 
 import com.example.controller.interfaces.HhVacancyAPI;
 import com.example.dto.VacancyRequest;
+import com.example.dto.vacancy_dto.Area;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.model.AuthUser;
 import com.example.service.AllVacancies;
+import com.example.service.VacancyClient;
 import com.example.service.VacancyResponseProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,7 @@ import java.util.Set;
 public class HhVacancyController implements HhVacancyAPI {
     private final AllVacancies allVacancies;
     private final VacancyResponseProcessor vacancyResponseProcessor;
+    private final VacancyClient vacancyClient;
 
     @PostMapping("/all")
     public Set<VacancyItem> getAllVacancies(@RequestBody VacancyRequest request) {
@@ -44,5 +48,10 @@ public class HhVacancyController implements HhVacancyAPI {
     ) {
         vacancyResponseProcessor.respondToRelevantVacancies(request, authUser.getUser().getId());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/area")
+    public ResponseEntity<List<Area>> getAreas(@AuthenticationPrincipal AuthUser authUser) {
+        return ResponseEntity.ok(vacancyClient.getAreas(authUser.getUser()));
     }
 }

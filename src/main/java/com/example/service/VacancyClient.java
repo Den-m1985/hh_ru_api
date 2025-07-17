@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.dto.VacancyRequest;
 import com.example.dto.vacancy_dto.ApiListResponse;
+import com.example.dto.vacancy_dto.Area;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.model.User;
 import com.example.service.common.UserService;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -66,5 +68,10 @@ public class VacancyClient {
                     .append(URLEncoder.encode(entry.getValue(), UTF_8));
         }
         return sb.toString();
+    }
+
+    public List<Area> getAreas(User user){
+        String url = String.format("%s/areas", headHunterProperties.getBaseUrlApi());
+        return requestTemplates.getAreaFromRequest(url, user.getHhToken());
     }
 }

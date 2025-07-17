@@ -1,6 +1,7 @@
 package com.example.controller.interfaces;
 
 import com.example.dto.VacancyRequest;
+import com.example.dto.vacancy_dto.Area;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.model.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,4 +75,27 @@ public interface HhVacancyAPI {
     ResponseEntity<Void> applyToVacancies(@RequestBody VacancyRequest request,
                                           @Parameter(hidden = true)
                                           @AuthenticationPrincipal AuthUser authUser);
+
+    @Operation(
+            summary = "Дерево всех регионов",
+            description = """
+                            Возвращает древовидный список всех регионов.
+                            Значения в справочнике могут поменяться в любой момент
+                            https://api.hh.ru/openapi/redoc#tag/Obshie-spravochniki/operation/get-areas
+                            WARN - возвращает json размером в 1Мб
+                    """,
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Дерево регионов",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Area.class)
+                            )
+                    )
+            }
+    )
+    ResponseEntity<List<Area>> getAreas(
+            @Parameter(description = "Аутентифицированный пользователь", required = true, hidden = true)
+            @AuthenticationPrincipal AuthUser authUser);
 }
