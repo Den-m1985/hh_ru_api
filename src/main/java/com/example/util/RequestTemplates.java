@@ -4,6 +4,7 @@ import com.example.dto.HhTokenResponse;
 import com.example.dto.NegotiationItemDto;
 import com.example.dto.SavedSearchDto;
 import com.example.dto.vacancy_dto.ApiListResponse;
+import com.example.dto.vacancy_dto.Area;
 import com.example.dto.vacancy_dto.ResumeDto;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.model.HhToken;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -29,6 +31,17 @@ public class RequestTemplates {
     public ResumeDto getMineResume(HhToken hhToken) {
         return httpUtils.safeRequest(
                 headHunterProperties.baseUrlApi + "/resumes/mine",
+                HttpMethod.GET,
+                createHeaders.getHeaders(hhToken),
+                null,
+                new TypeReference<>() {
+                }
+        );
+    }
+
+    public List<Area> getAreaFromRequest(String url, HhToken hhToken) {
+        return httpUtils.safeRequest(
+                url,
                 HttpMethod.GET,
                 createHeaders.getHeaders(hhToken),
                 null,
