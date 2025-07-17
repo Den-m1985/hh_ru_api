@@ -12,7 +12,7 @@ public record VacancyItem(
         String alternate_url, // Ссылка на представление вакансии на сайте
         String apply_alternate_url,  // Ссылка на отклик на вакансию на сайте
         Boolean archived,  //  Находится ли данная вакансия в архиве
-        Area area,  //  Регион
+        AreaFromVacancy area,  //  Регион
         Contact contacts,  // Контактная информация
         String created_at,  // Дата и время публикации вакансии
         Department department,  // Департамент
