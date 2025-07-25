@@ -57,4 +57,9 @@ public record VacancyRequest(
         String locale,
         String host
 ) implements Serializable {
+    public VacancyRequest {
+        if (count > 1000 || count < 1) {
+            throw new IllegalArgumentException("count must be 1 ~ 1000");
+        }
+    }
 }
