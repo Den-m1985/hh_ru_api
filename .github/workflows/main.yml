@@ -43,10 +43,6 @@ jobs:
         with:
           name: hh-ru-api-image
           path: ./hh-ru-api.tar
-#      - name: List files
-#        run: ls -la
-#      - name: Fix permissions
-#        run: chmod 644 hh-ru-api.tar
       - name: List files
         run: ls -la
 
