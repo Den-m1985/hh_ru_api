@@ -67,7 +67,6 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           source: "hh-ru-api.tar"
           target: "~/"
-          tar: false  # no zip to -> tar.gz
 
   deploy_on_server:
     runs-on: ubuntu-latest
