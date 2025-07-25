@@ -67,6 +67,7 @@ public class VacancySchedulerService {
             String name = autoResponseSchedule.getName();
             if (request.nameRequest().equals(name)) {
                 autoResponseSchedule.setParams(request);
+                autoResponseSchedule.setEnabled(request.enabledSchedule());
                 scheduleRepository.save(autoResponseSchedule);
                 schedule = autoResponseSchedule;
                 isFind = true;
