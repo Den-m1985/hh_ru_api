@@ -35,7 +35,7 @@ public class TelegramAuthValidator {
             data.put("first_name", req.firstName());
             data.put("id", String.valueOf(req.telegramUserId()));
             if (req.lastName() != null) data.put("last_name", req.lastName());
-            if (req.photoUrl() != null) data.put("photoUrl", req.photoUrl());
+            if (req.photoUrl() != null) data.put("photo_url", req.photoUrl());
             if (req.username() != null) data.put("username", req.username());
 
             String dataCheckString = data.entrySet().stream()
