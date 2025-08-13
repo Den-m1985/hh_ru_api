@@ -61,8 +61,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public UserInfoDto getUserInfo(String email) {
-        User user = getUserByEmail(email);
+    public UserInfoDto getUserInfo(User user) {
         return new UserInfoDto(user);
     }
 }
