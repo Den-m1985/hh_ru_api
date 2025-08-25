@@ -3,11 +3,16 @@ package com.example.util;
 import com.example.dto.HhTokenResponse;
 import com.example.dto.NegotiationItemDto;
 import com.example.dto.SavedSearchDto;
+import com.example.dto.superjob.SendCvOnVacancyResponse;
+import com.example.dto.superjob.SuperjobTokenResponse;
+import com.example.dto.superjob.VacancyResponse;
+import com.example.dto.superjob.resume.SuperJobResumeResponse;
 import com.example.dto.vacancy_dto.ApiListResponse;
 import com.example.dto.vacancy_dto.Area;
 import com.example.dto.vacancy_dto.ResumeDto;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.model.HhToken;
+import com.example.model.SuperjobToken;
 import com.example.model.User;
 import com.example.service.common.CreateHeaders;
 import com.example.service.common.UserService;
@@ -39,6 +44,17 @@ public class RequestTemplates {
         );
     }
 
+    public SuperJobResumeResponse getResumes(String url, SuperjobToken token) {
+        return httpUtils.safeRequest(
+                url,
+                HttpMethod.GET,
+                createHeaders.createHeadersSuperjob(token),
+                null,
+                new TypeReference<>() {
+                }
+        );
+    }
+
     public List<Area> getAreaFromRequest(String url, HhToken hhToken) {
         return httpUtils.safeRequest(
                 url,
@@ -61,7 +77,40 @@ public class RequestTemplates {
         );
     }
 
+    public VacancyResponse getRequestToSuperjob(String url, SuperjobToken token) {
+        return httpUtils.safeRequest(
+                url,
+                HttpMethod.GET,
+                createHeaders.createHeadersSuperjob(token),
+                null,
+                new TypeReference<>() {
+                }
+        );
+    }
+
+        public SendCvOnVacancyResponse postRequestToSuperjob(String url, SuperjobToken token, String body) {
+        return httpUtils.safeRequest(
+                url,
+                HttpMethod.POST,
+                createHeaders.createHeadersSuperjob(token),
+                body,
+                new TypeReference<>() {
+                }
+        );
+    }
+
     public HhTokenResponse getHhTokenFromRequest(String url) {
+        return httpUtils.safeRequest(
+                url,
+                HttpMethod.POST,
+                createHeaders.createHeadersForToken(),
+                null,
+                new TypeReference<>() {
+                }
+        );
+    }
+
+    public SuperjobTokenResponse getSuperjobTokenFromRequest(String url) {
         return httpUtils.safeRequest(
                 url,
                 HttpMethod.POST,
