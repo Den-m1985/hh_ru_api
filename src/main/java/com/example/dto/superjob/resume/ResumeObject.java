@@ -1,0 +1,83 @@
+package com.example.dto.superjob.resume;
+
+import com.example.dto.superjob.Catalogue;
+import com.example.dto.superjob.Children;
+import com.example.dto.superjob.Education;
+import com.example.dto.superjob.Gender;
+import com.example.dto.superjob.Language;
+import com.example.dto.superjob.MaritalStatus;
+import com.example.dto.superjob.MetroStation;
+import com.example.dto.superjob.PlaceOfWork;
+import com.example.dto.superjob.Town;
+import com.example.dto.superjob.TypeOfWork;
+
+import java.util.List;
+
+public record ResumeObject(
+        Integer id,
+        Integer id_user,
+        String last_profession,
+        Integer payment,
+        String currency,
+        Boolean hide_birthday,
+        Integer birthday,
+        Integer birthmonth,
+        Integer birthyear,
+        Integer age,
+        List<MetroStation> metro,
+        String address,
+        Citizenship citizenship,
+        Published published,
+        Boolean draft,
+        String refuse_reason,
+        Boolean moveable,
+        Boolean agreement,
+        Boolean is_archive,
+        List<Town> moveable_towns,
+        TypeOfWork type_of_work,
+        PlaceOfWork place_of_work,
+        Education education,
+        MaritalStatus maritalstatus,
+        Children children,
+        BusinessTrip business_trip,
+        List<List<Language>> languages,
+        List<String> driving_licence,
+        List<Catalogue> catalogues,
+        Town town,
+        Region region,
+        String experience_text,
+        Integer experience_month_count,
+        List<WorkHistory> work_history,
+        List<BaseEducationHistory> base_education_history,
+        List<EducationHistory> education_history,
+        String firstname,
+        String middlename,
+        String lastname,
+        String name,
+        String phone1,
+        String timebeg1,
+        String timeend1,
+        String phone2,
+        String timebeg2,
+        String timeend2,
+        List<Phone> phones,
+        Boolean receive_sms,
+        String email,
+        Boolean favorite,
+        Boolean contacts_bought,
+        String link,
+        String short_link,
+        List<SocialLink> social_links,
+        Gender gender,
+        String achievements,
+        String additional_info,
+        String recommendations,
+        String profession,
+        Long date_published,
+        Long date_last_modified,
+        String photo,
+        PhotoSizes photo_sizes,
+        Integer timeToUpdate,
+        List<String> portfolio
+) {
+}

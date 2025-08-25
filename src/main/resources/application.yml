@@ -45,6 +45,14 @@ hh:
   base_url: ${HH_BASE_URL}
   hh-User-Agent: ${HH_USER_AGENT}
 
+superjob:
+  client-id: ${SUPERJOB_CLIENT_ID}
+  client-secret: ${SUPERJOB_SECRET_KEY}
+  redirect-uri: ${SUPERJOB_REDIRECT_URL}
+  base_url: ${SUPERJOB_BASE_URL}
+  base_url_api: ${SUPERJOB_BASE_URL_API}
+  user-agent: ${USER_AGENT}
+
 application:
   prePrompt: ${APP_PRE_PROMPT}
   apply-interval-min: ${APP_APPLY_INTERVAL_MIN}
