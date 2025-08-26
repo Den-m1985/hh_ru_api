@@ -50,6 +50,14 @@ hh:
   use_aI: false
   keywordsToExclude: Senior,Сениор,lead,TeamLead,Тимлид
 
+superjob:
+  client-id: 1234
+  client-secret: 123456
+  redirect-uri: http://localhost:8080/callback/superjob
+  base_url: https://www.superjob.ru
+  base_url_api: https://api.superjob.ru
+  user-agent: jobResponder
+
 application:
   prePrompt: prompt
   apply-interval-min: 1
