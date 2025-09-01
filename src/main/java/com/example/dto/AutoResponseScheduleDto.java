@@ -18,7 +18,7 @@ public record AutoResponseScheduleDto(
                 schedule.getId(),
                 schedule.getName(),
                 schedule.isEnabled(),
-                schedule.getParams(),
+                schedule.getParams(VacancyRequest.class).orElse(null),
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
         );

@@ -1,6 +1,6 @@
 package com.example.util;
 
-import com.example.dto.superjob.SearchRequest;
+import com.example.dto.superjob.SuperjobSearchRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 @Component
 public class SuperjobVacancyUrlBuilder {
 
-    public String buildUrl(SearchRequest request, String baseUrl) {
+    public String buildUrl(SuperjobSearchRequest request, String baseUrl) {
         UriComponentsBuilder builder = baseBuilder(baseUrl);
         addQueryParams(builder, request);
         return builder.build(false).toUriString();
@@ -19,7 +19,7 @@ public class SuperjobVacancyUrlBuilder {
         return UriComponentsBuilder.fromUriString(baseUrl + "/2.0/vacancies/");
     }
 
-    private void addQueryParams(UriComponentsBuilder builder, SearchRequest request) {
+    private void addQueryParams(UriComponentsBuilder builder, SuperjobSearchRequest request) {
         addParam(builder, "id_client", request.id_client());
         addParam(builder, "id_user", request.id_user());
         addParam(builder, "id_resume", request.id_resume());

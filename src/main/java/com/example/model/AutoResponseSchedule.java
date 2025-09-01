@@ -1,6 +1,5 @@
 package com.example.model;
 
-import com.example.dto.VacancyRequest;
 import com.nimbusds.jose.shaded.gson.Gson;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,12 +10,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Optional;
+
 @Entity
 @Setter
 @Getter
 @NoArgsConstructor
 @Table(name = "auto_response_schedules")
-public class AutoResponseSchedule extends BaseEntity{
+public class AutoResponseSchedule extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -29,11 +30,20 @@ public class AutoResponseSchedule extends BaseEntity{
     @Column(columnDefinition = "TEXT")
     private String params;
 
-    public VacancyRequest getParams() {
-        return new Gson().fromJson(params, VacancyRequest.class);
+    @Column(name = "params_type", nullable = false)
+    private String paramsType;
+
+    public <T> Optional <T> getParams(Class<T> clazz) {
+        if (clazz.getName().equals(paramsType)) {
+            T result = new Gson().fromJson(params, clazz);
+            return Optional.ofNullable(result);
+        }
+        return Optional.empty();
     }
 
-    public void setParams(VacancyRequest request) {
+    public void setParams(Object request) {
         this.params = new Gson().toJson(request);
+        this.paramsType = request.getClass().getName();
     }
+
 }

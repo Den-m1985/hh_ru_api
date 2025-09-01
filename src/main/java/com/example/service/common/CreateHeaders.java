@@ -35,6 +35,7 @@ public class CreateHeaders {
         );
     }
 
+    // TODO реализовать обновление токена
     public Map<String, String> createHeadersSuperjob(SuperjobToken token) {
         if (token == null) {
             throw new RuntimeException("Token for request null");
