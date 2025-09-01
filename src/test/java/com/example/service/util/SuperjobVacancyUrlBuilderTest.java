@@ -1,7 +1,7 @@
 package com.example.service.util;
 
 import com.example.dto.superjob.Keyword;
-import com.example.dto.superjob.SearchRequest;
+import com.example.dto.superjob.SuperjobSearchRequest;
 import com.example.util.SuperjobVacancyUrlBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ class SuperjobVacancyUrlBuilderTest {
 
     @Test
     void shouldBuildUrlWithKeywordOnly() {
-        SearchRequest request = new SearchRequest(
+        SuperjobSearchRequest request = new SuperjobSearchRequest(
                 null, null, null, null, null, null, null, null, null,
                 null, null,
                 "java",
@@ -32,7 +32,7 @@ class SuperjobVacancyUrlBuilderTest {
 
     @Test
     void shouldBuildUrlWithPaymentRange() {
-        SearchRequest request = new SearchRequest(
+        SuperjobSearchRequest request = new SuperjobSearchRequest(
                 null, null, null, null, null, null, null, null, null,
                 null, null,
                 "java",
@@ -52,7 +52,7 @@ class SuperjobVacancyUrlBuilderTest {
     @Test
     void shouldBuildUrlWithKeywordsList() {
         List<Keyword> array = List.of(new Keyword(1, "and", "php"), new Keyword(3, "particular", "javascript"));
-        SearchRequest request = new SearchRequest(
+        SuperjobSearchRequest request = new SuperjobSearchRequest(
                 null, null, null, null, null, null, null, null, null,
                 null, null,
                 "java",

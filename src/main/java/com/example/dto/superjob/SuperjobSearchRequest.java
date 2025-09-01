@@ -2,7 +2,7 @@ package com.example.dto.superjob;
 
 import java.util.List;
 
-public record SearchRequest(
+public record SuperjobSearchRequest(
 
         Integer id_client,
         Integer id_user,

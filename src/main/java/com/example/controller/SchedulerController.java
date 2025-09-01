@@ -3,8 +3,10 @@ package com.example.controller;
 import com.example.controller.interfaces.SchedulerApi;
 import com.example.dto.AutoResponseScheduleDto;
 import com.example.dto.VacancyRequest;
+import com.example.dto.superjob.SuperjobVacancyRequest;
 import com.example.model.AuthUser;
 import com.example.service.VacancySchedulerService;
+import com.example.service.superjob.SuperjobSchedulerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +25,7 @@ import java.util.List;
 @RequestMapping("/v1/scheduler")
 public class SchedulerController implements SchedulerApi {
     private final VacancySchedulerService vacancySchedulerService;
+    private final SuperjobSchedulerService superjobSchedulerService;
 
     @PostMapping("/auto")
     public ResponseEntity<AutoResponseScheduleDto> triggerAutoResponse(
@@ -30,6 +33,15 @@ public class SchedulerController implements SchedulerApi {
             @AuthenticationPrincipal AuthUser authUser
     ) {
         return ResponseEntity.ok(vacancySchedulerService.createOrUpdateSchedule(request, authUser.getUser()));
+    }
+
+    // TODO надо применить Стратегию и фабричный метод с реализацией общих методов.
+    @PostMapping("/superjob/auto")
+    public ResponseEntity<AutoResponseScheduleDto> superjobAutoResponse(
+            @RequestBody SuperjobVacancyRequest request,
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        return ResponseEntity.ok(superjobSchedulerService.createOrUpdateSchedule(request, authUser.getUser()));
     }
 
     @GetMapping("/all")
