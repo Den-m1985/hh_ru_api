@@ -9,7 +9,7 @@ public record AutoResponseScheduleDto(
         Integer id,
         String name,
         boolean enabled,
-        VacancyRequest params,
+        Object params,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) implements Serializable {
@@ -18,9 +18,18 @@ public record AutoResponseScheduleDto(
                 schedule.getId(),
                 schedule.getName(),
                 schedule.isEnabled(),
-                schedule.getParams(VacancyRequest.class).orElse(null),
+                extractParams(schedule),
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
         );
+    }
+
+    private static Object extractParams(AutoResponseSchedule schedule) {
+        try {
+            Class<?> clazz = Class.forName(schedule.getParamsType());
+            return schedule.getParams(clazz).orElse(null);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
     }
 }
