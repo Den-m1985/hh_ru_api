@@ -138,7 +138,7 @@ class VacancySchedulerServiceTest {
         assertNotNull(schedule);
         for (AutoResponseScheduleDto autoResponseScheduleDto : schedule) {
             assertTrue(autoResponseScheduleDto.enabled());
-            VacancyRequest params = autoResponseScheduleDto.params();
+            VacancyRequest params = (VacancyRequest) autoResponseScheduleDto.params();
             assertEquals(vacancyRequest, params);
         }
     }
