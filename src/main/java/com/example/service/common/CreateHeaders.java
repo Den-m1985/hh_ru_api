@@ -35,19 +35,18 @@ public class CreateHeaders {
         );
     }
 
-    // TODO реализовать обновление токена
+
     public Map<String, String> createHeadersSuperjob(SuperjobToken token) {
         if (token == null) {
             throw new RuntimeException("Token for request null");
         }
         if (!superjobTokenService.isTokenGood(token)) {
-            throw new RuntimeException("Нужно обновить токен");
+            token = superjobTokenService.refreshTokens(token);
         }
         return Map.of(
                 "Authorization", "Bearer " + token.getAccessToken(),
                 "X-Api-App-Id", superjobProperties.clientSecret(),
                 "Content-Type", "application/x-www-form-urlencoded"
-
         );
     }
 
