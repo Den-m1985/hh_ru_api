@@ -16,6 +16,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -69,8 +70,18 @@ public class AggregatorParseService {
                 );
                 String title = titleElement.getText();
                 String url = linkElement.getAttribute("href");
-
-                items.add(new AggregatorResponseDto(title, url, null, null, new RecruiterDto("", "", "", "")));
+                RecruiterDto recruiterDto = new RecruiterDto(
+                        1,
+                        LocalDateTime.now(),
+                        LocalDateTime.now(),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                );
+                items.add(new AggregatorResponseDto(title, url, null, null, recruiterDto));
             }
             log.info("Parse items.size: {} for: {}", items.size(), source.getBaseUrl());
             return items;

@@ -28,6 +28,11 @@ public class CompanyService {
                 .orElseThrow(() -> new EntityNotFoundException("Company with name: " + name + " not found"));
     }
 
+    public Company getCompanyById(Integer id) {
+        return companyRepository.findCompanyById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Company with id: " + id + " not found"));
+    }
+
     public CompanyResponseDto addCompany(CompanyResponseDto dto) {
         CompanyCategory category = categoryService.getOrCreateCategory(dto.category());
         List<Recruiter> recruiters = new ArrayList<>();

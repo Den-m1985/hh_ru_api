@@ -2,14 +2,7 @@ package com.example.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
-
-public record RecruiterDto(
-        Integer id,
-
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-
+public record RecruiterRequest(
         @JsonProperty("first_name")
         String firstName,
 
@@ -24,6 +17,6 @@ public record RecruiterDto(
 
         String email,
 
-        String company
+        Integer company
 ) {
 }
