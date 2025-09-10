@@ -30,7 +30,7 @@ public record Vacancy(
         Experience experience,
         MaritalStatus maritalstatus,
         Children children,
-        List<Language> languages,
+        List<List<Language>> languages,
         List<Catalogue> catalogues,
         Boolean is_archive,
         Boolean is_storage,
