@@ -3,6 +3,7 @@ package com.example.service.superjob;
 import com.example.dto.AutoResponseScheduleDto;
 import com.example.dto.superjob.SuperjobVacancyRequest;
 import com.example.model.AutoResponseSchedule;
+import com.example.model.SuperjobResume;
 import com.example.model.User;
 import com.example.repository.AutoResponseScheduleRepository;
 import com.example.service.common.UserService;
@@ -10,6 +11,7 @@ import com.example.service.notify.TelegramUserNotifier;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -57,6 +59,7 @@ public class SuperjobSchedulerService {
 
     @Transactional
     public AutoResponseScheduleDto createOrUpdateSchedule(SuperjobVacancyRequest request, User user) {
+        hasResume(user);
         List<AutoResponseSchedule> existingSchedule = scheduleRepository.findByUserId(user.getId());
         AutoResponseSchedule schedule = null;
         boolean isFind = false;
@@ -92,6 +95,14 @@ public class SuperjobSchedulerService {
         log.info("Расписание {} (ID={}) для userId={} обновлено/создано: enabled={}",
                 schedule.getName(), schedule.getId(), user.getId(), schedule.isEnabled());
         return AutoResponseScheduleDto.fromEntity(schedule);
+    }
+
+    public void hasResume(User user) {
+        user = userService.getUserById(user.getId());
+        List<SuperjobResume> superjobResumes = user.getSuperjobResumes();
+        if (superjobResumes.isEmpty()) {
+            throw new EntityNotFoundException("User don't have resume");
+        }
     }
 
     /**
