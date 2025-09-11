@@ -22,6 +22,9 @@ public class CompanyMapper {
 
     public CompanyResponseDto toDto(Company entity) {
         return new CompanyResponseDto(
+                entity.getId(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
                 entity.getCategory().getName(),
                 entity.getName(),
                 entity.getCompanyUrl(),
@@ -33,16 +36,7 @@ public class CompanyMapper {
     }
 
     public List<CompanyResponseDto> toDto(List<Company> entities) {
-        return entities.stream().map(entity ->
-                new CompanyResponseDto(
-                        entity.getCategory().getName(),
-                        entity.getName(),
-                        entity.getCompanyUrl(),
-                        entity.getCareerUrl(),
-                        entity.getRecruiter().stream()
-                                .map(Recruiter::getId)
-                                .toList())
-        ).toList();
+        return entities.stream().map(this::toDto).toList();
     }
 
 }

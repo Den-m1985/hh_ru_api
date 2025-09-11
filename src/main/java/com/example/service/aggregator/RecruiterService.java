@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -32,8 +33,8 @@ public class RecruiterService {
     }
 
     public List<RecruiterDto> getRecruitersByCompany(Integer companyId) {
-        List<Recruiter> recruiter = recruiterRepository.getRecruitersByCompanyId(companyId);
-        return recruiterMapper.toDto(recruiter);
+        List<Recruiter> recruiters = recruiterRepository.getRecruitersByCompanyId(companyId);
+        return recruiterMapper.toDto(recruiters);
     }
 
     public List<RecruiterDto> findAll() {
@@ -43,7 +44,11 @@ public class RecruiterService {
 
     @Transactional
     public RecruiterDto saveRecruiter(RecruiterRequest request) {
-        Company company = companyService.getCompanyById(request.company());
+       Optional <Company> companyOptional = companyService.getOptionalCompanyById(request.company());
+        Company company = null;
+       if (companyOptional.isPresent()){
+           company = companyOptional.get();
+       }
         Recruiter recruiter = recruiterMapper.toEntity(request, company);
         return recruiterMapper.toDto(recruiter);
     }

@@ -23,6 +23,10 @@ public class RecruiterMapper {
     }
 
     public RecruiterDto toDto(Recruiter recruiter) {
+        String companyName = "";
+        if (recruiter.getCompany() != null){
+            companyName = recruiter.getCompany().getName();
+        }
         return new RecruiterDto(
                 recruiter.getId(),
                 recruiter.getCreatedAt(),
@@ -32,7 +36,7 @@ public class RecruiterMapper {
                 recruiter.getContactTelegram(),
                 recruiter.getContactLinkedIn(),
                 recruiter.getEmail(),
-                recruiter.getCompany().getName()
+                companyName
         );
     }
 

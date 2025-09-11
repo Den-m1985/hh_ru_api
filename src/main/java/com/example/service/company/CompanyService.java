@@ -11,9 +11,11 @@ import com.example.service.aggregator.CompanyCategoryService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,13 +35,21 @@ public class CompanyService {
                 .orElseThrow(() -> new EntityNotFoundException("Company with id: " + id + " not found"));
     }
 
+    public Optional<Company> getOptionalCompanyById(Integer id) {
+        return companyRepository.findCompanyById(id);
+    }
+
+    @Transactional
     public CompanyResponseDto addCompany(CompanyResponseDto dto) {
         CompanyCategory category = categoryService.getOrCreateCategory(dto.category());
         List<Recruiter> recruiters = new ArrayList<>();
-        if (dto.recruiter() != null && !dto.recruiter().isEmpty()) {
-            recruiters = recruiterRepository.findAllById(dto.recruiter());
+        if (dto.recruiters() != null && !dto.recruiters().isEmpty()) {
+            recruiters = recruiterRepository.findAllById(dto.recruiters());
         }
         Company company = companyMapper.toEntity(dto, category, recruiters);
+        for (Recruiter recruiter : recruiters) {
+            recruiter.setCompany(company);
+        }
         company = companyRepository.save(company);
         return companyMapper.toDto(company);
     }
