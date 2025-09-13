@@ -62,4 +62,14 @@ public class CompanyService {
         List<Company> companies = companyRepository.findAll();
         return companyMapper.toDto(companies);
     }
+
+    public List<CompanyResponseDto> getCompaniesByCategories(List<String> categories) {
+        if (categories == null || categories.isEmpty()) {
+           return List.of();
+        }
+        List<Company> companies = companyRepository.findByCategoryNames(categories);
+        return companies.stream()
+                .map(companyMapper::toDto)
+                .toList();
+    }
 }

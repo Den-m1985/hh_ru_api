@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class CompaniesController {
     private final CompanyCategoryService categoryService;
 
 
-    @GetMapping("/{id}/card")
+    @GetMapping("/{id}")
     public ResponseEntity<AggregatorResponseDto> getCompanyCard(@PathVariable Long id) {
         return ResponseEntity.ok().build();
     }
@@ -37,6 +38,11 @@ public class CompaniesController {
     @GetMapping("/all")
     public ResponseEntity<List<CompanyResponseDto>> getAllCompany() {
         return ResponseEntity.ok(companyService.getAllCompanies());
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilters(@RequestParam List<String> categories) {
+        return ResponseEntity.ok(companyService.getCompaniesByCategories(categories));
     }
 
     @PostMapping("/category/add")
