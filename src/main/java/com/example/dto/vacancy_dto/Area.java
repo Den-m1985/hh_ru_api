@@ -1,5 +1,6 @@
 package com.example.dto.vacancy_dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
@@ -38,6 +39,14 @@ public record Area(
 
         @NotBlank
         @Schema(description = "Дочерние регионы", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        List<Area> areas
+        List<Area> areas,
+
+        @Schema(
+                description = "Часовой пояс региона в формате UTC (например, '+03:00')",
+                requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+                example = "+03:00"
+        )
+        @JsonProperty("utc_offset")
+        String utcOffset
 ) {
 }
