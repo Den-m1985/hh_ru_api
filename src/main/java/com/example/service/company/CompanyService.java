@@ -1,5 +1,6 @@
 package com.example.service.company;
 
+import com.example.dto.agregator_dto.CompaniesProfileRequest;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.mapper.CompanyMapper;
 import com.example.model.Company;
