@@ -2,15 +2,14 @@ package com.example.dto.company;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record CompanyResponseDto(
         Integer id,
 
-        LocalDateTime createdAt,
+        String createdAt,
 
-        LocalDateTime updatedAt,
+        String updatedAt,
 
         String category,
 

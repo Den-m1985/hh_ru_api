@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.dto.agregator_dto.AggregatorResponseDto;
 import com.example.dto.agregator_dto.CompanyCategoryDto;
 import com.example.dto.company.CompanyResponseDto;
+import com.example.service.aggregator.CompaniesProfileService;
 import com.example.service.aggregator.CompanyCategoryService;
 import com.example.service.company.CompanyService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.List;
 public class CompaniesController {
     private final CompanyService companyService;
     private final CompanyCategoryService categoryService;
+    private final CompaniesProfileService companiesProfileService;
 
 
     @GetMapping("/{id}")

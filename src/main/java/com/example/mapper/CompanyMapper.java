@@ -6,10 +6,12 @@ import com.example.model.CompanyCategory;
 import com.example.model.Recruiter;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
 public class CompanyMapper {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Company toEntity(CompanyResponseDto dto, CompanyCategory category, List<Recruiter> recruiters) {
         Company company = new Company();
@@ -23,8 +25,8 @@ public class CompanyMapper {
     public CompanyResponseDto toDto(Company entity) {
         return new CompanyResponseDto(
                 entity.getId(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt(),
+                entity.getCreatedAt() != null ? entity.getCreatedAt().format(formatter) : null,
+                entity.getUpdatedAt() != null ? entity.getCreatedAt().format(formatter) : null,
                 entity.getCategory().getName(),
                 entity.getName(),
                 entity.getCompanyUrl(),
