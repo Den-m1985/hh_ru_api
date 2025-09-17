@@ -1,9 +1,6 @@
 package com.example.controller;
 
-import com.example.dto.RecruiterDto;
 import com.example.dto.agregator_dto.AggregatorResponseDto;
-import com.example.dto.agregator_dto.CompaniesProfileRequest;
-import com.example.dto.agregator_dto.CompaniesProfileResponse;
 import com.example.dto.agregator_dto.CompanyCategoryDto;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.service.aggregator.CompaniesProfileService;
@@ -63,10 +60,5 @@ public class CompaniesController {
     @GetMapping("/category/all")
     public ResponseEntity<List<CompanyCategoryDto>> getAllCompanyCategory() {
         return ResponseEntity.ok(categoryService.getAllCompaniesCategory());
-    }
-
-    @PostMapping("/profile")
-    public ResponseEntity<CompaniesProfileResponse> getCompaniesProfile(@RequestBody CompaniesProfileRequest request) {
-        return ResponseEntity.ok(companiesProfileService.getCompaniesProfile(request));
     }
 }
