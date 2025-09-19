@@ -27,6 +27,8 @@ public class RecruiterController implements RecruiterApi {
         return ResponseEntity.ok(recruiterService.getRecruiterInfo(id));
     }
 
+    // TODO find by name/email ...
+
     @GetMapping("/all")
     public ResponseEntity<List<RecruiterDto>> getAllRecruiters() {
         return ResponseEntity.ok(recruiterService.findAll());

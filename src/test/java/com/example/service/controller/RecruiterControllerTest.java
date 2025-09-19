@@ -4,6 +4,7 @@ import com.example.dto.RecruiterRequest;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.model.Recruiter;
 import com.example.repository.RecruiterRepository;
+import com.example.service.aggregator.RecruiterService;
 import com.example.service.company.CompanyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,8 @@ class RecruiterControllerTest {
     private RecruiterRepository recruiterRepository;
     @Autowired
     private CompanyService companyService;
+    @Autowired
+    private RecruiterService recruiterService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String endpointBase = "/v1/recruiters/";
@@ -52,13 +55,15 @@ class RecruiterControllerTest {
     @Test
     @WithMockUser
     void shouldReturnRecruiter() throws Exception {
-        Recruiter recruiter = new Recruiter();
-        recruiter = recruiterRepository.save(recruiter);
+        recruiterService.saveRecruiter(new RecruiterRequest(
+                "firstName", "lastName", null, null, null, null));
+        List<Recruiter> a = recruiterRepository.findAll();
+        Recruiter recruiter = a.get(0);
         mockMvc.perform(get(endpointBase + recruiter.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(recruiter.getId()));
-
+                .andExpect(jsonPath("$.id").value(recruiter.getId()))
+                .andExpect(jsonPath("$.first_name").value(recruiter.getFirstName()));
     }
 
     @Test
