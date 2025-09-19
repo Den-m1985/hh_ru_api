@@ -1,10 +1,12 @@
 package com.example.controller;
 
+import com.example.controller.interfaces.RecruiterApi;
 import com.example.dto.RecruiterDto;
 import com.example.dto.RecruiterRequest;
 import com.example.service.aggregator.RecruiterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,13 +19,15 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/recruiters")
-public class RecruiterController {
+public class RecruiterController implements RecruiterApi {
     private final RecruiterService recruiterService;
 
     @GetMapping("/{id}")
     public ResponseEntity<RecruiterDto> getRecruiterById(@PathVariable Integer id) {
         return ResponseEntity.ok(recruiterService.getRecruiterInfo(id));
     }
+
+    // TODO find by name/email ...
 
     @GetMapping("/all")
     public ResponseEntity<List<RecruiterDto>> getAllRecruiters() {
@@ -38,5 +42,11 @@ public class RecruiterController {
     @PostMapping("/add")
     public ResponseEntity<RecruiterDto> addRecruiter(@RequestBody RecruiterRequest request) {
         return ResponseEntity.ok(recruiterService.saveRecruiter(request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRecruiter(@PathVariable Integer id) {
+        recruiterService.deleteRecruiter(id);
+        return ResponseEntity.noContent().build();
     }
 }

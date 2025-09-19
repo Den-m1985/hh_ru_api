@@ -20,7 +20,7 @@ public class CompaniesProfileService {
 
     public CompaniesProfileResponse getCompaniesProfile(CompaniesProfileRequest request) {
         ExperienceGrade experience = experienceGradeService.getExperienceGradeById(request.experienceGrade());
-        CompetencyMatrix competency = competencyMatrixService.getCompetencyMatrix(request.specialization());
+        CompetencyMatrix competency = competencyMatrixService.getCompetencyMatrixBySpec(request.specialization());
 
         List<CompanyResponseDto> arrayOfCompanies = companyService.getCompaniesByCategories(request.categories());
         return companiesProfileMapper(experience, competency, arrayOfCompanies);
