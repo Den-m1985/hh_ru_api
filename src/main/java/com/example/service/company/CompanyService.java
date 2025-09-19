@@ -1,6 +1,5 @@
 package com.example.service.company;
 
-import com.example.dto.agregator_dto.CompaniesProfileRequest;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.mapper.CompanyMapper;
 import com.example.model.Company;
@@ -32,7 +31,7 @@ public class CompanyService {
     }
 
     public Company getCompanyById(Integer id) {
-        return companyRepository.findCompanyById(id)
+       return companyRepository.findCompanyById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Company with id: " + id + " not found"));
     }
 
@@ -64,6 +63,11 @@ public class CompanyService {
         return companyMapper.toDto(companies);
     }
 
+    public CompanyResponseDto getCompanyDto(Integer id) {
+        Company company = getCompanyById(id);
+        return companyMapper.toDto(company);
+    }
+
     public List<CompanyResponseDto> getCompaniesByCategories(List<String> categories) {
         if (categories == null || categories.isEmpty()) {
            return List.of();
@@ -72,5 +76,10 @@ public class CompanyService {
         return companies.stream()
                 .map(companyMapper::toDto)
                 .toList();
+    }
+
+    public void deleteCompany(Integer id){
+        Company company = getCompanyById(id);
+        companyRepository.delete(company);
     }
 }

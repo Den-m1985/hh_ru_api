@@ -44,13 +44,18 @@ public class RecruiterService {
 
     @Transactional
     public RecruiterDto saveRecruiter(RecruiterRequest request) {
-       Optional <Company> companyOptional = companyService.getOptionalCompanyById(request.company());
+        Optional<Company> companyOptional = companyService.getOptionalCompanyById(request.company());
         Company company = null;
-       if (companyOptional.isPresent()){
-           company = companyOptional.get();
-       }
+        if (companyOptional.isPresent()) {
+            company = companyOptional.get();
+        }
         Recruiter recruiter = recruiterMapper.toEntity(request, company);
+        recruiter = recruiterRepository.save(recruiter);
         return recruiterMapper.toDto(recruiter);
     }
 
+    public void deleteRecruiter(Integer id) {
+        Recruiter recruiter = getRecruiterById(id);
+        recruiterRepository.delete(recruiter);
+    }
 }
