@@ -68,6 +68,30 @@ class RecruiterControllerTest {
 
     @Test
     @WithMockUser
+    void shouldReturnRecruiterByEmail() throws Exception {
+        String email = "test@email.com";
+        recruiterService.saveRecruiter(new RecruiterRequest(
+                "firstName", "lastName", null, null, email, null));
+        mockMvc.perform(get(endpointBase + "/email/" + email)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value(email));
+    }
+
+    @Test
+    @WithMockUser
+    void shouldReturnRecruiterByTelegram() throws Exception {
+        String telegram = "@telegram";
+        recruiterService.saveRecruiter(new RecruiterRequest(
+                "firstName", "lastName", telegram, null, null, null));
+        mockMvc.perform(get(endpointBase + "/telegram/" + telegram)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contact_telegram").value(telegram));
+    }
+
+    @Test
+    @WithMockUser
     void shouldReturnAllRecruiters() throws Exception {
         Recruiter recruiter1 = new Recruiter();
         Recruiter recruiter2 = new Recruiter();

@@ -27,7 +27,20 @@ public class RecruiterController implements RecruiterApi {
         return ResponseEntity.ok(recruiterService.getRecruiterInfo(id));
     }
 
-    // TODO find by name/email ...
+    @GetMapping("/email/{email}")
+    public ResponseEntity<RecruiterDto> getRecruiterByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(recruiterService.getRecruiterByEmail(email));
+    }
+
+    @GetMapping("/telegram/{telegram}")
+    public ResponseEntity<RecruiterDto> getRecruiterByTelegram(@PathVariable String telegram) {
+        return ResponseEntity.ok(recruiterService.getRecruiterByTelegram(telegram));
+    }
+
+    @GetMapping("/linkedIn/{linkedIn}")
+    public ResponseEntity<RecruiterDto> getRecruiterByLinkedIn(@PathVariable String linkedIn) {
+        return ResponseEntity.ok(recruiterService.getRecruiterByLinkedIn(linkedIn));
+    }
 
     @GetMapping("/all")
     public ResponseEntity<List<RecruiterDto>> getAllRecruiters() {
