@@ -37,6 +37,24 @@ public class RecruiterService {
         return recruiterMapper.toDto(recruiters);
     }
 
+    public RecruiterDto getRecruiterByEmail(String email) {
+        Recruiter recruiter = recruiterRepository.getRecruiterByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Recruiter with email: " + email + " not found"));
+        return recruiterMapper.toDto(recruiter);
+    }
+
+    public RecruiterDto getRecruiterByTelegram(String telegram) {
+        Recruiter recruiter = recruiterRepository.getRecruitersByTelegram(telegram)
+                .orElseThrow(() -> new EntityNotFoundException("Recruiter with telegram: " + telegram + " not found"));
+        return recruiterMapper.toDto(recruiter);
+    }
+
+    public RecruiterDto getRecruiterByLinkedIn(String linkedIn) {
+        Recruiter recruiter = recruiterRepository.getRecruitersByLinkedIn(linkedIn)
+                .orElseThrow(() -> new EntityNotFoundException("Recruiter with linkedIn: " + linkedIn + " not found"));
+        return recruiterMapper.toDto(recruiter);
+    }
+
     public List<RecruiterDto> findAll() {
         List<Recruiter> array = recruiterRepository.findAll();
         return recruiterMapper.toDto(array);
