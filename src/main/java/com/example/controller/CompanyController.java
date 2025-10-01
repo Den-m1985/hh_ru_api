@@ -4,6 +4,7 @@ import com.example.controller.interfaces.CompanyApi;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.service.company.CompanyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,6 +33,24 @@ public class CompanyController implements CompanyApi {
     @PostMapping("/add")
     public ResponseEntity<CompanyResponseDto> addCompany(@RequestBody CompanyResponseDto response) {
         return ResponseEntity.ok(companyService.addCompany(response));
+    }
+
+    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CompanyResponseDto> addCompany(
+            @RequestPart("companyData") CompanyResponseDto response,
+            @RequestPart(value = "logoFile", required = false) MultipartFile logoFile
+    ) {
+        CompanyResponseDto updatedCompany = companyService.addCompany(response, logoFile);
+        return ResponseEntity.ok(updatedCompany);
+    }
+
+    @PostMapping("/{companyId}/logo")
+    public ResponseEntity<CompanyResponseDto> uploadLogo(
+            @PathVariable Integer companyId,
+            @RequestPart("File") MultipartFile file
+    ) {
+        CompanyResponseDto updatedCompany = companyService.updateCompanyLogo(companyId, file);
+        return ResponseEntity.ok(updatedCompany);
     }
 
     @GetMapping("/all")

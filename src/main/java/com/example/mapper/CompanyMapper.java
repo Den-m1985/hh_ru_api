@@ -13,11 +13,12 @@ import java.util.List;
 public class CompanyMapper {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public Company toEntity(CompanyResponseDto dto, CompanyCategory category, List<Recruiter> recruiters) {
+    public Company toEntity(CompanyResponseDto dto, CompanyCategory category, List<Recruiter> recruiters, String logofile) {
         Company company = new Company();
         company.setCategory(category);
         company.setName(dto.name());
         company.setCareerUrl(dto.careerUrl());
+        company.setLogoPath(logofile);
         company.setRecruiter(recruiters);
         return company;
     }
@@ -31,6 +32,7 @@ public class CompanyMapper {
                 entity.getName(),
                 entity.getCompanyUrl(),
                 entity.getCareerUrl(),
+                entity.getLogoPath(),
                 entity.getRecruiter().stream()
                         .map(Recruiter::getId)
                         .toList()

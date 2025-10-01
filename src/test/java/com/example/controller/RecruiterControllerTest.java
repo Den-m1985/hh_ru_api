@@ -1,4 +1,4 @@
-package com.example.service.controller;
+package com.example.controller;
 
 import com.example.dto.RecruiterRequest;
 import com.example.dto.company.CompanyResponseDto;
@@ -116,6 +116,7 @@ class RecruiterControllerTest {
                 null,
                 "IT",
                 companyName,
+                null,
                 null,
                 null,
                 List.of(recruiters.get(0).getId(), recruiters.get(1).getId()));

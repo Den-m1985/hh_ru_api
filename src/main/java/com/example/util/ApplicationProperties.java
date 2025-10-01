@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "application")
 public class ApplicationProperties {
+    private String storageDir;
     private String prePrompt;
     private float applyIntervalMin;
     private float applyIntervalMax;

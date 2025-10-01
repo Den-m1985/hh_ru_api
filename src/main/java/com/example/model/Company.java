@@ -31,6 +31,9 @@ public class Company extends BaseEntity {
     @Column(name = "career_url")
     private String careerUrl;
 
+    @Column(name = "logo_path")
+    private String logoPath;
+
     @OneToMany(mappedBy = "company", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Recruiter> recruiter;
 }
