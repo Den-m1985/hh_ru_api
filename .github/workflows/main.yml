@@ -87,7 +87,7 @@ jobs:
               --env "TELEGRAM_BOT_NAME=${{ secrets.TELEGRAM_BOT_NAME }}" \
               --env "SUPPER_ADMIN_PASSWORD=${{ secrets.SUPPER_ADMIN_PASSWORD }}" \
               --env "ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}" \
-              --env "APP_STORAGE_DIR=/data/vaity/files" \ 
+              --env "APP_STORAGE_DIR=/data/vaity/files" \
               --env-file .env \
               -v /var/lib/vaity/files:/data/vaity/files \
               --network=hh_network \
