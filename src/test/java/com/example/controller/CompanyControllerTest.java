@@ -294,7 +294,7 @@ class CompanyControllerTest {
         MockMultipartFile companyDataPart = new MockMultipartFile(
                 "companyData", null, MediaType.APPLICATION_JSON, companyDataJson.getBytes());
 
-        mockMvc.perform(multipart(endpointBase + "/add")
+        mockMvc.perform(multipart(endpointBase + "/add/with-logo")
                         .file(logoFile)
                         .file(companyDataPart)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
