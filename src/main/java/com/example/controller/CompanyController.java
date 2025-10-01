@@ -35,10 +35,10 @@ public class CompanyController implements CompanyApi {
         return ResponseEntity.ok(companyService.addCompany(response));
     }
 
-    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/add/with-logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CompanyResponseDto> addCompany(
             @RequestPart("companyData") CompanyResponseDto response,
-            @RequestPart(value = "logoFile", required = false) MultipartFile logoFile
+            @RequestPart(value = "logoFile") MultipartFile logoFile
     ) {
         CompanyResponseDto updatedCompany = companyService.addCompany(response, logoFile);
         return ResponseEntity.ok(updatedCompany);
