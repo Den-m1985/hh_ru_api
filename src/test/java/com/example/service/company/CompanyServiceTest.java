@@ -4,6 +4,8 @@ import com.example.dto.company.CompanyResponseDto;
 import com.example.model.Company;
 import com.example.repository.CompanyCategoryRepository;
 import com.example.repository.CompanyRepository;
+import com.example.service.common.FileStorageService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -12,6 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,11 +35,32 @@ class CompanyServiceTest {
     private CompanyCategoryRepository companyCategoryRepository;
     @Autowired
     private CompanyService companyService;
+    @Autowired
+    private FileStorageService fileStorageService;
+
+    Path tempDir;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IllegalAccessException, IOException, NoSuchFieldException {
         companyRepository.deleteAll();
         companyCategoryRepository.deleteAll();
+
+        tempDir = Files.createTempDirectory("filestorage-test-");
+        java.lang.reflect.Field storageDirField = FileStorageService.class.getDeclaredField("storageDir");
+        storageDirField.setAccessible(true);
+        storageDirField.set(fileStorageService, tempDir);
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        Files.walk(tempDir)
+                .forEach(path -> {
+                    try {
+                        Files.deleteIfExists(path);
+                    } catch (IOException ignored) {
+                        // Ignore cleanup errors
+                    }
+                });
     }
 
     // --- СЦЕНАРИЙ 1: УСПЕШНОЕ ОБНОВЛЕНИЕ ЛОГОТИПА ---

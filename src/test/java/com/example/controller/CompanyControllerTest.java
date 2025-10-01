@@ -5,8 +5,10 @@ import com.example.model.Company;
 import com.example.model.CompanyCategory;
 import com.example.repository.CompanyCategoryRepository;
 import com.example.repository.CompanyRepository;
+import com.example.service.common.FileStorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.core.MediaType;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -41,31 +43,33 @@ class CompanyControllerTest {
     private CompanyRepository companyRepository;
     @Autowired
     private CompanyCategoryRepository companyCategoryRepository;
+    @Autowired
+    private FileStorageService fileStorageService;
 
+    Path tempDir;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String endpointBase = "/v1/companies";
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException, IllegalAccessException, NoSuchFieldException {
         companyRepository.deleteAll();
         companyCategoryRepository.deleteAll();
-        // Очищаем директорию с логотипами после каждого теста
-        try {
-            Path logosDir = Paths.get("logos");
-            if (Files.exists(logosDir)) {
-                Files.walk(logosDir)
-                        .filter(Files::isRegularFile)
-                        .forEach(path -> {
-                            try {
-                                Files.delete(path);
-                            } catch (Exception e) {
-                                // Ignore cleanup errors
-                            }
-                        });
-            }
-        } catch (Exception e) {
-            // Ignore cleanup errors
-        }
+        tempDir = Files.createTempDirectory("filestorage-test-");
+        java.lang.reflect.Field storageDirField = FileStorageService.class.getDeclaredField("storageDir");
+        storageDirField.setAccessible(true);
+        storageDirField.set(fileStorageService, tempDir);
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        Files.walk(tempDir)
+                .forEach(path -> {
+                    try {
+                        Files.deleteIfExists(path);
+                    } catch (IOException ignored) {
+                        // Ignore cleanup errors
+                    }
+                });
     }
 
     @Test
