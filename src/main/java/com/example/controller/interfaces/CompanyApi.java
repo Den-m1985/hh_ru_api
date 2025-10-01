@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,7 +30,7 @@ public interface CompanyApi {
 
 
     @Operation(
-            summary = "Добавить компанию",
+            summary = "Добавить компанию без логотипа",
             description = "Создаёт новую компанию на основе переданных данных."
     )
     @ApiResponse(
@@ -36,6 +38,34 @@ public interface CompanyApi {
             content = @Content(schema = @Schema(implementation = CompanyResponseDto.class))
     )
     ResponseEntity<CompanyResponseDto> addCompany(@RequestBody CompanyResponseDto response);
+
+
+    @Operation(
+            summary = "Добавить компанию с логотипом",
+            description = "Создаёт новую компанию на основе переданных данных."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(schema = @Schema(implementation = CompanyResponseDto.class))
+    )
+    ResponseEntity<CompanyResponseDto> addCompany(
+            @RequestPart("companyData") CompanyResponseDto response,
+            @RequestPart(value = "logoFile", required = false) MultipartFile logoFile
+    );
+
+
+    @Operation(
+            summary = "Добавить логотип в существующюю компанию",
+            description = "Создаёт новую компанию на основе переданных данных."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(schema = @Schema(implementation = CompanyResponseDto.class))
+    )
+    ResponseEntity<CompanyResponseDto> uploadLogo(
+            @PathVariable Integer companyId,
+            @RequestPart("File") MultipartFile file
+    );
 
 
     @Operation(

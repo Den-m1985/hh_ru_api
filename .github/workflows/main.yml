@@ -78,12 +78,24 @@ jobs:
             docker load -i ~/hh-ru-api.tar
             docker stop hh-ru-api || true
             docker rm hh-ru-api || true
+            
+            mkdir -p /var/lib/vaity/files
+            chmod -R 777 /var/lib/vaity/files
+            
             docker run -d \
               --env "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" \
               --env "TELEGRAM_BOT_NAME=${{ secrets.TELEGRAM_BOT_NAME }}" \
               --env "SUPPER_ADMIN_PASSWORD=${{ secrets.SUPPER_ADMIN_PASSWORD }}" \
               --env "ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}" \
+            
+              # Указываем Spring Boot, куда записывать файлы внутри контейнера
+              --env "APP_STORAGE_DIR=/data/vaity/files" \ 
+            
               --env-file .env \
+            
+              # Монтируем внешний каталог хоста (:) внутрений путь контейнера
+              -v /var/lib/vaity/files:/data/vaity/files \
+            
               --network=hh_network \
               -p 8080:8080 \
               --name hh-ru-api hh-ru-api:latest

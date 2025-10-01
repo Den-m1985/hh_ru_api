@@ -1,4 +1,4 @@
-package com.example.service.controller;
+package com.example.controller;
 
 import com.example.dto.agregator_dto.CompaniesProfileRequest;
 import com.example.dto.agregator_dto.CompaniesProfileResponse;
@@ -82,7 +82,7 @@ class CompanyReviewControllerTest {
                 company.getId(),
                 company.getCreatedAt() != null ? company.getCreatedAt().format(formatter) : null,
                 company.getUpdatedAt() != null ? company.getCreatedAt().format(formatter) : null,
-                bigTech.getName(), company.getName(), company.getCompanyUrl(), company.getCareerUrl(), List.of()
+                bigTech.getName(), company.getName(), company.getCompanyUrl(), company.getCareerUrl(), company.getLogoPath(), List.of()
         );
 
         CompaniesProfileRequest companiesProfileRequest = new CompaniesProfileRequest(

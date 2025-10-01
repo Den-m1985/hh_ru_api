@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.FileNotFoundException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,6 +31,11 @@ public class GlobalExceptionHandler {
 
         log.error(exception.getMessage());
 
+        if (exception instanceof IllegalArgumentException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+            return errorDetail;
+        }
+
         if (exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
             errorDetail.setProperty("description", "The username or password is incorrect");
@@ -37,8 +43,13 @@ public class GlobalExceptionHandler {
         }
 
         if (exception instanceof EntityNotFoundException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
             errorDetail.setProperty("description", "The username or password is incorrect");
+            return errorDetail;
+        }
+
+        if (exception instanceof FileNotFoundException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
             return errorDetail;
         }
 
@@ -97,6 +108,12 @@ public class GlobalExceptionHandler {
         if (exception instanceof TelegramApiException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
             errorDetail.setProperty("description", "Telegram error");
+            return errorDetail;
+        }
+
+        if (exception instanceof FileStorageException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INSUFFICIENT_STORAGE, exception.getMessage());
+            errorDetail.setProperty("description", "File error");
             return errorDetail;
         }
 

@@ -54,6 +54,7 @@ superjob:
   user-agent: ${USER_AGENT}
 
 application:
+  storage_dir: ${APP_STORAGE_DIR}
   prePrompt: ${APP_PRE_PROMPT}
   apply-interval-min: ${APP_APPLY_INTERVAL_MIN}
   apply-interval-max: ${APP_APPLY_INTERVAL_MAX}

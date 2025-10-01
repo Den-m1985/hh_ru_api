@@ -21,6 +21,9 @@ public record CompanyResponseDto(
         @JsonProperty("career_url")
         String careerUrl,
 
+        @JsonProperty("logo_url")
+        String logoUrl,
+
         List<Integer> recruiters
 ) {
 }

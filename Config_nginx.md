@@ -17,15 +17,14 @@ server {
     root /var/www;
     index index.html;
 
-    # Фронт доступен по https://вайти.tech/vaiti-web/
-    location /vaiti-web/ {
-        alias /var/www/;
-        try_files $uri $uri/ =404;
+    # Фронт работает по /*
+    location / {
+        try_files $uri $uri/ /index.html;
     }
 
-    # Все остальные запросы идут на Spring Boot (порт 8080)
-    location / {
-        proxy_pass http://localhost:8080/;
+    # Все остальные запросы проксируются на Spring Boot
+    location /v1/ {
+        proxy_pass http://localhost:8080/v1/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -33,7 +32,7 @@ server {
     }
 }
 
-# Автоматический редирект с http → https
+# (опционально) редирект http → https
 server {
     listen 80;
     server_name xn--80adtd9b.tech www.xn--80adtd9b.tech;
