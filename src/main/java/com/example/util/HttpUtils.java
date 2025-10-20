@@ -20,7 +20,7 @@ public class HttpUtils {
         try {
             return sendRequest(url, method, headers, body, typeReference);
         } catch (IOException | InterruptedException e) {
-            log.error("Request failed. Method: {}, url: {}, message: {} ", method, url, e.getMessage());
+            log.error("Request failed. Method: {}, url: {}, message: {}", method, url, e.getMessage(), e);
         }
         return null;
 
