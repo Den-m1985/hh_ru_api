@@ -1,16 +1,13 @@
 package com.example.dto.agregator_dto;
 
+import com.example.dto.it_map.CompetencyAreasResponse;
+
+import java.util.List;
+
 public record CompetencyMatrixResponse(
         Integer id,
-
-        String createdAt,
-
-        String updatedAt,
-
         String specialization,
-
-        String competencies,
-
-        String technicalQuestions
+        String experienceGrade,
+        List<CompetencyAreasResponse> competencyAreas
 ) {
 }

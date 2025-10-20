@@ -1,14 +1,13 @@
 package com.example.dto.agregator_dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.example.dto.it_map.CompetencyAreasRequest;
+
+import java.util.List;
 
 public record CompetencyMatrixRequest(
-
+        Integer id,
         String specialization,
 
-        String competencies,
-
-        @JsonProperty("technical_questions")
-        String technicalQuestions
+        List<CompetencyAreasRequest> competencies
 ) {
 }

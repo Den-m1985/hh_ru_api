@@ -111,6 +111,11 @@ public class GlobalExceptionHandler {
             return errorDetail;
         }
 
+        if (exception instanceof CompanyCreationException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+            return errorDetail;
+        }
+
         if (exception instanceof FileStorageException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INSUFFICIENT_STORAGE, exception.getMessage());
             errorDetail.setProperty("description", "File error");
