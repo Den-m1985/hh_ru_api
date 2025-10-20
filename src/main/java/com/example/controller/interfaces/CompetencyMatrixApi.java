@@ -2,11 +2,14 @@ package com.example.controller.interfaces;
 
 import com.example.dto.agregator_dto.CompetencyMatrixRequest;
 import com.example.dto.agregator_dto.CompetencyMatrixResponse;
+import com.example.dto.it_map.CompetencyAreasResponse;
+import com.example.dto.it_map.CompetencyMatrixFilterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,15 +29,18 @@ public interface CompetencyMatrixApi {
     ResponseEntity<CompetencyMatrixResponse> getCompetencyMatrixById(@PathVariable Integer id);
 
 
+
     @Operation(
-            summary = "Получить матрицу компетенций по специализации",
-            description = "Возвращает матрицу компетенций по названию специализации (например, Backend, Frontend, QA)."
+            summary = "Получить матрицу компетенций по специализации и опыту",
+            description = "Возвращает матрицу компетенций по названию специализации (например, Backend, Frontend, QA) и опыту (junior, middle)"
     )
     @ApiResponse(
             responseCode = "200",
-            content = @Content(schema = @Schema(implementation = CompetencyMatrixResponse.class))
+            content = @Content(schema = @Schema(implementation = CompetencyAreasResponse.class))
     )
-    ResponseEntity<CompetencyMatrixResponse> getCompetencyBySpecialisation(@PathVariable String specialization);
+    ResponseEntity<List<CompetencyAreasResponse>> getFilteredCompetencyMatrix(
+            @RequestBody @Valid CompetencyMatrixFilterRequest request);
+
 
 
     @Operation(
@@ -49,23 +55,41 @@ public interface CompetencyMatrixApi {
             required = true,
             content = @Content(
                     mediaType = "application/json",
+                    schema = @Schema(implementation = CompetencyMatrixRequest.class),
                     examples = {
                             @ExampleObject(
-                                    name = "Backend-разработчик",
-                                    summary = "Пример для Backend",
-                                    description = "Пример запроса для создания матрицы компетенций Backend",
+                                    name = "Frontend-разработчик",
+                                    summary = "Пример для Frontend",
+                                    description = "Пример запроса для создания матрицы компетенций Frontend",
                                     value = """
+                                        {
+                                          "id": null,
+                                          "specialization": "Frontend",
+                                          "competencies": [
                                             {
-                                              "specialization": "Java",
-                                              "competencies": "https://link to competencies",
-                                              "technical_questions": "https://link to technical questions"
+                                              "id": null,
+                                              "area": "HTML & CSS",
+                                              "competencies": [
+                                                {
+                                                  "id": null,
+                                                  "name": "Семантика",
+                                                  "experienceGradeId": 1,
+                                                  "experienceGradeName": "JUNIOR",
+                                                  "attribute": [
+                                                    "<header>, <section>, <footer>"
+                                                  ]
+                                                }
+                                              ]
                                             }
-                                            """
+                                          ]
+                                        }
+                                        """
                             )
                     }
             )
     )
     ResponseEntity<CompetencyMatrixResponse> addCompetencyMatrix(@RequestBody CompetencyMatrixRequest request);
+
 
 
     @Operation(
@@ -77,6 +101,7 @@ public interface CompetencyMatrixApi {
             content = @Content(schema = @Schema(implementation = CompetencyMatrixResponse.class))
     )
     ResponseEntity<List<CompetencyMatrixResponse>> getAllCompetencyMatrix();
+
 
 
     @Operation(summary = "Удалить матрицу компетенций")
