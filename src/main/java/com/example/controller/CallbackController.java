@@ -116,7 +116,7 @@ public class CallbackController implements CallBackApi {
                     <script>
                         if (window.opener) {
                             // Отправляем сообщение родительскому окну, если оно есть
-                            window.opener.postMessage('superjob_auth_success', '*');
+                            window.opener.postMessage('sj_auth_success', '*');
                             window.close(); // Закрываем текущее окно
                         } else {
                             // Если страница открыта напрямую, показываем сообщение об ошибке
