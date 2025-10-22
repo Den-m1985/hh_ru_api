@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v1/users/**").permitAll()
                         .requestMatchers("/v1/telegram/auth").permitAll()
-                        .requestMatchers("/callback/**").permitAll()
+                        .requestMatchers("/v1/callback/**").permitAll()
                         .requestMatchers(whiteListSwagger).permitAll()
                         .anyRequest().authenticated()
                 )
