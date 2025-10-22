@@ -1,11 +1,13 @@
 package com.example.dto.vacancy_dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record Area(
         @NotBlank
         @Schema(
@@ -14,6 +16,20 @@ public record Area(
                 example = "1"
         )
         String id,
+
+        @NotBlank
+        @Schema(
+                description = "Широта региона",
+                requiredMode = Schema.RequiredMode.NOT_REQUIRED
+        )
+        Double lat,
+
+        @NotBlank
+        @Schema(
+                description = "Долгота региона",
+                requiredMode = Schema.RequiredMode.NOT_REQUIRED
+        )
+        Double lng,
 
         @NotBlank
         @Schema(
