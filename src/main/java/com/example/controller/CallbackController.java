@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/callback")
+@RequestMapping("/v1")
 public class CallbackController implements CallBackApi {
     private final CallBackService callBackService;
 
     // TODO применить стратегию и фабрику через интерфейс
 
-    @GetMapping
+    @GetMapping("/callback")
     public ResponseEntity<String> callback(@RequestParam String code, @RequestParam String state) {
         callBackService.authenticate(ApiProvider.HEADHUNTER, code, state);
         HttpHeaders headers = new HttpHeaders();
@@ -74,7 +74,7 @@ public class CallbackController implements CallBackApi {
         return new ResponseEntity<>(htmlContent, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/superjob")
+    @GetMapping("/callback/superjob")
     public ResponseEntity<String> callbackSuperJob(
             @RequestParam @NotBlank String code,
             @RequestParam @NotBlank String state
