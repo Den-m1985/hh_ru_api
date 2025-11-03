@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exceptions.FileStorageException;
 import com.example.service.common.FileStorageService;
 import com.example.util.ApplicationProperties;
 import org.junit.jupiter.api.AfterEach;
@@ -104,7 +105,7 @@ class FileStorageServiceTest {
 
     @Test
     void shouldThrowFileNotFoundExceptionWhenResourceDoesNotExist() {
-        assertThrows(FileNotFoundException.class, () -> {
+        assertThrows(FileStorageException.class, () -> {
             fileStorageService.downloadFile("notfound.txt");
         });
     }

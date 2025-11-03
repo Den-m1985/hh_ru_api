@@ -1,5 +1,6 @@
 package com.example.dto;
 
+import com.example.dto.superjob.SuperjobVacancyRequest;
 import com.example.model.AutoResponseSchedule;
 
 import java.io.Serializable;
@@ -11,7 +12,8 @@ public record AutoResponseScheduleDto(
         boolean enabled,
         Object params,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        String provider
 ) implements Serializable {
     public static AutoResponseScheduleDto fromEntity(AutoResponseSchedule schedule) {
         return new AutoResponseScheduleDto(
@@ -20,7 +22,8 @@ public record AutoResponseScheduleDto(
                 schedule.isEnabled(),
                 extractParams(schedule),
                 schedule.getCreatedAt(),
-                schedule.getUpdatedAt()
+                schedule.getUpdatedAt(),
+                extractProvider(schedule)
         );
     }
 
@@ -31,5 +34,15 @@ public record AutoResponseScheduleDto(
         } catch (ClassNotFoundException e) {
             return null;
         }
+    }
+
+    private static String extractProvider(AutoResponseSchedule schedule) {
+            String paramType= schedule.getParamsType();
+            if (paramType.equals(VacancyRequest.class.getName())){
+                return "hh";
+            } else if (paramType.equals(SuperjobVacancyRequest.class.getName())) {
+                return "sj";
+            }
+            return null;
     }
 }
