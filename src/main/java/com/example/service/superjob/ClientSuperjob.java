@@ -1,5 +1,6 @@
 package com.example.service.superjob;
 
+import com.example.dto.VacancyHistoryDto;
 import com.example.dto.superjob.SendCvOnVacancyResponse;
 import com.example.dto.superjob.SuperjobResumeDto;
 import com.example.dto.superjob.SuperjobVacancyRequest;
@@ -10,12 +11,15 @@ import com.example.dto.superjob.resume.SuperJobResumeResponse;
 import com.example.model.SuperjobResume;
 import com.example.model.SuperjobToken;
 import com.example.model.User;
+import com.example.service.VacancyHistoryService;
 import com.example.service.common.UserService;
 import com.example.service.notify.NotificationService;
 import com.example.util.RequestTemplates;
 import com.example.util.SuperjobProperties;
 import com.example.util.SuperjobVacancyUrlBuilder;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,15 +36,17 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ClientSuperjob {
-    private final NotificationService notificationService;
-    private final RequestTemplates requestTemplates;
-    private final SuperjobTokenService superjobTokenService;
-    private final SuperjobProperties superjobProperties;
-    private final SuperjobResumeService superjobResumeService;
-    private final UserService userService;
-    private final SuperjobVacancyFilter superjobVacancyFilter;
-    private final SuperjobVacancyUrlBuilder superjobVacancyUrlBuilder;
+    NotificationService notificationService;
+    RequestTemplates requestTemplates;
+    SuperjobTokenService superjobTokenService;
+    SuperjobProperties superjobProperties;
+    SuperjobResumeService superjobResumeService;
+    UserService userService;
+    SuperjobVacancyFilter superjobVacancyFilter;
+    SuperjobVacancyUrlBuilder superjobVacancyUrlBuilder;
+    VacancyHistoryService historyService;
 
     public void sendCvOnVacancy(SuperjobVacancyRequest request, User user) {
         SuperjobToken superjobToken = superjobTokenService.getTokenFromDb(user);
@@ -60,6 +66,7 @@ public class ClientSuperjob {
                 SendCvOnVacancyResponse response = requestTemplates.postRequestToSuperjob(url, superjobToken, body);
                 if (response.result() != null && response.result()) {
                     reportList.add("✅ откликнулся на вакансию: " + vacancy.external_url());
+                    historyService.addHistory(new VacancyHistoryDto(null, "sj", vacancy.external_url(), null), user);
                 } else if (response.error() != null) {
                     log.error("Ошибка: {} - {}*****  вакансия: {} {}", response.error().code(), response.error().message(), vacancy.id(), vacancy.external_url());
                     reportList.add("❌ не смог откликнутся на вакансию: " + vacancy.external_url());

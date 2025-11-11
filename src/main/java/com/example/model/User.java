@@ -83,4 +83,7 @@ public class User extends BaseEntity implements Serializable {
 
     @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     private TelegramChat telegramChat;
+
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
+    private List<VacancyHistory> vacancyHistory;
 }
