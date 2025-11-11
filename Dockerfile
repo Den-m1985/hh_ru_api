@@ -12,7 +12,7 @@ WORKDIR /app
 RUN mvn clean package
 
 # Создаем новый образ, используя JRE
-FROM openjdk:17-oracle
+FROM amazoncorretto:17-alpine3.20
 
 # Копируем собранный JAR файл из предыдущего образа в новый образ
 COPY --from=build /app/target/*.jar /app/app.jar
