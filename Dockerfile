@@ -12,7 +12,7 @@ WORKDIR /app
 RUN mvn clean package
 
 # Создаем новый образ, используя JRE
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jre-slim
 
 # Копируем собранный JAR файл из предыдущего образа в новый образ
 COPY --from=build /app/target/*.jar /app/app.jar
