@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 @NoArgsConstructor
-@Table(name = "vacancy_responses")
+@Table(name = "vacancy_history")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VacancyHistory extends BaseEntity implements Serializable {
 
