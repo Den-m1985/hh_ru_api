@@ -1,15 +1,15 @@
-package com.example.model;
+package com.example.model.it_map;
 
-import jakarta.persistence.CascadeType;
+import com.example.model.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -36,6 +36,6 @@ public class CompanyCategory extends BaseEntity {
     @Column(length = 1000)
     private String description;
 
-    @OneToMany(mappedBy = "category", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
-    private List<Company> companies = new ArrayList<>();
+    @ManyToMany(mappedBy = "categories")
+    private Set<Company> companies = new HashSet<>();
 }

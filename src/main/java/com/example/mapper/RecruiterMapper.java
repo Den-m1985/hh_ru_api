@@ -2,7 +2,7 @@ package com.example.mapper;
 
 import com.example.dto.RecruiterDto;
 import com.example.dto.RecruiterRequest;
-import com.example.model.Company;
+import com.example.model.it_map.Company;
 import com.example.model.Recruiter;
 import org.springframework.stereotype.Component;
 

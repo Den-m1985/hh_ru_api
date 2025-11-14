@@ -1,21 +1,23 @@
 package com.example.mapper;
 
 import com.example.dto.company.CompanyResponseDto;
-import com.example.model.Company;
-import com.example.model.CompanyCategory;
+import com.example.model.it_map.Company;
+import com.example.model.it_map.CompanyCategory;
 import com.example.model.Recruiter;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class CompanyMapper {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public Company toEntity(CompanyResponseDto dto, CompanyCategory category, List<Recruiter> recruiters, String logofile) {
+    public Company toEntity(CompanyResponseDto dto, Set<CompanyCategory> category, List<Recruiter> recruiters, String logofile) {
         Company company = new Company();
-        company.setCategory(category);
+        company.setCategories(category);
         company.setName(dto.name());
         company.setCareerUrl(dto.careerUrl());
         company.setLogoPath(logofile);
@@ -28,7 +30,7 @@ public class CompanyMapper {
                 entity.getId(),
                 entity.getCreatedAt() != null ? entity.getCreatedAt().format(formatter) : null,
                 entity.getUpdatedAt() != null ? entity.getCreatedAt().format(formatter) : null,
-                entity.getCategory().getName(),
+                convertToList(entity.getCategories()),
                 entity.getName(),
                 entity.getCompanyUrl(),
                 entity.getCareerUrl(),
@@ -43,4 +45,9 @@ public class CompanyMapper {
         return entities.stream().map(this::toDto).toList();
     }
 
+    private List<String> convertToList(Set<CompanyCategory> categories) {
+        List<String> arrayList = new ArrayList<>();
+        categories.forEach(cat -> arrayList.add(cat.getName()));
+        return arrayList;
+    }
 }

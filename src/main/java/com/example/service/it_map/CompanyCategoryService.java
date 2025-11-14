@@ -1,7 +1,7 @@
 package com.example.service.it_map;
 
 import com.example.dto.agregator_dto.CompanyCategoryDto;
-import com.example.model.CompanyCategory;
+import com.example.model.it_map.CompanyCategory;
 import com.example.repository.it_map.CompanyCategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
@@ -9,8 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -43,14 +44,28 @@ public class CompanyCategoryService {
         return mapperEntityToDto(category);
     }
 
-    public CompanyCategory getOrCreateCategory(String nameCategory) {
-        Optional<CompanyCategory> category = categoryRepository.findByName(nameCategory);
-        if (category.isEmpty()) {
-            CompanyCategory newCategory = new CompanyCategory();
-            newCategory.setName(nameCategory);
-            return categoryRepository.save(newCategory);
+    public Set<CompanyCategory> getOrCreateCategory(List<String> nameCategories) {
+        List<CompanyCategory> categoryFromDB = categoryRepository.findByNameIn(nameCategories);
+        Set<CompanyCategory> resultSet = new HashSet<>();
+        if (categoryFromDB.isEmpty()) {
+            nameCategories.forEach(category->{
+                CompanyCategory newCategory = new CompanyCategory();
+                newCategory.setName(category);
+                resultSet.add(newCategory);
+            });
         }
-        return category.get();
+        else {
+            List<String> tempList = categoryFromDB.stream().map(CompanyCategory::getName).toList();
+            nameCategories.forEach(name->{
+                if (!tempList.contains(name)){
+                    CompanyCategory newCategory = new CompanyCategory();
+                    newCategory.setName(name);
+                    resultSet.add(newCategory);
+                }
+            });
+        }
+        List<CompanyCategory> savedAll = categoryRepository.saveAll(resultSet);
+        return new HashSet<>(savedAll);
     }
 
     public CompanyCategoryDto createCategory(CompanyCategoryDto category) {

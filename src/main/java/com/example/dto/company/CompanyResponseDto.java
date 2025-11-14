@@ -11,7 +11,7 @@ public record CompanyResponseDto(
 
         String updatedAt,
 
-        String category,
+        List<String> category,
 
         String name,
 

@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.example.model.it_map.Company;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;

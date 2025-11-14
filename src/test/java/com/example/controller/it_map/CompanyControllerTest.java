@@ -1,8 +1,8 @@
 package com.example.controller.it_map;
 
 import com.example.dto.company.CompanyResponseDto;
-import com.example.model.Company;
-import com.example.model.CompanyCategory;
+import com.example.model.it_map.Company;
+import com.example.model.it_map.CompanyCategory;
 import com.example.repository.it_map.CompanyCategoryRepository;
 import com.example.repository.it_map.CompanyRepository;
 import com.example.service.common.FileStorageService;
@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -85,12 +86,12 @@ class CompanyControllerTest {
 
         Company c1 = new Company();
         c1.setName("Google");
-        c1.setCategory(bigTech);
+        c1.setCategories(Set.of(bigTech));
         companyRepository.save(c1);
 
         Company c2 = new Company();
         c2.setName("Stripe");
-        c2.setCategory(finTech);
+        c2.setCategories(Set.of(finTech));
         companyRepository.save(c2);
 
         Company c3 = new Company();
@@ -112,7 +113,7 @@ class CompanyControllerTest {
         companyCategoryRepository.save(other);
         Company c = new Company();
         c.setName("SomeCompany");
-        c.setCategory(other);
+        c.setCategories(Set.of(other));
         companyRepository.save(c);
 
         mockMvc.perform(get(endpointBase + "/filter")
@@ -130,7 +131,7 @@ class CompanyControllerTest {
         companyCategoryRepository.save(category);
         Company company = new Company();
         company.setName("Stripe");
-        company.setCategory(category);
+        company.setCategories(Set.of(category));
         company = companyRepository.save(company);
 
         MockMultipartFile mockFile = new MockMultipartFile(
@@ -157,7 +158,7 @@ class CompanyControllerTest {
         companyCategoryRepository.save(category);
         Company company = new Company();
         company.setName("AcmeCorp");
-        company.setCategory(category);
+        company.setCategories(Set.of(category));
         company = companyRepository.save(company);
         final Integer companyId = company.getId();
 
@@ -186,7 +187,7 @@ class CompanyControllerTest {
 
         Company company = new Company();
         company.setName("Test Company");
-        company.setCategory(category);
+        company.setCategories(Set.of(category));
         company = companyRepository.save(company);
 
         MockMultipartFile logoFile = new MockMultipartFile(
@@ -228,7 +229,7 @@ class CompanyControllerTest {
 
         Company company = new Company();
         company.setName("TestCompany");
-        company.setCategory(category);
+        company.setCategories(Set.of(category));
         company = companyRepository.save(company);
 
         MockMultipartFile logoFile1 = new MockMultipartFile(
@@ -258,7 +259,7 @@ class CompanyControllerTest {
 
         Company company = new Company();
         company.setName("Test Company");
-        company.setCategory(category);
+        company.setCategories(Set.of(category));
         company = companyRepository.save(company);
 
         MockMultipartFile emptyFile = new MockMultipartFile(
@@ -279,7 +280,7 @@ class CompanyControllerTest {
         companyCategoryRepository.save(bigTech);
 
         CompanyResponseDto inputDto = new CompanyResponseDto(
-                null, null, null, "BigTech", companyName,
+                null, null, null, List.of("BigTech"), companyName,
                 "http://newgencorp.com", "http://newgencorp.com/career", null, List.of());
         String companyDataJson = objectMapper.writeValueAsString(inputDto);
 

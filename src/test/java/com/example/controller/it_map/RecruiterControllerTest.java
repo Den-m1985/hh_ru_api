@@ -114,7 +114,7 @@ class RecruiterControllerTest {
                 null,
                 null,
                 null,
-                "IT",
+                List.of("IT"),
                 companyName,
                 null,
                 null,
