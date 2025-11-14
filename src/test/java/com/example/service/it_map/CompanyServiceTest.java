@@ -1,7 +1,7 @@
 package com.example.service.it_map;
 
 import com.example.dto.company.CompanyResponseDto;
-import com.example.model.Company;
+import com.example.model.it_map.Company;
 import com.example.repository.it_map.CompanyCategoryRepository;
 import com.example.repository.it_map.CompanyRepository;
 import com.example.service.common.FileStorageService;
@@ -18,8 +18,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
@@ -69,7 +71,7 @@ class CompanyServiceTest {
         CompanyResponseDto request = new CompanyResponseDto(0,
                 "createdAt",
                 "updatedAt",
-                "category",
+                List.of("category"),
                 "name",
                 "companyUrl",
                 "careerUrl",
@@ -89,7 +91,7 @@ class CompanyServiceTest {
     @Test
     void shouldDeleteNewFileFromDiskWhenDbSaveFails() {
         CompanyResponseDto request = new CompanyResponseDto(0,
-                "createdAt", "updatedAt", "category",
+                "createdAt", "updatedAt", List.of("category"),
                 "name_fail_test", "companyUrl", "careerUrl",
                 null, java.util.List.of());
 
@@ -121,5 +123,37 @@ class CompanyServiceTest {
         }
         Company companyAfter = companyService.getCompanyById(companyDto.id());
         assertThat(companyAfter.getLogoPath()).isNull();
+    }
+
+    @Test
+    void shouldSaveWithManyCategories(){
+        CompanyResponseDto request = new CompanyResponseDto(0,
+                "createdAt",
+                "updatedAt",
+                List.of("category1", "category2"),
+                "Google",
+                "companyUrl",
+                "careerUrl",
+                null,
+                java.util.List.of());
+        companyService.addCompany(request);
+        List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of("category1", "category2"));
+        assertEquals("Google", listFromDb.get(0).name());
+    }
+
+    @Test
+    void shouldGetByOneCategories(){
+        CompanyResponseDto request = new CompanyResponseDto(0,
+                "createdAt",
+                "updatedAt",
+                List.of("category1", "category2"),
+                "Google",
+                "companyUrl",
+                "careerUrl",
+                null,
+                java.util.List.of());
+        companyService.addCompany(request);
+        List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of("category1"));
+        assertEquals("Google", listFromDb.get(0).name());
     }
 }

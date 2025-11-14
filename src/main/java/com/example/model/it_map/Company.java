@@ -1,16 +1,21 @@
-package com.example.model;
+package com.example.model.it_map;
 
+import com.example.model.BaseEntity;
+import com.example.model.Recruiter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,9 +23,13 @@ import java.util.List;
 @Table(name = "companies")
 public class Company extends BaseEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private CompanyCategory category;
+    @ManyToMany
+    @JoinTable(
+            name = "company_category_mapping",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<CompanyCategory> categories = new HashSet<>();
 
     @Column(name = "company_name", nullable = false)
     private String name;

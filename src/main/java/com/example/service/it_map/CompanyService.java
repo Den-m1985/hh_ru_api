@@ -4,8 +4,8 @@ import com.example.dto.company.CompanyResponseDto;
 import com.example.exceptions.CompanyCreationException;
 import com.example.exceptions.FileStorageException;
 import com.example.mapper.CompanyMapper;
-import com.example.model.Company;
-import com.example.model.CompanyCategory;
+import com.example.model.it_map.Company;
+import com.example.model.it_map.CompanyCategory;
 import com.example.model.Recruiter;
 import com.example.repository.RecruiterRepository;
 import com.example.repository.it_map.CompanyRepository;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +69,7 @@ public class CompanyService {
     }
 
     private Company createCompany(CompanyResponseDto dto, String logoPath) {
-        CompanyCategory category = categoryService.getOrCreateCategory(dto.category());
+        Set<CompanyCategory> category = categoryService.getOrCreateCategory(dto.category());
         List<Recruiter> recruiters = new ArrayList<>();
         if (dto.recruiters() != null && !dto.recruiters().isEmpty()) {
             recruiters = recruiterRepository.findAllById(dto.recruiters());

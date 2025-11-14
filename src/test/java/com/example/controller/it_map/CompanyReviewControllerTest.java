@@ -3,8 +3,8 @@ package com.example.controller.it_map;
 import com.example.dto.agregator_dto.CompaniesProfileRequest;
 import com.example.dto.agregator_dto.CompaniesProfileResponse;
 import com.example.dto.company.CompanyResponseDto;
-import com.example.model.Company;
-import com.example.model.CompanyCategory;
+import com.example.model.it_map.Company;
+import com.example.model.it_map.CompanyCategory;
 import com.example.model.agregator.CompetencyMatrix;
 import com.example.model.agregator.ExperienceGrade;
 import com.example.repository.it_map.CompanyCategoryRepository;
@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -75,14 +76,19 @@ class CompanyReviewControllerTest {
 
         Company company = new Company();
         company.setName("Google");
-        company.setCategory(bigTech);
+        company.setCategories(Set.of(bigTech));
         company = companyRepository.save(company);
 
         CompanyResponseDto companyResponseDto = new CompanyResponseDto(
                 company.getId(),
                 company.getCreatedAt() != null ? company.getCreatedAt().format(formatter) : null,
                 company.getUpdatedAt() != null ? company.getCreatedAt().format(formatter) : null,
-                bigTech.getName(), company.getName(), company.getCompanyUrl(), company.getCareerUrl(), company.getLogoPath(), List.of()
+                List.of(bigTech.getName()),
+                company.getName(),
+                company.getCompanyUrl(),
+                company.getCareerUrl(),
+                company.getLogoPath(),
+                List.of()
         );
 
         CompaniesProfileRequest companiesProfileRequest = new CompaniesProfileRequest(

@@ -3,7 +3,7 @@ package com.example.service.it_map;
 import com.example.dto.RecruiterDto;
 import com.example.dto.RecruiterRequest;
 import com.example.mapper.RecruiterMapper;
-import com.example.model.Company;
+import com.example.model.it_map.Company;
 import com.example.model.Recruiter;
 import com.example.repository.RecruiterRepository;
 import jakarta.persistence.EntityNotFoundException;
