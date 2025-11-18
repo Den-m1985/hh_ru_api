@@ -1,6 +1,7 @@
 package com.example.service.it_map;
 
 import com.example.dto.agregator_dto.CompanyCategoryDto;
+import com.example.mapper.CompanyCategoryMapper;
 import com.example.model.it_map.CompanyCategory;
 import com.example.repository.it_map.CompanyCategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,6 +19,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CompanyCategoryService {
     CompanyCategoryRepository categoryRepository;
+    CompanyCategoryMapper categoryMapper;
 
     public CompanyCategory getCategoryByName(String nameCategory) {
         return categoryRepository.findByName(nameCategory)
@@ -31,41 +33,21 @@ public class CompanyCategoryService {
 
     public List<CompanyCategoryDto> getAllCompaniesCategory() {
         List<CompanyCategory> companies = categoryRepository.findAll();
-        return companies.stream().map(this::mapperEntityToDto).toList();
+        return categoryMapper.toDto(companies);
     }
 
     public CompanyCategoryDto getCompanyCategoryDto(String nameCategory) {
         CompanyCategory category = getCategoryByName(nameCategory);
-        return mapperEntityToDto(category);
+        return categoryMapper.toDto(category);
     }
 
     public CompanyCategoryDto getCompanyCategoryDto(Integer id) {
         CompanyCategory category = getCategoryById(id);
-        return mapperEntityToDto(category);
+        return categoryMapper.toDto(category);
     }
 
-    public Set<CompanyCategory> getOrCreateCategory(List<String> nameCategories) {
-        List<CompanyCategory> categoryFromDB = categoryRepository.findByNameIn(nameCategories);
-        Set<CompanyCategory> resultSet = new HashSet<>();
-        if (categoryFromDB.isEmpty()) {
-            nameCategories.forEach(category->{
-                CompanyCategory newCategory = new CompanyCategory();
-                newCategory.setName(category);
-                resultSet.add(newCategory);
-            });
-        }
-        else {
-            List<String> tempList = categoryFromDB.stream().map(CompanyCategory::getName).toList();
-            nameCategories.forEach(name->{
-                if (!tempList.contains(name)){
-                    CompanyCategory newCategory = new CompanyCategory();
-                    newCategory.setName(name);
-                    resultSet.add(newCategory);
-                }
-            });
-        }
-        List<CompanyCategory> savedAll = categoryRepository.saveAll(resultSet);
-        return new HashSet<>(savedAll);
+    public Set<CompanyCategory> getAllCategoryByArray(List<Integer> nameCategories) {
+        return new HashSet<>(categoryRepository.findAllById(nameCategories));
     }
 
     public CompanyCategoryDto createCategory(CompanyCategoryDto category) {
@@ -73,15 +55,7 @@ public class CompanyCategoryService {
         newCategory.setName(category.name());
         newCategory.setDescription(category.description());
         newCategory = categoryRepository.save(newCategory);
-        return mapperEntityToDto(newCategory);
-    }
-
-    public CompanyCategoryDto mapperEntityToDto(CompanyCategory newCategory) {
-        return new CompanyCategoryDto(
-                newCategory.getId(),
-                newCategory.getName(),
-                newCategory.getDescription()
-        );
+        return categoryMapper.toDto(newCategory);
     }
 
     public void deleteCategory(Integer id) {

@@ -3,10 +3,10 @@ package com.example.controller.it_map;
 import com.example.dto.agregator_dto.CompaniesProfileRequest;
 import com.example.dto.agregator_dto.CompaniesProfileResponse;
 import com.example.dto.company.CompanyResponseDto;
-import com.example.model.it_map.Company;
-import com.example.model.it_map.CompanyCategory;
 import com.example.model.agregator.CompetencyMatrix;
 import com.example.model.agregator.ExperienceGrade;
+import com.example.model.it_map.Company;
+import com.example.model.it_map.CompanyCategory;
 import com.example.repository.it_map.CompanyCategoryRepository;
 import com.example.repository.it_map.CompanyRepository;
 import com.example.repository.it_map.CompetencyMatrixRepository;
@@ -83,7 +83,7 @@ class CompanyReviewControllerTest {
                 company.getId(),
                 company.getCreatedAt() != null ? company.getCreatedAt().format(formatter) : null,
                 company.getUpdatedAt() != null ? company.getCreatedAt().format(formatter) : null,
-                List.of(bigTech.getName()),
+                List.of(bigTech.getId()),
                 company.getName(),
                 company.getCompanyUrl(),
                 company.getCareerUrl(),
@@ -94,7 +94,7 @@ class CompanyReviewControllerTest {
         CompaniesProfileRequest companiesProfileRequest = new CompaniesProfileRequest(
                 competencyMatrix.getSpecialization(),
                 experienceGrade.getId(),
-                List.of(bigTech.getName())
+                List.of(bigTech.getId())
         );
 
         CompaniesProfileResponse companiesProfileResponse = new CompaniesProfileResponse(

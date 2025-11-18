@@ -4,9 +4,9 @@ import com.example.dto.company.CompanyResponseDto;
 import com.example.exceptions.CompanyCreationException;
 import com.example.exceptions.FileStorageException;
 import com.example.mapper.CompanyMapper;
+import com.example.model.Recruiter;
 import com.example.model.it_map.Company;
 import com.example.model.it_map.CompanyCategory;
-import com.example.model.Recruiter;
 import com.example.repository.RecruiterRepository;
 import com.example.repository.it_map.CompanyRepository;
 import com.example.service.common.FileStorageService;
@@ -46,7 +46,7 @@ public class CompanyService {
 
     @Transactional
     public CompanyResponseDto addCompany(CompanyResponseDto dto) {
-        Company company = createCompany(dto, null);
+        Company company = createCompany(dto);
         company = companyRepository.save(company);
         return companyMapper.toDto(company);
     }
@@ -54,7 +54,8 @@ public class CompanyService {
     @Transactional
     public CompanyResponseDto addCompany(CompanyResponseDto dto, MultipartFile file) {
         String fileName = saveFile(file);
-        Company company = createCompany(dto, fileName);
+        dto.setLogoUrl(fileName);
+        Company company = createCompany(dto);
         try {
             company = companyRepository.save(company);
         } catch (Exception dbException) {
@@ -68,13 +69,13 @@ public class CompanyService {
         return companyMapper.toDto(company);
     }
 
-    private Company createCompany(CompanyResponseDto dto, String logoPath) {
-        Set<CompanyCategory> category = categoryService.getOrCreateCategory(dto.category());
+    private Company createCompany(CompanyResponseDto dto) {
+        Set<CompanyCategory> category = categoryService.getAllCategoryByArray(dto.getCategory());
         List<Recruiter> recruiters = new ArrayList<>();
-        if (dto.recruiters() != null && !dto.recruiters().isEmpty()) {
-            recruiters = recruiterRepository.findAllById(dto.recruiters());
+        if (dto.getRecruiters() != null && !dto.getRecruiters().isEmpty()) {
+            recruiters = recruiterRepository.findAllById(dto.getRecruiters());
         }
-        Company company = companyMapper.toEntity(dto, category, recruiters, logoPath);
+        Company company = companyMapper.toEntity(dto, category, recruiters);
         for (Recruiter recruiter : recruiters) {
             recruiter.setCompany(company);
         }
@@ -91,11 +92,12 @@ public class CompanyService {
         return companyMapper.toDto(company);
     }
 
-    public List<CompanyResponseDto> getCompaniesByCategories(List<String> categories) {
+    @Transactional(readOnly = true)
+    public List<CompanyResponseDto> getCompaniesByCategories(List<Integer> categories) {
         if (categories == null || categories.isEmpty()) {
             return List.of();
         }
-        List<Company> companies = companyRepository.findByCategoryNames(categories);
+        List<Company> companies = companyRepository.findByCategoryIds(categories);
         return companies.stream()
                 .map(companyMapper::toDto)
                 .toList();
