@@ -1,29 +1,38 @@
 package com.example.dto.company;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
-public record CompanyResponseDto(
-        Integer id,
+@Getter
+@Setter
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class CompanyResponseDto {
 
-        String createdAt,
+    Integer id;
 
-        String updatedAt,
+    String createdAt;
 
-        List<String> category,
+    String updatedAt;
 
-        String name,
+    List<Integer> category;
 
-        @JsonProperty("company_url")
-        String companyUrl,
+    String name;
 
-        @JsonProperty("career_url")
-        String careerUrl,
+    @JsonProperty("company_url")
+    String companyUrl;
 
-        @JsonProperty("logo_url")
-        String logoUrl,
+    @JsonProperty("career_url")
+    String careerUrl;
 
-        List<Integer> recruiters
-) {
+    @JsonProperty("logo_url")
+    String logoUrl;
+
+    List<Integer> recruiters;
 }

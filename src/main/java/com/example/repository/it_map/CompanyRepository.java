@@ -18,4 +18,9 @@ public interface CompanyRepository extends JpaRepository<Company, Integer> {
             "LEFT JOIN FETCH c.recruiter r " +
             "WHERE cat.name IN :categories")
     List<Company> findByCategoryNames(@Param("categories") List<String> categories);
+
+    @Query("SELECT DISTINCT c FROM Company c " +
+            "JOIN c.categories cat " +
+            "WHERE cat.id IN :categoryIds")
+    List<Company> findByCategoryIds(@Param("categoryIds") List<Integer> categoryIds);
 }

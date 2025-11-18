@@ -1,5 +1,6 @@
 package com.example.service.it_map;
 
+import com.example.dto.agregator_dto.CompanyCategoryDto;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.model.it_map.Company;
 import com.example.repository.it_map.CompanyCategoryRepository;
@@ -21,7 +22,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
@@ -36,16 +39,27 @@ class CompanyServiceTest {
     @Autowired
     private CompanyCategoryRepository companyCategoryRepository;
     @Autowired
+    private CompanyCategoryService companyCategoryService;
+    @Autowired
     private CompanyService companyService;
     @Autowired
     private FileStorageService fileStorageService;
 
     Path tempDir;
+    CompanyCategoryDto dtoTelecom;
+    CompanyCategoryDto dtoBigTech;
 
     @BeforeEach
     void setUp() throws IllegalAccessException, IOException, NoSuchFieldException {
         companyRepository.deleteAll();
         companyCategoryRepository.deleteAll();
+
+        String categoryTelecom = "Telecom";
+        String categoryBigTech = "BigTech";
+        CompanyCategoryDto telecom = new CompanyCategoryDto(null, categoryTelecom, null);
+        CompanyCategoryDto bigTech = new CompanyCategoryDto(null, categoryBigTech, null);
+        dtoTelecom = companyCategoryService.createCategory(telecom);
+        dtoBigTech = companyCategoryService.createCategory(bigTech);
 
         tempDir = Files.createTempDirectory("filestorage-test-");
         java.lang.reflect.Field storageDirField = FileStorageService.class.getDeclaredField("storageDir");
@@ -71,7 +85,7 @@ class CompanyServiceTest {
         CompanyResponseDto request = new CompanyResponseDto(0,
                 "createdAt",
                 "updatedAt",
-                List.of("category"),
+                List.of(dtoTelecom.id()),
                 "name",
                 "companyUrl",
                 "careerUrl",
@@ -80,18 +94,18 @@ class CompanyServiceTest {
         CompanyResponseDto companyResponseDto = companyService.addCompany(request);
         MockMultipartFile file = new MockMultipartFile(
                 "file", "test.png", "text/plain", "hello".getBytes());
-        CompanyResponseDto result = companyService.updateCompanyLogo(companyResponseDto.id(), file);
+        CompanyResponseDto result = companyService.updateCompanyLogo(companyResponseDto.getId(), file);
 
         assertThat(result).isNotNull();
-        assertThat(result.logoUrl()).isNotNull();
-        assertThat(result.logoUrl()).endsWith(".png");
+        assertThat(result.getLogoUrl()).isNotNull();
+        assertThat(result.getLogoUrl()).endsWith(".png");
     }
 
     // --- СЦЕНАРИЙ 2: СБОЙ СОХРАНЕНИЯ В БД С КОМПЕНСАЦИЕЙ ---
     @Test
     void shouldDeleteNewFileFromDiskWhenDbSaveFails() {
         CompanyResponseDto request = new CompanyResponseDto(0,
-                "createdAt", "updatedAt", List.of("category"),
+                "createdAt", "updatedAt", List.of(dtoTelecom.id()),
                 "name_fail_test", "companyUrl", "careerUrl",
                 null, java.util.List.of());
 
@@ -103,7 +117,7 @@ class CompanyServiceTest {
         doThrow(new RuntimeException("Simulated DB Constraint Error"))
                 .when(companyRepository).save(any(Company.class));
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            companyService.updateCompanyLogo(companyDto.id(), file);
+            companyService.updateCompanyLogo(companyDto.getId(), file);
         });
 
         assertThat(exception.getMessage()).contains("DB save failed");
@@ -121,39 +135,83 @@ class CompanyServiceTest {
         } catch (Throwable ignored) {
             // Игнорируем исключение
         }
-        Company companyAfter = companyService.getCompanyById(companyDto.id());
+        Company companyAfter = companyService.getCompanyById(companyDto.getId());
         assertThat(companyAfter.getLogoPath()).isNull();
     }
 
     @Test
-    void shouldSaveWithManyCategories(){
-        CompanyResponseDto request = new CompanyResponseDto(0,
+    void shouldGetByOneCategories() {
+        String companyName = "Sber";
+        CompanyResponseDto request = new CompanyResponseDto(null,
                 "createdAt",
                 "updatedAt",
-                List.of("category1", "category2"),
-                "Google",
+                List.of(dtoTelecom.id(), dtoBigTech.id()),
+                companyName,
                 "companyUrl",
                 "careerUrl",
                 null,
                 java.util.List.of());
         companyService.addCompany(request);
-        List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of("category1", "category2"));
-        assertEquals("Google", listFromDb.get(0).name());
+        List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of(dtoTelecom.id()));
+        assertEquals(companyName, listFromDb.get(0).getName());
     }
 
     @Test
-    void shouldGetByOneCategories(){
-        CompanyResponseDto request = new CompanyResponseDto(0,
+    void shouldGetByOneCategories2() {
+        CompanyResponseDto request = new CompanyResponseDto(null,
                 "createdAt",
                 "updatedAt",
-                List.of("category1", "category2"),
-                "Google",
+                List.of(),
+                "Sber",
                 "companyUrl",
                 "careerUrl",
                 null,
                 java.util.List.of());
         companyService.addCompany(request);
-        List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of("category1"));
-        assertEquals("Google", listFromDb.get(0).name());
+        List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of());
+        assertEquals(0, listFromDb.size());
+    }
+
+    @Test
+    void shouldSaveWithManyCategories() {
+        String companyName = "Sber";
+        CompanyResponseDto request = new CompanyResponseDto(null,
+                "createdAt",
+                "updatedAt",
+                List.of(dtoTelecom.id(), dtoBigTech.id()),
+                companyName,
+                "companyUrl",
+                "careerUrl",
+                null,
+                java.util.List.of());
+        companyService.addCompany(request);
+        List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of(dtoTelecom.id(), dtoBigTech.id()));
+        assertEquals(companyName, listFromDb.get(0).getName());
+    }
+
+    @Test
+    void shouldSaveByOneCategory() {
+        String companyName = "Sber";
+        String companyUrl = "companyUrl";
+        String careerUrl = "career_url";
+        CompanyResponseDto dto = new CompanyResponseDto(
+                null,
+                null,
+                null,
+                List.of(dtoTelecom.id()),
+                companyName,
+                companyUrl,
+                careerUrl,
+                null,
+                null);
+        CompanyResponseDto companyDto = companyService.addCompany(dto);
+        assertAll(
+                () -> assertNotNull(companyDto.getId()),
+                () -> assertEquals(companyName, companyDto.getName()),
+                () -> assertEquals(1, companyDto.getCategory().size()),
+                () -> assertEquals(dtoTelecom.id(), companyDto.getCategory().get(0)),
+                () -> assertEquals(companyUrl, companyDto.getCompanyUrl()),
+                () -> assertEquals(careerUrl, companyDto.getCareerUrl())
+        );
     }
 }

@@ -66,6 +66,6 @@ public record CompaniesProfileRequest(
                         """,
                 example = "Fin-Tech"
         )
-        List<String> categories
+        List<Integer> categories
 ) {
 }

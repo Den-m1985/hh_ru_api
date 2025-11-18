@@ -59,7 +59,7 @@ public class CompanyController implements CompanyApi {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilters(@RequestParam List<String> categories) {
+    public ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilters(@RequestParam List<Integer> categories) {
         return ResponseEntity.ok(companyService.getCompaniesByCategories(categories));
     }
 

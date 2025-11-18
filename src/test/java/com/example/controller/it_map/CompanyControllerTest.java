@@ -1,11 +1,13 @@
 package com.example.controller.it_map;
 
+import com.example.dto.agregator_dto.CompanyCategoryDto;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.model.it_map.Company;
 import com.example.model.it_map.CompanyCategory;
 import com.example.repository.it_map.CompanyCategoryRepository;
 import com.example.repository.it_map.CompanyRepository;
 import com.example.service.common.FileStorageService;
+import com.example.service.it_map.CompanyCategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.AfterEach;
@@ -45,6 +47,8 @@ class CompanyControllerTest {
     @Autowired
     private CompanyCategoryRepository companyCategoryRepository;
     @Autowired
+    private CompanyCategoryService companyCategoryService;
+    @Autowired
     private FileStorageService fileStorageService;
 
     Path tempDir;
@@ -76,22 +80,23 @@ class CompanyControllerTest {
     @Test
     @WithMockUser
     void shouldReturnCompaniesByCategories() throws Exception {
-        CompanyCategory bigTech = new CompanyCategory();
-        bigTech.setName("BigTech");
-        companyCategoryRepository.save(bigTech);
-
-        CompanyCategory finTech = new CompanyCategory();
-        finTech.setName("FinTech");
-        companyCategoryRepository.save(finTech);
+        String categoryTelecom = "Telecom";
+        String categoryBigTech = "BigTech";
+        CompanyCategoryDto dtoTelecom = new CompanyCategoryDto(null, categoryTelecom, null);
+        CompanyCategoryDto dtoBigTech = new CompanyCategoryDto(null, categoryBigTech, null);
+        CompanyCategoryDto dtoTelecomSaved = companyCategoryService.createCategory(dtoTelecom);
+        CompanyCategoryDto dtoBigTechSaved = companyCategoryService.createCategory(dtoBigTech);
+        CompanyCategory companyCategoryTelecom = companyCategoryService.getCategoryById(dtoTelecomSaved.id());
+        CompanyCategory companyCategoryBigTech = companyCategoryService.getCategoryById(dtoBigTechSaved.id());
 
         Company c1 = new Company();
         c1.setName("Google");
-        c1.setCategories(Set.of(bigTech));
+        c1.setCategories(Set.of(companyCategoryTelecom));
         companyRepository.save(c1);
 
         Company c2 = new Company();
         c2.setName("Stripe");
-        c2.setCategories(Set.of(finTech));
+        c2.setCategories(Set.of(companyCategoryBigTech));
         companyRepository.save(c2);
 
         Company c3 = new Company();
@@ -99,7 +104,7 @@ class CompanyControllerTest {
         companyRepository.save(c3);
 
         mockMvc.perform(get(endpointBase + "/filter")
-                        .param("categories", "BigTech", "FinTech")
+                        .param("categories", String.valueOf(dtoTelecomSaved.id()), String.valueOf(dtoBigTechSaved.id()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[*].name").value(org.hamcrest.Matchers.containsInAnyOrder("Google", "Stripe")));
@@ -108,16 +113,17 @@ class CompanyControllerTest {
     @Test
     @WithMockUser
     void shouldReturnEmptyListIfNoMatches() throws Exception {
-        CompanyCategory other = new CompanyCategory();
-        other.setName("E-com");
-        companyCategoryRepository.save(other);
-        Company c = new Company();
-        c.setName("SomeCompany");
-        c.setCategories(Set.of(other));
-        companyRepository.save(c);
+        String categoryName = "Telecom";
+        CompanyCategoryDto dtoToSave = new CompanyCategoryDto(null, categoryName, null);
+        CompanyCategoryDto companyCategoryDto = companyCategoryService.createCategory(dtoToSave);
+        CompanyCategory companyCategory = companyCategoryService.getCategoryById(companyCategoryDto.id());
+        Company company = new Company();
+        company.setName("SomeCompany");
+        company.setCategories(Set.of(companyCategory));
+        companyRepository.save(company);
 
         mockMvc.perform(get(endpointBase + "/filter")
-                        .param("categories", "BigTech", "FinTech")
+                        .param("categories", String.valueOf(companyCategoryDto.id() + 1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
@@ -280,7 +286,7 @@ class CompanyControllerTest {
         companyCategoryRepository.save(bigTech);
 
         CompanyResponseDto inputDto = new CompanyResponseDto(
-                null, null, null, List.of("BigTech"), companyName,
+                null, null, null, List.of(0), companyName,
                 "http://newgencorp.com", "http://newgencorp.com/career", null, List.of());
         String companyDataJson = objectMapper.writeValueAsString(inputDto);
 

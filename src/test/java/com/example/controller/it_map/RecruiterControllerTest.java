@@ -4,8 +4,8 @@ import com.example.dto.RecruiterRequest;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.model.Recruiter;
 import com.example.repository.RecruiterRepository;
-import com.example.service.it_map.RecruiterService;
 import com.example.service.it_map.CompanyService;
+import com.example.service.it_map.RecruiterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -114,7 +114,7 @@ class RecruiterControllerTest {
                 null,
                 null,
                 null,
-                List.of("IT"),
+                List.of(0),
                 companyName,
                 null,
                 null,
@@ -122,7 +122,7 @@ class RecruiterControllerTest {
                 List.of(recruiters.get(0).getId(), recruiters.get(1).getId()));
         CompanyResponseDto company = companyService.addCompany(companyResponseDto);
 
-        mockMvc.perform(get(endpointBase + "all_by_company/" + company.id())
+        mockMvc.perform(get(endpointBase + "all_by_company/" + company.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
