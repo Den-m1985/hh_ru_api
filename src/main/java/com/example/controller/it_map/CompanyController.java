@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,6 +62,11 @@ public class CompanyController implements CompanyApi {
     @GetMapping("/filter")
     public ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilters(@RequestParam List<Integer> categories) {
         return ResponseEntity.ok(companyService.getCompaniesByCategories(categories));
+    }
+
+    @PatchMapping
+    public ResponseEntity<CompanyResponseDto> updateCompany(@RequestBody CompanyResponseDto response){
+        return ResponseEntity.ok(companyService.updateCompany(response));
     }
 
     @DeleteMapping("/{id}")

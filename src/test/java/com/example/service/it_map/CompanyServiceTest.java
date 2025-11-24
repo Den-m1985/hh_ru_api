@@ -1,8 +1,11 @@
 package com.example.service.it_map;
 
+import com.example.dto.RecruiterDto;
+import com.example.dto.RecruiterRequest;
 import com.example.dto.agregator_dto.CompanyCategoryDto;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.model.it_map.Company;
+import com.example.repository.RecruiterRepository;
 import com.example.repository.it_map.CompanyCategoryRepository;
 import com.example.repository.it_map.CompanyRepository;
 import com.example.service.common.FileStorageService;
@@ -26,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;
@@ -44,6 +48,10 @@ class CompanyServiceTest {
     private CompanyService companyService;
     @Autowired
     private FileStorageService fileStorageService;
+    @Autowired
+    private RecruiterService recruiterService;
+    @Autowired
+    private RecruiterRepository recruiterRepository;
 
     Path tempDir;
     CompanyCategoryDto dtoTelecom;
@@ -53,6 +61,7 @@ class CompanyServiceTest {
     void setUp() throws IllegalAccessException, IOException, NoSuchFieldException {
         companyRepository.deleteAll();
         companyCategoryRepository.deleteAll();
+        recruiterRepository.deleteAll();
 
         String categoryTelecom = "Telecom";
         String categoryBigTech = "BigTech";
@@ -90,6 +99,8 @@ class CompanyServiceTest {
                 "companyUrl",
                 "careerUrl",
                 null,
+                dtoTelecom.id(),
+                true,
                 java.util.List.of());
         CompanyResponseDto companyResponseDto = companyService.addCompany(request);
         MockMultipartFile file = new MockMultipartFile(
@@ -107,7 +118,8 @@ class CompanyServiceTest {
         CompanyResponseDto request = new CompanyResponseDto(0,
                 "createdAt", "updatedAt", List.of(dtoTelecom.id()),
                 "name_fail_test", "companyUrl", "careerUrl",
-                null, java.util.List.of());
+                null, dtoTelecom.id(),
+                true, java.util.List.of());
 
         CompanyResponseDto companyDto = companyService.addCompany(request);
         MockMultipartFile file = new MockMultipartFile(
@@ -150,6 +162,8 @@ class CompanyServiceTest {
                 "companyUrl",
                 "careerUrl",
                 null,
+                dtoTelecom.id(),
+                true,
                 java.util.List.of());
         companyService.addCompany(request);
         List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of(dtoTelecom.id()));
@@ -166,6 +180,8 @@ class CompanyServiceTest {
                 "companyUrl",
                 "careerUrl",
                 null,
+                dtoTelecom.id(),
+                true,
                 java.util.List.of());
         companyService.addCompany(request);
         List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of());
@@ -183,6 +199,8 @@ class CompanyServiceTest {
                 "companyUrl",
                 "careerUrl",
                 null,
+                dtoTelecom.id(),
+                true,
                 java.util.List.of());
         companyService.addCompany(request);
         List<CompanyResponseDto> listFromDb = companyService.getCompaniesByCategories(List.of(dtoTelecom.id(), dtoBigTech.id()));
@@ -203,6 +221,8 @@ class CompanyServiceTest {
                 companyUrl,
                 careerUrl,
                 null,
+                dtoTelecom.id(),
+                true,
                 null);
         CompanyResponseDto companyDto = companyService.addCompany(dto);
         assertAll(
@@ -214,4 +234,58 @@ class CompanyServiceTest {
                 () -> assertEquals(careerUrl, companyDto.getCareerUrl())
         );
     }
+
+    @Test
+    void shouldUpdateCompany() {
+        String companyName = "Sber";
+        String companyUrl = "companyUrl";
+        String careerUrl = "career_url";
+        CompanyResponseDto dto = new CompanyResponseDto(null, null, null,
+                List.of(dtoTelecom.id()),
+                companyName,
+                companyUrl,
+                careerUrl,
+                null,
+                dtoTelecom.id(),
+                true,
+                null);
+        CompanyResponseDto companyDto = companyService.addCompany(dto);
+
+        String companyNameNew = "SberNew";
+        String companyUrlNew = "companyUrlNew";
+        String careerUrlNew = "career_urlNew";
+        CompanyResponseDto dtoToUpdate = new CompanyResponseDto(companyDto.getId(), null, null,
+                List.of(dtoTelecom.id(), dtoBigTech.id()),
+                companyNameNew,
+                companyUrlNew,
+                careerUrlNew,
+                null,
+                dtoBigTech.id(),
+                true,
+                null);
+
+        RecruiterRequest recruiterDto = new RecruiterRequest("firstName", "lastName",
+                "contactTelegram", "contactLinkedIn", "email", companyDto.getId());
+        recruiterService.saveRecruiter(recruiterDto);
+
+        RecruiterRequest recruiterDtoToUpdate = new RecruiterRequest("firstName", "lastName",
+                "contactTelegram", "contactLinkedIn", "email", null);
+        RecruiterDto recruiterFromDbToUpdate = recruiterService.saveRecruiter(recruiterDtoToUpdate);
+        dtoToUpdate.setRecruiters(List.of(recruiterFromDbToUpdate.id()));
+
+        CompanyResponseDto companyUpdatedDto = companyService.updateCompany(dtoToUpdate);
+        assertAll(
+                () -> assertNotNull(companyUpdatedDto.getId()),
+                () -> assertEquals(companyNameNew, companyUpdatedDto.getName()),
+                () -> assertEquals(2, companyUpdatedDto.getCategory().size()),
+                () -> assertTrue(companyUpdatedDto.getCategory().contains(dtoTelecom.id())),
+                () -> assertEquals(companyUrlNew, companyUpdatedDto.getCompanyUrl()),
+                () -> assertEquals(careerUrlNew, companyUpdatedDto.getCareerUrl()),
+                () -> assertEquals(dtoBigTech.id(), companyUpdatedDto.getCategoryVirtualMap()),
+                () -> assertEquals(true, companyUpdatedDto.getPresentInVirtualMap()),
+                () -> assertEquals(recruiterFromDbToUpdate.id(), companyUpdatedDto.getRecruiters().get(0))
+        );
+    }
+
+
 }

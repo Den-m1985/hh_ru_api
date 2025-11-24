@@ -287,7 +287,8 @@ class CompanyControllerTest {
 
         CompanyResponseDto inputDto = new CompanyResponseDto(
                 null, null, null, List.of(0), companyName,
-                "http://newgencorp.com", "http://newgencorp.com/career", null, List.of());
+                "http://newgencorp.com", "http://newgencorp.com/career", null, null,
+                null, List.of());
         String companyDataJson = objectMapper.writeValueAsString(inputDto);
 
         String logoContent = "Mock image data";

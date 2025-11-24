@@ -143,4 +143,56 @@ public class CompanyService {
         }
     }
 
+    @Transactional
+    public CompanyResponseDto updateCompany(CompanyResponseDto dto) {
+        Company company = getCompanyById(dto.getId());
+        updateCompanyFromDto(company, dto);
+        company = companyRepository.save(company);
+        return companyMapper.toDto(company);
+    }
+
+    private void updateCompanyFromDto(Company company, CompanyResponseDto dto) {
+        if (dto.getName() != null) {
+            company.setName(dto.getName());
+        }
+        if (dto.getCompanyUrl() != null) {
+            company.setCompanyUrl(dto.getCompanyUrl());
+        }
+        if (dto.getCareerUrl() != null) {
+            company.setCareerUrl(dto.getCareerUrl());
+        }
+        if (dto.getCareerUrl() != null) {
+            company.setCareerUrl(dto.getCareerUrl());
+        }
+        if (dto.getPresentInVirtualMap() != null) {
+            company.setPresentInVirtualMap(dto.getPresentInVirtualMap());
+        }
+
+        if (dto.getCategory() != null) {
+            Set<CompanyCategory> newCategories = categoryService.getAllCategoryByArray(dto.getCategory());
+            company.getCategories().clear();
+            company.setCategories(newCategories);
+            if (dto.getCategoryVirtualMap() != null) {
+                List<Integer> categoriesIds = newCategories.stream().map(CompanyCategory::getId).toList();
+                if (categoriesIds.contains(dto.getCategoryVirtualMap())) {
+                    company.setCategoryVirtualMap(dto.getCategoryVirtualMap());
+                } else {
+                    throw new EntityNotFoundException(dto.getCategoryVirtualMap() + " not found");
+                }
+            }
+        }
+
+        if (dto.getRecruiters() != null) {
+            List<Recruiter> newRecruiters = new ArrayList<>();
+            if (dto.getRecruiters() != null && !dto.getRecruiters().isEmpty()) {
+                newRecruiters = recruiterRepository.findAllById(dto.getRecruiters());
+            }
+            company.getRecruiter().clear();
+            for (Recruiter recruiter : newRecruiters) {
+                company.getRecruiter().add(recruiter);
+                recruiter.setCompany(company);
+            }
+        }
+    }
+
 }

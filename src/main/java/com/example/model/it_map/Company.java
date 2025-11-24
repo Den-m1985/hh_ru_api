@@ -43,6 +43,12 @@ public class Company extends BaseEntity {
     @Column(name = "logo_path")
     private String logoPath;
 
+    @Column(name = "category_virtual_map")
+    private Integer categoryVirtualMap;
+
+    @Column(name = "present_in_virtual_map")
+    private Boolean presentInVirtualMap;
+
     @OneToMany(mappedBy = "company", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     private List<Recruiter> recruiter;
 }
