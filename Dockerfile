@@ -1,6 +1,6 @@
 
 # Используем образ с Java Development Kit (JDK)
-FROM maven:3.8.5-openjdk-17-slim AS build
+FROM maven:3.9.4-eclipse-temurin-21-alpine AS build
 
 # Копируем файлы с исходным кодом приложения в контейнер
 COPY ./ /app
@@ -12,7 +12,7 @@ WORKDIR /app
 RUN mvn clean package
 
 # Создаем новый образ, используя JRE
-FROM amazoncorretto:17-alpine3.20
+FROM amazoncorretto:21-alpine3.20
 
 # Копируем собранный JAR файл из предыдущего образа в новый образ
 COPY --from=build /app/target/*.jar /app/app.jar
