@@ -287,5 +287,38 @@ class CompanyServiceTest {
         );
     }
 
+    @Test
+    void shouldFindCompanyByPresentInVirtualMap() {
+        String companyName = "Sber";
+        CompanyResponseDto dto1 = new CompanyResponseDto(null, null, null, List.of(dtoTelecom.id()),
+                companyName, null, null, null, dtoTelecom.id(), true, null);
+        CompanyResponseDto dto2 = new CompanyResponseDto(null, null, null, List.of(dtoTelecom.id()),
+                companyName, null, null, null, dtoTelecom.id(), true, null);
+        CompanyResponseDto dto3 = new CompanyResponseDto(null, null, null, List.of(dtoTelecom.id()),
+                companyName, null, null, null, dtoTelecom.id(), false, null);
+        companyService.addCompany(dto1);
+        companyService.addCompany(dto2);
+        companyService.addCompany(dto3);
+        List<CompanyResponseDto> resultList = companyService.findCompanyByField(true);
+        assertAll(
+                () -> assertNotNull(resultList),
+                () -> assertEquals(2, resultList.size())
+        );
+    }
 
+    @Test
+    void shouldFindCompanyBySearch() {
+        List<String> arayNames = List.of("Sber", "Сбер", "ВкусВилл", "Яндекс", "VK", "Мегафон", "Т-Банк", "Авито");
+        arayNames.forEach(name ->{
+            CompanyResponseDto dto = new CompanyResponseDto(null, null, null, List.of(dtoTelecom.id()),
+                    name, null, null, null, null, true, null);
+            companyService.addCompany(dto);
+        });
+
+        List<String> arayNamesToFind = List.of("Sber", "сбер", "вкусВилл", "яндекс", "vk", "мегафон", "т-банк", "Авито");
+        arayNamesToFind.forEach(name ->{
+            List<CompanyResponseDto> resultList = companyService.findCompanyBySearch(name);
+            assertEquals(name.toLowerCase(), resultList.get(0).getName().toLowerCase());
+        });
+    }
 }
