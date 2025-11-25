@@ -94,7 +94,38 @@ public interface CompanyApi {
             description = "Список компаний по категориям",
             content = @Content(schema = @Schema(implementation = CompanyResponseDto.class))
     )
-    ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilters(@RequestParam List<Integer> categories);
+    ResponseEntity<List<CompanyResponseDto>> getCompaniesByCategories(@RequestParam List<Integer> categories);
+
+    //----------------------------------------
+
+    @Operation(
+            summary = "Поиск компаний по ключевому слову",
+            description = "Возвращает список компаний по ключевому слову. Поиск ведется без учета регистра. " +
+                    "К примеру: Сбер = сбер и т.п."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CompanyResponseDto.class)
+            )
+    )
+    ResponseEntity<List<CompanyResponseDto>> getCompaniesBySearch(@RequestParam String search);
+
+    //----------------------------------------
+
+    @Operation(
+            summary = "Поиск компаний для виртуальной карты",
+            description = "Возвращает список компаний по полю presentInVirtualMap."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CompanyResponseDto.class)
+            )
+    )
+    ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilter(@RequestParam Boolean isPrime);
 
     //----------------------------------------
 

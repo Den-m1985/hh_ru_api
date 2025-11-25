@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -195,4 +196,22 @@ public class CompanyService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<CompanyResponseDto> findCompanyByField(Boolean isPrime) {
+        if (isPrime == null) {
+            throw new IllegalArgumentException();
+        }
+        List<Company> companies = companyRepository.findCompanyByPresentInVirtualMap(isPrime);
+        return companyMapper.toDto(companies);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CompanyResponseDto> findCompanyBySearch(String search) {
+        if (search == null || search.isBlank()) {
+            return Collections.emptyList();
+        }
+        String trimmedSearch = search.trim();
+        List<Company> companies = companyRepository.findByNameContainingIgnoreCase(trimmedSearch);
+        return companyMapper.toDto(companies);
+    }
 }

@@ -60,8 +60,18 @@ public class CompanyController implements CompanyApi {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilters(@RequestParam List<Integer> categories) {
+    public ResponseEntity<List<CompanyResponseDto>> getCompaniesByCategories(@RequestParam List<Integer> categories) {
         return ResponseEntity.ok(companyService.getCompaniesByCategories(categories));
+    }
+
+    @GetMapping("/is_prime")
+    public ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilter(@RequestParam Boolean isPrime) {
+        return ResponseEntity.ok(companyService.findCompanyByField(isPrime));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CompanyResponseDto>> getCompaniesBySearch(@RequestParam String search) {
+        return ResponseEntity.ok(companyService.findCompanyBySearch(search));
     }
 
     @PatchMapping
