@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dto.HeadhunterNegotiation;
 import com.example.dto.VacancyRequest;
 import com.example.dto.vacancy_dto.ApiListResponse;
 import com.example.dto.vacancy_dto.Area;
@@ -47,6 +48,15 @@ public class VacancyClient {
         log.info("Fetching similar vacancies from: {}", url);
         User user = userService.findUserByResume(vacancyRequest.resumeId());
         return requestTemplates.getDataFromRequest(url, user.getHhToken());
+    }
+    /**
+     * <a href="https://api.hh.ru/openapi/redoc#tag/Perepiska-(otklikipriglasheniya)-dlya-soiskatelya/operation/get-negotiations">....</a>
+     */
+    public List<HeadhunterNegotiation> getAllNegotiations(User user) {
+        String url = String.format("%s/negotiations?page=0&per_page=1000", headHunterProperties.getBaseUrlApi());
+        List<HeadhunterNegotiation> result = requestTemplates.getHeadhunterNegotiations(url, user);
+        log.info("Headhunter, find {} negotiations", result.size());
+        return result;
     }
 
     private String createSimilarUrl(String resumeId, Map<String, String> search) {

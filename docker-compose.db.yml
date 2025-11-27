@@ -9,15 +9,30 @@ services:
       POSTGRES_PASSWORD: ${DATA_BASE_PASSWORD}
       POSTGRES_DB: hh_ru_db
       TZ: Europe/Moscow
-#    ports:
-#      - "5432:5432"
+    ports:
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
       - hh_network
 
+  redis:
+    image: redis:7.0
+    container_name: redis-local
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+        --appendonly yes
+        --maxmemory 512mb
+        --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+
 volumes:
   db_data:
+  redis-data:
 
 networks:
   hh_network:
