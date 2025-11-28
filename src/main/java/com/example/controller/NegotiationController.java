@@ -1,15 +1,13 @@
 package com.example.controller;
 
 import com.example.dto.negotiation.NegotiationDto;
+import com.example.dto.negotiation.NegotiationRequestDto;
 import com.example.dto.negotiation.NegotiationStatistic;
 import com.example.model.AuthUser;
 import com.example.service.negotiation.NegotiationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,12 +23,15 @@ public class NegotiationController {
     }
 
     @GetMapping()
-    public List<NegotiationDto> getNegotiations(@AuthenticationPrincipal AuthUser authUser) {
-        return negotiationService.getNegotiations(authUser.getUser());
+    public List<NegotiationDto> getNegotiations(@AuthenticationPrincipal AuthUser authUser,
+                                                @RequestParam(defaultValue = "0") Integer from,
+                                                @RequestParam(defaultValue = "10") Integer size) {
+        return negotiationService.getNegotiations(authUser.getUser(), from , size);
     }
 
     @PostMapping
-    public NegotiationDto updateNegotiation(@AuthenticationPrincipal AuthUser authUser) {
-        return negotiationService.updateNegotiation(authUser.getUser());
+    public NegotiationDto updateNegotiation(@AuthenticationPrincipal AuthUser authUser,
+                                            @RequestBody NegotiationRequestDto negotiationRequestDto) {
+        return negotiationService.updateNegotiation(authUser.getUser(), negotiationRequestDto);
     }
 }

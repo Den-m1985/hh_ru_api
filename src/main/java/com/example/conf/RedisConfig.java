@@ -1,30 +1,32 @@
 package com.example.conf;
 
-import com.example.dto.negotiation.NegotiationStatistic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@Profile("!test")
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<String, NegotiationStatistic> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, NegotiationStatistic> template = new RedisTemplate<>();
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        Jackson2JsonRedisSerializer<NegotiationStatistic> serializer =
-                new Jackson2JsonRedisSerializer<>(NegotiationStatistic.class);
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer();
 
-        template.setValueSerializer(serializer);
-        template.setHashValueSerializer(serializer);
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setKeySerializer(keySerializer);
+        template.setHashKeySerializer(keySerializer);
+
+        template.setValueSerializer(valueSerializer);
+        template.setHashValueSerializer(valueSerializer);
+
         template.afterPropertiesSet();
-
         return template;
     }
 }

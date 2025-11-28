@@ -1,12 +1,11 @@
 package com.example.service.negotiation;
 
 import com.example.dto.HeadhunterNegotiation;
-import com.example.dto.negotiation.NegotiationDto;
-import com.example.dto.negotiation.NegotiationStatistic;
-import com.example.dto.negotiation.PlatformStatistic;
-import com.example.dto.negotiation.SuperjobNegotiation;
+import com.example.dto.negotiation.*;
 import com.example.enums.ApiProvider;
 import com.example.enums.NegotiationState;
+import com.example.exceptions.NotFoundException;
+import com.example.mapper.NegotiationMapper;
 import com.example.model.Negotiation;
 import com.example.model.User;
 import com.example.repository.NegotiationRepository;
@@ -16,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +24,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,8 +35,8 @@ public class NegotiationService {
     NegotiationRepository negotiationRepository;
     VacancyClient vacancyClient;
     ClientSuperjob superjobClient;
-    RedisTemplate<String, NegotiationStatistic> redisTemplate;
-    static String STATS_KEY_PREFIX = "user:stats:";
+    RedisTemplate<String, Object> redisTemplate;
+    static String LAST_SYNC = "user:sync:";
     static Duration TTL = Duration.ofMinutes(1);
     static Set<NegotiationState> SYSTEM_STATUSES = Set.of(
             NegotiationState.RESPONSE,
@@ -50,26 +47,37 @@ public class NegotiationService {
 
     @Transactional
     public NegotiationStatistic getUserStatistic(User user) {
-        final String key = STATS_KEY_PREFIX + user.getId();
-
-        NegotiationStatistic cachedStats = redisTemplate.opsForValue().get(key);
-        if (cachedStats != null) {
-            log.info("Stats found in Redis for user {}", user.getId());
-            return cachedStats;
+        final String key = LAST_SYNC + user.getId();
+        if (!redisTemplate.hasKey(key)) {
+            redisTemplate.opsForValue().set(key, "synced", TTL);
+            syncNegotiations(user);
         }
-        syncNegotiations(user);
         List<Negotiation> negotiations = negotiationRepository.findAllByUser(user);
-        NegotiationStatistic stats = calculateStatistic(negotiations);
-        redisTemplate.opsForValue().set(key, stats, TTL);
-        return stats;
+        return calculateStatistic(negotiations);
     }
 
-    public List<NegotiationDto> getNegotiations(User user) {
-        return null;
+    @Transactional
+    public List<NegotiationDto> getNegotiations(User user, Integer from, Integer size) {
+        log.info("Get negotiations from {} to {}. User {}", from, size, user.getId());
+        final String lastSyncKey = LAST_SYNC + user.getId();
+        if (!redisTemplate.hasKey(lastSyncKey)) {
+            redisTemplate.opsForValue().set(lastSyncKey, "synced", TTL);
+            syncNegotiations(user);
+        }
+        List<Negotiation> negotiations = negotiationRepository.findAllByUserOrderBySendAtDesc(user, PageRequest.of(from, size));
+        return NegotiationMapper.toDto(negotiations);
     }
 
-    public NegotiationDto updateNegotiation(User user) {
-        return null;
+    @Transactional
+    public NegotiationDto updateNegotiation(User user, NegotiationRequestDto negotiationRequestDto) {
+        Optional<Negotiation> negotiation = negotiationRepository.findById(negotiationRequestDto.id());
+        if (negotiation.isEmpty() || !negotiation.get().getUser().equals(user)) {
+            throw new NotFoundException("Negotiation with id " + negotiationRequestDto.id() + " not found");
+        }
+        Negotiation existingNegotiation = negotiation.get();
+        existingNegotiation.setState(negotiationRequestDto.negotiationState() != null ? negotiationRequestDto.negotiationState() : existingNegotiation.getState());
+        existingNegotiation.setComment(negotiationRequestDto.comment() != null ? negotiationRequestDto.comment() : existingNegotiation.getComment());
+        return NegotiationMapper.toDto(existingNegotiation);
     }
 
     private NegotiationStatistic calculateStatistic(List<Negotiation> negotiations) {
@@ -184,7 +192,7 @@ public class NegotiationService {
                 existingMap.put(externalId, negotiation);
             }
             negotiation.setCompanyName(hh.vacancy().employer().name());
-            negotiation.setVacancyUrl(hh.url());
+            negotiation.setVacancyUrl(hh.vacancy().alternate_url());
             negotiation.setPositionName(hh.vacancy().name());
             negotiation.setViewedByOpponent(hh.viewed_by_opponent());
             if (canUpdateState(negotiation)) {

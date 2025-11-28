@@ -2,11 +2,17 @@ package com.example.dto.negotiation;
 
 import com.example.enums.ApiProvider;
 import com.example.enums.NegotiationState;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@Builder
 public class NegotiationDto {
-    Long id;
+    Integer id;
     NegotiationState state;
     Boolean viewedByOpponent;
     ApiProvider apiProvider;
