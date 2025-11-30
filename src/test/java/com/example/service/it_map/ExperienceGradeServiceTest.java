@@ -1,11 +1,13 @@
 package com.example.service.it_map;
 
+import com.example.RedisTestConfig;
 import com.example.model.agregator.ExperienceGrade;
 import com.example.repository.it_map.ExperienceGradeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(RedisTestConfig.class)
 class ExperienceGradeServiceTest {
     @Autowired
     private ExperienceGradeRepository experienceGradeRepository;

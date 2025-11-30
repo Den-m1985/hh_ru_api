@@ -1,5 +1,6 @@
 package com.example.service.it_map;
 
+import com.example.RedisTestConfig;
 import com.example.dto.agregator_dto.CompanyCategoryDto;
 import com.example.model.it_map.CompanyCategory;
 import com.example.repository.it_map.CompanyCategoryRepository;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(RedisTestConfig.class)
 class CompanyCategoryTest {
     @MockitoSpyBean
     private CompanyRepository companyRepository;

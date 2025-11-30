@@ -1,20 +1,23 @@
 package com.example.controller;
 
+import com.example.controller.interfaces.NegotiationApi;
 import com.example.dto.negotiation.NegotiationDto;
 import com.example.dto.negotiation.NegotiationRequestDto;
 import com.example.dto.negotiation.NegotiationStatistic;
 import com.example.model.AuthUser;
 import com.example.service.negotiation.NegotiationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/negotiation")
-public class NegotiationController {
+public class NegotiationController implements NegotiationApi {
     private final NegotiationService negotiationService;
 
     @GetMapping("/statistic")
@@ -31,7 +34,7 @@ public class NegotiationController {
 
     @PostMapping
     public NegotiationDto updateNegotiation(@AuthenticationPrincipal AuthUser authUser,
-                                            @RequestBody NegotiationRequestDto negotiationRequestDto) {
+                                            @Valid @RequestBody NegotiationRequestDto negotiationRequestDto) {
         return negotiationService.updateNegotiation(authUser.getUser(), negotiationRequestDto);
     }
 }

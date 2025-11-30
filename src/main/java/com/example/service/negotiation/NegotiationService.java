@@ -70,12 +70,12 @@ public class NegotiationService {
 
     @Transactional
     public NegotiationDto updateNegotiation(User user, NegotiationRequestDto negotiationRequestDto) {
-        Optional<Negotiation> negotiation = negotiationRepository.findById(negotiationRequestDto.id());
-        if (negotiation.isEmpty() || !negotiation.get().getUser().equals(user)) {
+        Optional<Negotiation> negotiation = negotiationRepository.findByIdAndUser(negotiationRequestDto.id(), user);
+        if (negotiation.isEmpty()) {
             throw new NotFoundException("Negotiation with id " + negotiationRequestDto.id() + " not found");
         }
         Negotiation existingNegotiation = negotiation.get();
-        existingNegotiation.setState(negotiationRequestDto.negotiationState() != null ? negotiationRequestDto.negotiationState() : existingNegotiation.getState());
+        existingNegotiation.setState(negotiationRequestDto.state() != null ? negotiationRequestDto.state() : existingNegotiation.getState());
         existingNegotiation.setComment(negotiationRequestDto.comment() != null ? negotiationRequestDto.comment() : existingNegotiation.getComment());
         return NegotiationMapper.toDto(existingNegotiation);
     }

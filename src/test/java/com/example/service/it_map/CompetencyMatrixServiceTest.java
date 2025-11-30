@@ -1,5 +1,6 @@
 package com.example.service.it_map;
 
+import com.example.RedisTestConfig;
 import com.example.dto.agregator_dto.CompetencyMatrixRequest;
 import com.example.dto.it_map.CompetencyAreasRequest;
 import com.example.dto.it_map.CompetencyRequest;
@@ -12,17 +13,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(RedisTestConfig.class)
 class CompetencyMatrixServiceTest {
     @Autowired
     private CompetencyMatrixRepository competencyMatrixRepository;

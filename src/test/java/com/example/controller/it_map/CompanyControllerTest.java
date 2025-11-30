@@ -1,5 +1,6 @@
 package com.example.controller.it_map;
 
+import com.example.RedisTestConfig;
 import com.example.dto.agregator_dto.CompanyCategoryDto;
 import com.example.dto.company.CompanyResponseDto;
 import com.example.model.it_map.Company;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -38,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(RedisTestConfig.class)
 @ActiveProfiles("test")
 class CompanyControllerTest {
     @Autowired
