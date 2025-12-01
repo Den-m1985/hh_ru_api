@@ -1,7 +1,9 @@
 package com.example.dto.negotiation;
 
 import com.example.dto.superjob.Vacancy;
+import lombok.Builder;
 
+@Builder
 public record SuperjobNegotiation(
         String date_viewed,
         String mailId,

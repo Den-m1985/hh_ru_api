@@ -5,9 +5,11 @@ import com.example.enums.NegotiationState;
 import com.example.util.CustomLocalDateTimeDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record HeadhunterNegotiation(
         String id,
