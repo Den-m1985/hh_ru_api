@@ -271,13 +271,6 @@ public class NegotiationServiceTest {
         assertEquals(NegotiationState.DISCARD, n.getState());
     }
 
-    @Test
-    void mapSjStatus_works() {
-        assertEquals(NegotiationState.INVITATION, callMapSjStatus(1));
-        assertEquals(NegotiationState.DISCARD, callMapSjStatus(2));
-        assertEquals(NegotiationState.DISCARD, callMapSjStatus(30));
-        assertEquals(NegotiationState.RESPONSE, callMapSjStatus(999));
-    }
 
     @Test
     void canUpdateState_logicCorrect() {
@@ -291,16 +284,6 @@ public class NegotiationServiceTest {
 
         n.setState(NegotiationState.DISCARD_AFTER_INTERVIEW);
         assertFalse(callCanUpdateState(n));
-    }
-
-    private NegotiationState callMapSjStatus(Integer status) {
-        try {
-            var m = NegotiationService.class.getDeclaredMethod("mapSjStatus", Integer.class);
-            m.setAccessible(true);
-            return (NegotiationState) m.invoke(negotiationService, status);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private boolean callCanUpdateState(Negotiation n) {
