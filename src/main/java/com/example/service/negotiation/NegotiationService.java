@@ -1,7 +1,9 @@
 package com.example.service.negotiation;
 
-import com.example.dto.HeadhunterNegotiation;
-import com.example.dto.negotiation.*;
+import com.example.dto.negotiation.NegotiationDto;
+import com.example.dto.negotiation.NegotiationRequestDto;
+import com.example.dto.negotiation.NegotiationStatistic;
+import com.example.dto.negotiation.PlatformStatistic;
 import com.example.enums.ApiProvider;
 import com.example.enums.NegotiationState;
 import com.example.exceptions.NotFoundException;
@@ -21,9 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +46,7 @@ public class NegotiationService {
 
     @Transactional
     public NegotiationStatistic getUserStatistic(User user) {
+        log.info("Get user statistic. User: {}", user.getId());
         ensureSynced(user);
         List<Negotiation> negotiations = negotiationRepository.findAllByUser(user);
         return calculateStatistic(negotiations);
@@ -62,8 +62,10 @@ public class NegotiationService {
 
     @Transactional
     public NegotiationDto updateNegotiation(User user, NegotiationRequestDto negotiationRequestDto) {
+        log.info("Update negotiation. User {}, request: {}", user.getId(), negotiationRequestDto);
         Optional<Negotiation> negotiation = negotiationRepository.findByIdAndUser(negotiationRequestDto.id(), user);
         if (negotiation.isEmpty()) {
+            log.warn("Negotiation with id {} not found. User: {}", negotiationRequestDto.id(), user.getId());
             throw new NotFoundException("Negotiation with id " + negotiationRequestDto.id() + " not found");
         }
         Negotiation existingNegotiation = negotiation.get();
@@ -114,6 +116,7 @@ public class NegotiationService {
 
     @Transactional
     void syncNegotiations(User user) {
+        log.info("Sync negotiations. User {}", user);
         List<HeadhunterNegotiationAdapter> hhNegotiations = vacancyClient.getAllNegotiations(user)
                 .stream()
                 .map(HeadhunterNegotiationAdapter::new)
