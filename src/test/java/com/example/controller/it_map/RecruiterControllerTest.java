@@ -122,6 +122,8 @@ class RecruiterControllerTest {
                 null,
                 null,
                 null,
+                null,
+                null,
                 List.of(recruiters.get(0).getId(), recruiters.get(1).getId()));
         CompanyResponseDto company = companyService.addCompany(companyResponseDto);
 

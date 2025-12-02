@@ -91,6 +91,8 @@ class CompanyReviewControllerTest {
                 company.getCompanyUrl(),
                 company.getCareerUrl(),
                 company.getLogoPath(),
+                null,
+                null,
                 List.of()
         );
 

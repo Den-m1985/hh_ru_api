@@ -28,6 +28,7 @@ public interface CompanyApi {
     )
     ResponseEntity<CompanyResponseDto> getCompanyById(@PathVariable Integer id);
 
+    //----------------------------------------
 
     @Operation(
             summary = "Добавить компанию без логотипа",
@@ -39,6 +40,7 @@ public interface CompanyApi {
     )
     ResponseEntity<CompanyResponseDto> addCompany(@RequestBody CompanyResponseDto response);
 
+    //----------------------------------------
 
     @Operation(
             summary = "Добавить компанию с логотипом",
@@ -53,6 +55,7 @@ public interface CompanyApi {
             @RequestPart(value = "logoFile", required = false) MultipartFile logoFile
     );
 
+    //----------------------------------------
 
     @Operation(
             summary = "Добавить логотип в существующюю компанию",
@@ -67,6 +70,7 @@ public interface CompanyApi {
             @RequestPart("File") MultipartFile file
     );
 
+    //----------------------------------------
 
     @Operation(
             summary = "Получить список всех компаний",
@@ -78,6 +82,7 @@ public interface CompanyApi {
     )
     ResponseEntity<List<CompanyResponseDto>> getAllCompanies();
 
+    //----------------------------------------
 
     @Operation(
             summary = "Фильтр компаний по категориям",
@@ -89,8 +94,59 @@ public interface CompanyApi {
             description = "Список компаний по категориям",
             content = @Content(schema = @Schema(implementation = CompanyResponseDto.class))
     )
-    ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilters(@RequestParam List<Integer> categories);
+    ResponseEntity<List<CompanyResponseDto>> getCompaniesByCategories(@RequestParam List<Integer> categories);
 
+    //----------------------------------------
+
+    @Operation(
+            summary = "Поиск компаний по ключевому слову",
+            description = "Возвращает список компаний по ключевому слову. Поиск ведется без учета регистра. " +
+                    "К примеру: Сбер = сбер и т.п."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CompanyResponseDto.class)
+            )
+    )
+    ResponseEntity<List<CompanyResponseDto>> getCompaniesBySearch(@RequestParam String search);
+
+    //----------------------------------------
+
+    @Operation(
+            summary = "Поиск компаний для виртуальной карты",
+            description = "Возвращает список компаний по полю presentInVirtualMap."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CompanyResponseDto.class)
+            )
+    )
+    ResponseEntity<List<CompanyResponseDto>> getCompaniesByFilter(@RequestParam Boolean isPrime);
+
+    //----------------------------------------
+
+    @Operation(
+            summary = "Обновление данных компании",
+            description = "Частично обновляет данные компании. " +
+                    "Позволяет обновить отдельные поля компании без необходимости передавать полный объект. " +
+                    "Обновляются только те поля, которые явно переданы в запросе (не null). " +
+                    "Поддерживает обновление названия, URL компании, карьерной страницы, категорий и списка рекрутеров."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Компания успешно обновлена",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CompanyResponseDto.class)
+            )
+    )
+    ResponseEntity<CompanyResponseDto> updateCompany(@RequestBody CompanyResponseDto response);
+
+    //----------------------------------------
 
     @Operation(summary = "Удалить компанию")
     ResponseEntity<Void> deleteCompany(@PathVariable Integer id);

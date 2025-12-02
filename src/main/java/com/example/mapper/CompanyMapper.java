@@ -23,6 +23,8 @@ public class CompanyMapper {
         company.setLogoPath(dto.getLogoUrl());
         company.setRecruiter(recruiters);
         company.setCompanyUrl(dto.getCompanyUrl());
+        company.setCategoryVirtualMap(dto.getCategoryVirtualMap());
+        company.setPresentInVirtualMap(dto.getPresentInVirtualMap());
         return company;
     }
 
@@ -36,6 +38,8 @@ public class CompanyMapper {
                 entity.getCompanyUrl(),
                 entity.getCareerUrl(),
                 entity.getLogoPath(),
+                entity.getCategoryVirtualMap(),
+                entity.getPresentInVirtualMap(),
                 entity.getRecruiter().stream()
                         .map(Recruiter::getId)
                         .toList()

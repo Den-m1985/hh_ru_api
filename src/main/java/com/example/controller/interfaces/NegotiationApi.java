@@ -37,6 +37,8 @@ public interface NegotiationApi {
             @AuthenticationPrincipal AuthUser authUser
     );
 
+    //----------------------------------------
+
     @Operation(
             summary = "Получить отклики пользователя",
             description = "Возвращает список откликов пользователя с hh и superjob, отсортированные по времени отклика",
@@ -53,6 +55,8 @@ public interface NegotiationApi {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size);
+
+    //----------------------------------------
 
     @Operation(
             summary = "Обновить отклик",

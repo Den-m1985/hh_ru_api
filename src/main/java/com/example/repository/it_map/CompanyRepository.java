@@ -11,7 +11,12 @@ import java.util.Optional;
 public interface CompanyRepository extends JpaRepository<Company, Integer> {
 
     Optional<Company> findCompanyByName(String name);
+
     Optional<Company> findCompanyById(Integer id);
+
+    List<Company> findCompanyByPresentInVirtualMap(Boolean presentInVirtualMap);
+
+    List<Company> findByNameContainingIgnoreCase(String name);
 
     @Query("SELECT DISTINCT c FROM Company c " +
             "JOIN FETCH c.categories cat " +

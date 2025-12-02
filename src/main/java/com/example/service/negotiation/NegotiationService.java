@@ -37,7 +37,7 @@ public class NegotiationService {
     ClientSuperjob superjobClient;
     RedisTemplate<String, Object> redisTemplate;
     static String LAST_SYNC = "user:sync:";
-    static Duration TTL = Duration.ofMinutes(1);
+    static Duration TTL = Duration.ofMinutes(5);
     static Set<NegotiationState> SYSTEM_STATUSES = Set.of(
             NegotiationState.RESPONSE,
             NegotiationState.INVITATION,

@@ -34,5 +34,11 @@ public class CompanyResponseDto {
     @JsonProperty("logo_url")
     String logoUrl;
 
+    @JsonProperty("category_virtual_map")
+    private Integer categoryVirtualMap;
+
+    @JsonProperty("present_in_virtual_map")
+    private Boolean presentInVirtualMap;
+
     List<Integer> recruiters;
 }
