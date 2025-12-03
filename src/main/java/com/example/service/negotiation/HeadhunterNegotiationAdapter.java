@@ -3,18 +3,21 @@ package com.example.service.negotiation;
 import com.example.dto.HeadhunterNegotiation;
 import com.example.enums.ApiProvider;
 import com.example.enums.NegotiationState;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class HeadhunterNegotiationAdapter implements ExternalNegotiation {
 
-    private final HeadhunterNegotiation src;
+    HeadhunterNegotiation headhunterNegotiation;
 
     @Override
     public String externalId() {
-        return src.id();
+        return headhunterNegotiation.id();
     }
 
     @Override
@@ -24,31 +27,31 @@ public class HeadhunterNegotiationAdapter implements ExternalNegotiation {
 
     @Override
     public LocalDateTime createdAt() {
-        return src.created_at();
+        return headhunterNegotiation.created_at();
     }
 
     @Override
     public String companyName() {
-        return src.vacancy().employer().name();
+        return headhunterNegotiation.vacancy().employer().name();
     }
 
     @Override
     public String vacancyUrl() {
-        return src.vacancy().alternate_url();
+        return headhunterNegotiation.vacancy().alternate_url();
     }
 
     @Override
     public String positionName() {
-        return src.vacancy().name();
+        return headhunterNegotiation.vacancy().name();
     }
 
     @Override
     public Boolean viewed() {
-        return src.viewed_by_opponent();
+        return headhunterNegotiation.viewed_by_opponent();
     }
 
     @Override
     public NegotiationState externalState() {
-        return src.state();
+        return headhunterNegotiation.state();
     }
 }

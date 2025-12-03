@@ -99,9 +99,9 @@ public class NegotiationControllersTest {
     @WithMockUser
     void updateNegotiation_success() throws Exception {
         NegotiationRequestDto request = new NegotiationRequestDto(
+                "updated comment",
                 10,
-                NegotiationState.DISCARD_AFTER_INTERVIEW,
-                "updated comment"
+                NegotiationState.DISCARD_AFTER_INTERVIEW
         );
 
         NegotiationDto updated = NegotiationDto.builder()
@@ -182,9 +182,9 @@ public class NegotiationControllersTest {
     @WithMockUser
     void updateNegotiation_validationError_idNull() throws Exception {
         NegotiationRequestDto request = new NegotiationRequestDto(
+                "comment",
                 null,
-                NegotiationState.INVITATION,
-                "comment"
+                NegotiationState.INVITATION
         );
 
         mockMvc.perform(post("/v1/negotiation")
@@ -199,9 +199,9 @@ public class NegotiationControllersTest {
     @WithMockUser
     void updateNegotiation_validationError_commentBlank() throws Exception {
         NegotiationRequestDto request = new NegotiationRequestDto(
+                "",
                 5,
-                NegotiationState.INVITATION,
-                ""
+                NegotiationState.INVITATION
         );
 
         mockMvc.perform(post("/v1/negotiation")

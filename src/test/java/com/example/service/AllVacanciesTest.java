@@ -2,7 +2,12 @@ package com.example.service;
 
 
 import com.example.dto.VacancyRequest;
-import com.example.dto.vacancy_dto.*;
+import com.example.dto.vacancy_dto.ApiListResponse;
+import com.example.dto.vacancy_dto.ProfessionalRoles;
+import com.example.dto.vacancy_dto.VacancyItem;
+import com.example.dto.vacancy_dto.WorkFormat;
+import com.example.dto.vacancy_dto.Snippet;
+import com.example.dto.vacancy_dto.Experience;
 import com.example.util.ApplicationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

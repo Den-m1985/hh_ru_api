@@ -16,19 +16,23 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Negotiation extends BaseEntity {
 
-    String externalId;
-
     @Enumerated(EnumType.STRING)
     NegotiationState state;
-
-    String statusText;
-
-    Boolean viewedByOpponent;
 
     @Enumerated(EnumType.STRING)
     ApiProvider provider;
 
-    LocalDateTime sendAt;
+    @ManyToOne
+    @JoinColumn(
+            name = "user_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_negotiations_user_id")
+    )
+    User user;
+
+    String externalId;
+
+    String statusText;
 
     String comment;
 
@@ -36,9 +40,9 @@ public class Negotiation extends BaseEntity {
 
     String companyName;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    User user;
-
     String positionName;
+
+    Boolean viewedByOpponent;
+
+    LocalDateTime sendAt;
 }

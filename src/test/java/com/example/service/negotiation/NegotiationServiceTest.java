@@ -1,7 +1,9 @@
 package com.example.service.negotiation;
 
 import com.example.RedisTestConfig;
+import com.example.dto.AuthResponse;
 import com.example.dto.HeadhunterNegotiation;
+import com.example.dto.UserDTO;
 import com.example.dto.negotiation.NegotiationDto;
 import com.example.dto.negotiation.NegotiationRequestDto;
 import com.example.dto.negotiation.NegotiationStatistic;
@@ -12,19 +14,19 @@ import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.enums.ApiProvider;
 import com.example.enums.NegotiationState;
 import com.example.model.Negotiation;
-import com.example.model.RoleEnum;
 import com.example.model.User;
 import com.example.repository.NegotiationRepository;
 import com.example.repository.UserRepository;
 import com.example.service.VacancyClient;
+import com.example.service.common.RegisterService;
 import com.example.service.superjob.ClientSuperjob;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisKeyCommands;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -32,8 +34,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -45,6 +46,8 @@ public class NegotiationServiceTest {
     private NegotiationRepository negotiationRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RegisterService registerService;
     @MockitoBean
     private VacancyClient vacancyClient;
     @MockitoBean
@@ -52,18 +55,17 @@ public class NegotiationServiceTest {
     @MockitoBean
     private RedisKeyCommands keyCommands;
     private User user;
+    private final HttpServletResponse servletResponse = mock(HttpServletResponse.class);
+
 
     @BeforeEach
     void setUp() {
         negotiationRepository.deleteAll();
         userRepository.deleteAll();
 
-        user = new User();
-        user.setUsername("username");
-        user.setPassword("password");
-        user.setRole(RoleEnum.USER);
-        User savedUser = userRepository.save(user);
-        user.setId(savedUser.getId());
+        UserDTO req = new UserDTO("test@mail.com", "password");
+        AuthResponse resp = registerService.registerUser(req, servletResponse);
+        user = userRepository.findById(resp.userId()).orElseThrow();
     }
 
     @Test
@@ -146,9 +148,10 @@ public class NegotiationServiceTest {
         Integer negotiationId = negotiationRepository.save(negotiation).getId();
 
         NegotiationRequestDto request = new NegotiationRequestDto(
+                "comment",
                 negotiationId,
-                NegotiationState.INTERVIEW,
-                "comment");
+                NegotiationState.INTERVIEW
+        );
 
         NegotiationDto result = negotiationService.updateNegotiation(user, request);
 
@@ -159,9 +162,9 @@ public class NegotiationServiceTest {
     @Test
     void updateNegotiation_notFound() {
         NegotiationRequestDto dto = new NegotiationRequestDto(
+                "comment",
                 999,
-                NegotiationState.INVITATION,
-                "comment"
+                NegotiationState.INVITATION
         );
         assertThrows(RuntimeException.class, () -> negotiationService.updateNegotiation(user, dto));
     }

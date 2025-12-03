@@ -6,13 +6,13 @@ import com.example.dto.negotiation.NegotiationStatistic;
 import com.example.dto.negotiation.PlatformStatistic;
 import com.example.enums.ApiProvider;
 import com.example.enums.NegotiationState;
-import com.example.exceptions.NotFoundException;
 import com.example.mapper.NegotiationMapper;
 import com.example.model.Negotiation;
 import com.example.model.User;
 import com.example.repository.NegotiationRepository;
 import com.example.service.VacancyClient;
 import com.example.service.superjob.ClientSuperjob;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,8 +35,8 @@ public class NegotiationService {
     VacancyClient vacancyClient;
     ClientSuperjob superjobClient;
     RedisTemplate<String, Object> redisTemplate;
-    static String LAST_SYNC = "user:sync:";
-    static Duration TTL = Duration.ofMinutes(5);
+    String LAST_SYNC = "user:sync:";
+    Duration TTL = Duration.ofMinutes(5);
     static Set<NegotiationState> SYSTEM_STATUSES = Set.of(
             NegotiationState.RESPONSE,
             NegotiationState.INVITATION,
@@ -46,31 +46,31 @@ public class NegotiationService {
 
     @Transactional
     public NegotiationStatistic getUserStatistic(User user) {
-        log.info("Get user statistic. User: {}", user.getId());
         ensureSynced(user);
         List<Negotiation> negotiations = negotiationRepository.findAllByUser(user);
+        log.info("Get user statistic. User: {}, negotiations count: {}", user.getId(), negotiations.size());
         return calculateStatistic(negotiations);
     }
 
     @Transactional
     public List<NegotiationDto> getNegotiations(User user, Integer from, Integer size) {
-        log.info("Get negotiations from {} to {}. User {}", from, size, user.getId());
         ensureSynced(user);
         List<Negotiation> negotiations = negotiationRepository.findAllByUserOrderBySendAtDesc(user, PageRequest.of(from, size));
+        log.info("Get negotiations from {} to {}. User {}, negotiations count: {}", from, size, user.getId(), negotiations.size());
         return NegotiationMapper.toDto(negotiations);
     }
 
     @Transactional
     public NegotiationDto updateNegotiation(User user, NegotiationRequestDto negotiationRequestDto) {
-        log.info("Update negotiation. User {}, request: {}", user.getId(), negotiationRequestDto);
         Optional<Negotiation> negotiation = negotiationRepository.findByIdAndUser(negotiationRequestDto.id(), user);
         if (negotiation.isEmpty()) {
             log.warn("Negotiation with id {} not found. User: {}", negotiationRequestDto.id(), user.getId());
-            throw new NotFoundException("Negotiation with id " + negotiationRequestDto.id() + " not found");
+            throw new EntityNotFoundException("Negotiation with id " + negotiationRequestDto.id() + " not found");
         }
         Negotiation existingNegotiation = negotiation.get();
         existingNegotiation.setState(negotiationRequestDto.state() != null ? negotiationRequestDto.state() : existingNegotiation.getState());
         existingNegotiation.setComment(negotiationRequestDto.comment() != null ? negotiationRequestDto.comment() : existingNegotiation.getComment());
+        log.info("Negotiation {} updated. User: {}, request: {}", existingNegotiation.getId(), user.getId(), negotiationRequestDto);
         return NegotiationMapper.toDto(existingNegotiation);
     }
 
@@ -116,7 +116,6 @@ public class NegotiationService {
 
     @Transactional
     void syncNegotiations(User user) {
-        log.info("Sync negotiations. User {}", user);
         List<HeadhunterNegotiationAdapter> hhNegotiations = vacancyClient.getAllNegotiations(user)
                 .stream()
                 .map(HeadhunterNegotiationAdapter::new)
@@ -127,11 +126,14 @@ public class NegotiationService {
                 .collect(Collectors.toList());
         syncExternalNegotiations(user, hhNegotiations);
         syncExternalNegotiations(user, sjNegotiations);
+        log.info("Sync negotiations finished. User {}, hh negotiations count: {}, superjob negotiations count: {}",
+                user, hhNegotiations.size(), sjNegotiations.size());
     }
 
     @Transactional
     void syncExternalNegotiations(User user, List<? extends ExternalNegotiation> externalNegotiations) {
         if (externalNegotiations.isEmpty()) {
+            log.debug("No external negotiations to sync. User: {}", user.getId());
             return;
         }
         ApiProvider provider = externalNegotiations.get(0).provider();
@@ -161,7 +163,8 @@ public class NegotiationService {
             }
             toSave.add(negotiation);
         }
-        negotiationRepository.saveAll(toSave);
+        List<Negotiation> saved = negotiationRepository.saveAll(toSave);
+        log.info("Sync external negotiations finished. User: {}, saved: {}", user.getId(), saved);
     }
 
     private boolean canUpdateState(Negotiation negotiation) {
@@ -172,8 +175,11 @@ public class NegotiationService {
     void ensureSynced(User user) {
         String key = LAST_SYNC + user.getId();
         if (!redisTemplate.hasKey(key)) {
+            log.info("Key absent, starting sync. User: {}, key: {}", user.getId(), key);
             redisTemplate.opsForValue().set(key, "synced", TTL);
             syncNegotiations(user);
+        } else {
+            log.info("Already synced, skipping sync. User: {}, key: {}", user.getId(), key);
         }
     }
 }

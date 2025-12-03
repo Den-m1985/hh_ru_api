@@ -3,20 +3,23 @@ package com.example.service.negotiation;
 import com.example.dto.negotiation.SuperjobNegotiation;
 import com.example.enums.ApiProvider;
 import com.example.enums.NegotiationState;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SuperjobNegotiationAdapter implements ExternalNegotiation {
 
-    private final SuperjobNegotiation src;
+    SuperjobNegotiation superjobNegotiation;
 
     @Override
     public String externalId() {
-        return src.id_vacancy() + "_" + src.id_resume() + "_" + src.date_sent();
+        return superjobNegotiation.id_vacancy() + "_" + superjobNegotiation.id_resume() + "_" + superjobNegotiation.date_sent();
     }
 
     @Override
@@ -26,32 +29,32 @@ public class SuperjobNegotiationAdapter implements ExternalNegotiation {
 
     @Override
     public LocalDateTime createdAt() {
-        return unixToLocalDateTime(src.date_sent());
+        return unixToLocalDateTime(superjobNegotiation.date_sent());
     }
 
     @Override
     public String companyName() {
-        return src.firm_name();
+        return superjobNegotiation.firm_name();
     }
 
     @Override
     public String vacancyUrl() {
-        return src.vacancy().link();
+        return superjobNegotiation.vacancy().link();
     }
 
     @Override
     public String positionName() {
-        return src.position_name();
+        return superjobNegotiation.position_name();
     }
 
     @Override
     public Boolean viewed() {
-        return src.date_viewed() != null;
+        return superjobNegotiation.date_viewed() != null;
     }
 
     @Override
     public NegotiationState externalState() {
-        return mapSjStatus(src.status());
+        return mapSjStatus(superjobNegotiation.status());
     }
 
     private LocalDateTime unixToLocalDateTime(long unix) {
