@@ -22,9 +22,10 @@ spring:
       org.springframework.web: INFO
 
 jwt:
-  secret:
-    access: ${JWT_KEY_ACCESS}
-    refresh: ${JWT_KEY_REFRESH}
+  rsa:
+    # TODO [Migration]: remove private-key after auth extraction
+    private-key: ${RSA_PRIVATE_KEY}
+    public-key: ${RSA_PUBLIC_KEY}
   lifetime:
     access: ${LIFETIME_ACCESS_TOKEN}
     refresh: ${LIFETIME_REFRESH_TOKEN}
