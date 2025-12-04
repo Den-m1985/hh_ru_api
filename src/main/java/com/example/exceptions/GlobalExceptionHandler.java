@@ -122,6 +122,12 @@ public class GlobalExceptionHandler {
             return errorDetail;
         }
 
+        if (exception instanceof NotFoundException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+            errorDetail.setProperty("description", "Entity not found");
+            return errorDetail;
+        }
+
         if (errorDetail == null) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
             errorDetail.setProperty("description", "Unknown internal server error.");

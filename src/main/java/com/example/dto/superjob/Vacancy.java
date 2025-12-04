@@ -1,7 +1,10 @@
 package com.example.dto.superjob;
 
+import lombok.Builder;
+
 import java.util.List;
 
+@Builder
 public record Vacancy(
         Integer id,
         String profession,

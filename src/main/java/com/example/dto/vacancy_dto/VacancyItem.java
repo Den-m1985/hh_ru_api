@@ -2,9 +2,11 @@ package com.example.dto.vacancy_dto;
 
 import com.example.enums.VacancyRelation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 
 import java.util.List;
 
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record VacancyItem(
         Boolean accept_incomplete_resumes,  // Разрешен ли отклик на вакансию неполным резюме

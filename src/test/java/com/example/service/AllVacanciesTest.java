@@ -3,11 +3,11 @@ package com.example.service;
 
 import com.example.dto.VacancyRequest;
 import com.example.dto.vacancy_dto.ApiListResponse;
-import com.example.dto.vacancy_dto.Experience;
 import com.example.dto.vacancy_dto.ProfessionalRoles;
-import com.example.dto.vacancy_dto.Snippet;
 import com.example.dto.vacancy_dto.VacancyItem;
 import com.example.dto.vacancy_dto.WorkFormat;
+import com.example.dto.vacancy_dto.Snippet;
+import com.example.dto.vacancy_dto.Experience;
 import com.example.util.ApplicationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,14 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.when;

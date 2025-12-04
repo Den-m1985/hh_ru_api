@@ -21,6 +21,20 @@ spring:
       org.springframework.cloud: INFO
       org.springframework.web: INFO
 
+  data:
+    redis:
+      host: ${REDIS_BASE_URL}
+      port: ${REDIS_BASE_PORT}
+      password:
+      timeout: ${REDIS_TIMEOUT}
+      lettuce:
+        pool:
+          max-active: ${REDIS_LETTUCE_POOL_MAX_ACTIVE}
+          max-idle: ${REDIS_LETTUCE_POOL_MAX_IDLE}
+          min-idle: ${REDIS_LETTUCE_POOL_MIN_IDLE}
+  cache:
+    type: redis
+
 jwt:
   secret:
     access: ${JWT_KEY_ACCESS}
