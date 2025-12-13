@@ -39,7 +39,7 @@ public class VacancySchedulerService {
                 .expireAfterAccess(25, TimeUnit.HOURS) // Например, удаляем через 25 часов бездействия
                 .build();
         loadActiveSchedulesIntoCache();
-        log.info("Инициализировано {} автоответчиков в память при запуске.", memoryCache.estimatedSize());
+        log.info("Инициализировано {} автоответчиков hh в память при запуске.", memoryCache.estimatedSize());
     }
 
     private void loadActiveSchedulesIntoCache() {
@@ -87,7 +87,7 @@ public class VacancySchedulerService {
             schedule = scheduleRepository.save(schedule);
             existingSchedule.add(schedule);
         }
-        log.info("Create a new schedule {} for userId={}", schedule.getId(), user.getId());
+        log.info("Create a new hh schedule: {} for userId: {}", schedule.getId(), user.getId());
 
         if (schedule.isEnabled()) {
             memoryCache.put(schedule.getId(), schedule.getParams(VacancyRequest.class).get());
@@ -95,7 +95,7 @@ public class VacancySchedulerService {
             memoryCache.invalidate(schedule.getId());
         }
 
-        log.info("Расписание {} (ID={}) для userId={} обновлено/создано: enabled={}",
+        log.info("Расписание {} id: {} для userId: {} обновлено/создано: enabled: {}",
                 schedule.getName(), schedule.getId(), user.getId(), schedule.isEnabled());
         return AutoResponseScheduleDto.fromEntity(schedule);
     }
@@ -104,11 +104,11 @@ public class VacancySchedulerService {
         AutoResponseSchedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new EntityNotFoundException("Расписание=" + scheduleId + " для userId=" + user.getId() + " не найдено"));
         if (!schedule.getUser().getId().equals(user.getId())) {
-            throw new SecurityException("Нельзя удалить чужое расписание");
+            throw new SecurityException("User: " + user.getId() + " пытался удалить чужое расписание:" + scheduleId);
         }
         scheduleRepository.delete(schedule);
         memoryCache.invalidate(schedule.getUser().getId());
-        log.info("Удалено расписание {} для userId={}", scheduleId, schedule.getUser().getId());
+        log.info("Удалено расписание hh id: {} для userId: {}", scheduleId, schedule.getUser().getId());
     }
 
     public List<AutoResponseScheduleDto> getAllSchedulesByUser(User user) {
@@ -120,18 +120,18 @@ public class VacancySchedulerService {
 
     public AutoResponseScheduleDto getScheduleById(Integer scheduleId, User user) {
         AutoResponseSchedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new EntityNotFoundException("Расписание=" + scheduleId + " для userId=" + user.getId() + " не найдено"));
+                .orElseThrow(() -> new EntityNotFoundException("Расписание hh: " + scheduleId + " для userId=" + user.getId() + " не найдено"));
         if (!schedule.getUser().getId().equals(user.getId())) {
-            throw new SecurityException("Нельзя просматривать чужое расписание");
+            throw new SecurityException("User: " + user.getId() + " пытался просматривать чужое расписание");
         }
         return AutoResponseScheduleDto.fromEntity(schedule);
     }
 
     public AutoResponseScheduleDto getScheduleByName(String scheduleName, User user) {
         AutoResponseSchedule schedule = scheduleRepository.findByNameAndUserId(scheduleName, user.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Расписание не найдено"));
+                .orElseThrow(() -> new EntityNotFoundException("Расписание hh: " + scheduleName + " не найдено"));
         if (!schedule.getUser().getId().equals(user.getId())) {
-            throw new SecurityException("Нельзя просматривать чужое расписание");
+            throw new SecurityException("User: " + user.getId() + " пытался просматривать чужое расписание");
         }
         return AutoResponseScheduleDto.fromEntity(schedule);
     }
@@ -141,10 +141,10 @@ public class VacancySchedulerService {
      */
     @Scheduled(cron = "0 0 10 * * *", zone = "Europe/Moscow") // каждый день в 10 утра по мск
     public void executeScheduledResponses() {
-        log.info("Запуск выполнения запланированных автооткликов. Текущий размер кэша: {}", memoryCache.estimatedSize());
+        log.info("Запуск выполнения запланированных автооткликов hh. Текущий размер кэша: {}", memoryCache.estimatedSize());
 
         loadActiveSchedulesIntoCache();
-        log.info("Кэш автоответчиков синхронизирован. Активных расписаний: {}", memoryCache.estimatedSize());
+        log.info("Кэш автоответчиков hh синхронизирован. Активных расписаний: {}", memoryCache.estimatedSize());
         for (Map.Entry<Integer, VacancyRequest> entry : memoryCache.asMap().entrySet()) {
             Integer scheduleId = entry.getKey();
             VacancyRequest request = entry.getValue();
@@ -153,13 +153,13 @@ public class VacancySchedulerService {
                 Integer userId = schedule.getUser().getId();
                 try {
                     processor.respondToRelevantVacancies(request, userId);
-                    log.info("✅ Автоотклик выполнен для userId={}", userId);
-                    telegramUserNotifier.notifyUser(userId, "✅ Автоотклик выполнен");
+                    log.info("✅ Автоотклик hh выполнен для userId={}", userId);
+                    telegramUserNotifier.notifyUser(userId, "✅ Автоотклик hh выполнен");
                 } catch (Exception e) {
-                    log.error("❌ Ошибка автоотклика для userId={}: {}", userId, e.getMessage(), e);
+                    log.error("❌ Ошибка автоотклика hh для userId={}: {}", userId, e.getMessage(), e);
                 }
             });
         }
-        log.info("Выполнение запланированных автооткликов завершено.");
+        log.info("Выполнение запланированных автооткликов hh завершено.");
     }
 }

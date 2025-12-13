@@ -42,7 +42,7 @@ public class SuperjobSchedulerService {
                 .expireAfterAccess(25, TimeUnit.HOURS) // Например, удаляем через 25 часов бездействия
                 .build();
         loadActiveSchedulesIntoCache();
-        log.info("Инициализировано {} автоответчиков в память при запуске.", memoryCache.estimatedSize());
+        log.info("Инициализировано {} автоответчиков sj в память при запуске.", memoryCache.estimatedSize());
     }
 
     private void loadActiveSchedulesIntoCache() {
@@ -84,7 +84,7 @@ public class SuperjobSchedulerService {
             schedule = scheduleRepository.save(schedule);
             existingSchedule.add(schedule);
         }
-        log.info("Create a new schedule {} for userId={}", schedule.getId(), user.getId());
+        log.info("Create a new sj schedule {} for userId: {}", schedule.getId(), user.getId());
 
         if (schedule.isEnabled()) {
             memoryCache.put(schedule.getId(), schedule.getParams(SuperjobVacancyRequest.class).get());
@@ -92,7 +92,7 @@ public class SuperjobSchedulerService {
             memoryCache.invalidate(schedule.getId());
         }
 
-        log.info("Расписание {} (ID={}) для userId={} обновлено/создано: enabled={}",
+        log.info("Расписание: {} id: {} для userId: {} обновлено/создано: enabled: {}",
                 schedule.getName(), schedule.getId(), user.getId(), schedule.isEnabled());
         return AutoResponseScheduleDto.fromEntity(schedule);
     }
@@ -101,7 +101,7 @@ public class SuperjobSchedulerService {
         user = userService.getUserById(user.getId());
         List<SuperjobResume> superjobResumes = user.getSuperjobResumes();
         if (superjobResumes.isEmpty()) {
-            throw new EntityNotFoundException("User don't have resume");
+            throw new EntityNotFoundException("User: " + user.getId() + " don't have resume");
         }
     }
 
@@ -110,9 +110,9 @@ public class SuperjobSchedulerService {
      */
     @Scheduled(cron = "0 0 10 * * *", zone = "Europe/Moscow") // каждый день в 10 утра по мск
     public void executeScheduledResponses() {
-        log.info("Запуск выполнения запланированных автооткликов. Текущий размер кэша: {}", memoryCache.estimatedSize());
+        log.info("Запуск выполнения запланированных автооткликов sj. Текущий размер кэша: {}", memoryCache.estimatedSize());
         loadActiveSchedulesIntoCache();
-        log.info("Кэш автоответчиков синхронизирован. Активных расписаний: {}", memoryCache.estimatedSize());
+        log.info("Кэш автоответчиков sj синхронизирован. Активных расписаний: {}", memoryCache.estimatedSize());
 
         for (Map.Entry<Integer, SuperjobVacancyRequest> entry : memoryCache.asMap().entrySet()) {
             SuperjobVacancyRequest request = entry.getValue();
@@ -123,13 +123,13 @@ public class SuperjobSchedulerService {
 
                     clientSuperjob.sendCvOnVacancy(request, user);
 
-                    log.info("✅ Автоотклик выполнен для userId={}", user.getId());
-                    telegramUserNotifier.notifyUser(user.getId(), "✅ Автоотклик выполнен");
+                    log.info("✅ Автоотклик sj выполнен для userId: {}", user.getId());
+                    telegramUserNotifier.notifyUser(user.getId(), "✅ Автоотклик sj выполнен");
                 } catch (Exception e) {
-                    log.error("❌ Ошибка автоотклика для userId={}: {}", user.getId(), e.getMessage(), e);
+                    log.error("❌ Ошибка автоотклика sj для userId: {}: {}", user.getId(), e.getMessage(), e);
                 }
             });
         }
-        log.info("Выполнение запланированных автооткликов завершено.");
+        log.info("Выполнение запланированных автооткликов sj завершено.");
     }
 }
