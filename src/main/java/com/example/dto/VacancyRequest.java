@@ -1,11 +1,16 @@
 package com.example.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.List;
 
 public record VacancyRequest(
         String nameRequest,
+
+        @JsonProperty("resume_id")
         String resumeId,
+
         int count,
         List<String> keywordsToExclude,
         boolean isSimilarSearch,
