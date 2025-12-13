@@ -62,6 +62,8 @@ public class VacancySchedulerService {
             throw new IllegalArgumentException("Имя расписания слишком длинное (макс. 100 символов)");
         }
 
+        log.info("\"VacancyRequest request\" from client to save: {}", request);
+
         List<AutoResponseSchedule> existingSchedule = scheduleRepository.findByUserId(user.getId());
 
         AutoResponseSchedule schedule = null;
