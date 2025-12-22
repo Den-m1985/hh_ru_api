@@ -16,8 +16,23 @@ services:
     networks:
       - hh_network
 
+  redis:
+    image: redis:7.0
+    container_name: redis-local
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+        --appendonly yes
+        --maxmemory 512mb
+        --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+
 volumes:
   db_data:
+  redis-data:
 
 networks:
   hh_network:

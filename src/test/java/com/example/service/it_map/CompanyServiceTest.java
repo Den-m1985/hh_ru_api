@@ -1,5 +1,6 @@
 package com.example.service.it_map;
 
+import com.example.RedisTestConfig;
 import com.example.dto.RecruiterDto;
 import com.example.dto.RecruiterRequest;
 import com.example.dto.agregator_dto.CompanyCategoryDto;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
@@ -31,12 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(RedisTestConfig.class)
 class CompanyServiceTest {
     @MockitoSpyBean
     private CompanyRepository companyRepository;

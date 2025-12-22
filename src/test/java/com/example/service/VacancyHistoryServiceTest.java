@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.RedisTestConfig;
 import com.example.dto.AuthResponse;
 import com.example.dto.UserDTO;
 import com.example.dto.VacancyHistoryDto;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(RedisTestConfig.class)
 class VacancyHistoryServiceTest {
     @Autowired
     private UserRepository userRepository;

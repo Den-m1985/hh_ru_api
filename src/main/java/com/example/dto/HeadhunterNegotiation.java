@@ -1,14 +1,23 @@
 package com.example.dto;
 
 import com.example.dto.vacancy_dto.VacancyItem;
+import com.example.enums.NegotiationState;
+import com.example.util.CustomLocalDateTimeDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Builder;
 
+import java.time.LocalDateTime;
+
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record NegotiationItemDto(
+public record HeadhunterNegotiation(
         String id,
-        Object state,
-        String created_at,
-        String updated_at,
+        NegotiationState state,
+        @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
+        LocalDateTime created_at,
+        @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
+        LocalDateTime updated_at,
         Object resume,
         Boolean viewed_by_opponent,
         Boolean has_updates,
