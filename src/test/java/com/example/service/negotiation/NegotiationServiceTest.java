@@ -135,7 +135,7 @@ public class NegotiationServiceTest {
 
         List<NegotiationDto> result = negotiationService.getNegotiations(user, 0, 1);
         assertEquals(1, result.size());
-        assertEquals(ApiProvider.HEADHUNTER, result.get(0).getApiProvider());
+        assertEquals(ApiProvider.SUPERJOB, result.get(0).getApiProvider());
     }
 
     @Test
