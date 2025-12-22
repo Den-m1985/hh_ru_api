@@ -25,7 +25,7 @@ spring:
     redis:
       host: ${REDIS_BASE_URL}
       port: ${REDIS_BASE_PORT}
-      password:
+      password: ${REDIS_PASSWORD}
       timeout: ${REDIS_TIMEOUT}
       lettuce:
         pool:

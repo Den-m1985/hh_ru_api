@@ -2,7 +2,7 @@
 
 вход в контейнер и базу данных
 ```shell
-docker exec -it hh_ru_api psql -U user -d hh_ru_db
+docker exec -it hh_ru_db psql -U user -d hh_ru_db
 ```
 копирование на сервер и запуск
 ```shell

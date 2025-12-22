@@ -49,6 +49,22 @@ docker compose -f docker-compose.app.yml up -d --build
 ```shell
 docker network inspect hh_network
 ```
+
+Список всех сетей:
+```shell
+docker network ls
+```
+
+В Docker один контейнер может быть подключен к нескольким сетям одновременно.
+Подключите Redis к сети вашего API
+```shell
+docker network connect hh_network vaity-redis
+```
+
+Проверьте видимость Redis из контейнера API
+```shell
+docker exec hh-ru-api ping -c 3 vaity-redis
+```
 Оба контейнера должны быть запущены:
 ```shell
 docker ps
