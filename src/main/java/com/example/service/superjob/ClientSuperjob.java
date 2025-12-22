@@ -1,6 +1,7 @@
 package com.example.service.superjob;
 
 import com.example.dto.VacancyHistoryDto;
+import com.example.dto.negotiation.SuperjobNegotiation;
 import com.example.dto.superjob.SendCvOnVacancyResponse;
 import com.example.dto.superjob.SuperjobResumeDto;
 import com.example.dto.superjob.SuperjobVacancyRequest;
@@ -142,5 +143,12 @@ public class ClientSuperjob {
             existingResumes.add(newResume);
         }
         return superjobResumeService.saveAll(existingResumes);
+    }
+
+    public List<SuperjobNegotiation> getAllNegotiations(User user) {
+        String url = String.format("%s/2.0/messages/history/all/", superjobProperties.baseUrlApi());
+        List<SuperjobNegotiation> result = requestTemplates.getSuperjobNegotiations(url, user);
+        log.info("Superjob, find {} negotiations", result.size());
+        return result;
     }
 }

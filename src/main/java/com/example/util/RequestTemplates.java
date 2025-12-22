@@ -1,8 +1,10 @@
 package com.example.util;
 
+import com.example.dto.HeadhunterNegotiation;
 import com.example.dto.HhTokenResponse;
-import com.example.dto.NegotiationItemDto;
 import com.example.dto.SavedSearchDto;
+import com.example.dto.negotiation.SuperjobNegotiation;
+import com.example.dto.negotiation.SuperjobResponse;
 import com.example.dto.superjob.SendCvOnVacancyResponse;
 import com.example.dto.superjob.SuperjobTokenResponse;
 import com.example.dto.superjob.VacancyResponse;
@@ -121,8 +123,8 @@ public class RequestTemplates {
         );
     }
 
-    public ApiListResponse<NegotiationItemDto> getDataFromRequest2(String url, User user) {
-        return httpUtils.safeRequest(
+    public List<HeadhunterNegotiation> getHeadhunterNegotiations(String url, User user) {
+        ApiListResponse<HeadhunterNegotiation> apiListResponse = httpUtils.safeRequest(
                 url,
                 HttpMethod.GET,
                 createHeaders.getHeaders(user.getHhToken()),
@@ -130,6 +132,7 @@ public class RequestTemplates {
                 new TypeReference<>() {
                 }
         );
+        return apiListResponse.items();
     }
 
     public ApiListResponse<SavedSearchDto> getSavedSearches(String url, User user) {
@@ -141,6 +144,18 @@ public class RequestTemplates {
                 new TypeReference<>() {
                 }
         );
+    }
+
+    public List<SuperjobNegotiation> getSuperjobNegotiations(String url, User user) {
+        SuperjobResponse<SuperjobNegotiation> response = httpUtils.safeRequest(
+                url,
+                HttpMethod.GET,
+                createHeaders.createHeadersSuperjob(user.getSuperjobToken()),
+                null,
+                new TypeReference<>() {
+                }
+        );
+        return response.getObjects();
     }
 
     /**
